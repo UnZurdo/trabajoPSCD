@@ -16,7 +16,6 @@
 #include "ImageDownloader.hpp"
 #include "CImg.h"
 #include "Gestor.h"
-#include "Monitor.h"
 #include "Subasta.h"
 
 using namespace std;
@@ -28,9 +27,10 @@ class Administrador{
 
     public:
         Administrador(Gestor* gestor, Subasta* subasta, Monitor* monitor);
-        void mostrarEstado();
-        void mostrarHistoria();
         void apagarServidor();
+        // Bucle infinito hasta END OF SERVICE en el que se leeran las ordenes
+        // por la linea de comandos (mostrar Estado, Historia o apagar)
+        void iniciarAdmin();
 
 };
 

@@ -13,9 +13,12 @@
 #include <iostream>
 #include <thread>
 #include <cstring>
+#include <sstream>
 #include <mutex>
 #include <condition_variable>
 #include <iomanip>
+#include <ctime>
+#include <random>
 
 
 using namespace std;
@@ -23,20 +26,30 @@ using namespace std;
 class Monitor{
 
     int nClientes;
+    int nPujas;
+    // Mayor puja actual
+    int actual; 
+    int siguiente;
+    int id;
     mutex mtx;
     condition_variable ocupado;
 
-    // ? Señal del administrador para finalizar el gestor
-    bool apagar;
-
     public:
         Monitor();
+        Monitor(int min);
+        int pujaActual();
+        int siguientePuja();
+        int clientes();
+        int getId();
+        string estado();
         // En caso de finalizacion inesperada de cliente
         void Finalizar();
-        int Entrar();
+        void Entrar();
         void Salir();
-        // Administrador apaga servidor
-        void shutdown();
+        void iniciar();
+        // Falso si puja es menor que la actual
+        bool Pujar(const int dinero, int id);
+
 };
 
 

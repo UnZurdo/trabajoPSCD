@@ -14,6 +14,12 @@
 
 using namespace std;
 
+
+/*
+ 	-Limitar la cantidad de dinero del cliente???
+ 	- Establecer una cantidad inicial
+
+*/
 const int MESSAGE_SIZE = 4001; //mensajes de no más 4000 caracteres
 
 int main(int argc, char* argv[]) {

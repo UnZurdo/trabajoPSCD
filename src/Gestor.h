@@ -22,12 +22,17 @@ using namespace std;
 class Gestor{
     Valla valla;
     queue<Valla> q;
+    bool fin;
 
     public:
         Gestor();
         void anyadirValla(Valla valla);
-        void quitarValla(Valla valla);
-        void mostrar();
+        // fin := true, establecido por el admin
+        void apagar();
+        // Bucle infinito en el que se muestran las imagenes siempre que haya disponibles 
+        // en la cola, finaliza si fin := true, rechaza nuevas vallas y espera a que se terminen de 
+        // mostrar las encoladas
+        void iniciar(bool& fin);
 
 };
 

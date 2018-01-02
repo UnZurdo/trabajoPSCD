@@ -11,41 +11,43 @@
 #include <thread>
 #include <sstream>
 #include <cstring> //manejo de cadenas tipo C
-#include "Monitor.h"
+#include "Administrador.h"
+
 
 using namespace std;
 
 //-------------------------------------------------------------
-// Cuenta el número de vocales existentes en un mensaje
-// PRE: 
-// POST: Devuelve el número de vocales existentes en el mensaje 'message'
-int cuentaVocales(char* message) {
-
-	int count = 0;
-	for (int i=0; i < strlen(message); i++) {
-
-		switch (message[i]) {
-			case 'a': case 'A': 
-			case 'e': case 'E': 
-			case 'i': case 'I': 
-			case 'o': case 'O': 
-			case 'u': case 'U': 
-						count++;
-					  	break;
-		}
-	}
-
-	return count;
-}
-//-------------------------------------------------------------
-void servCliente(Socket& soc, int client_fd, Monitor& monitor) {
-	char MENS_FIN[]="EXIT";
+void servCliente(Socket& soc, int client_fd, Monitor& monitor, bool& fin) {
+	monitor.Entrar();
+	char MENS_FIN[]="exit";
+	char RECHAZADO[]="rechazado";
+	char ACEPTADO[]="aceptado";
 	// Buffer para recibir el mensaje
 	int length = 100;
 	char buffer[length];
 	char *temp;
+	char *temp2;
 
-	bool out = false; // Inicialmente no salir del bucle
+	// Envio confirmacion de conexion aceptada/rechazada
+	char* messageAUX;
+	if(fin) messageAUX = RECHAZADO;
+	else messageAUX = ACEPTADO;
+
+	int send_bytes = soc.Send(client_fd, messageAUX);
+	if(send_bytes == -1) {
+		string mensError(strerror(errno));
+		cerr << "Error al enviar datos: " + mensError + "\n";
+		// Cerramos los sockets
+		monitor.Salir();
+		soc.Close(client_fd);
+		exit(1);
+	}
+	// Inicialmente no salir del bucle
+	bool out = false; 
+	// Si conexion rechazada NO entrar al bucle y cerrar socket 
+	if(strcmp(messageAUX,RECHAZADO)==0){
+		out = true;
+	}
 	while(!out) {
 		// Recibimos el mensaje del cliente
 		int rcv_bytes = soc.Recv(client_fd,buffer,length);
@@ -55,24 +57,39 @@ void servCliente(Socket& soc, int client_fd, Monitor& monitor) {
 			// Cerramos los sockets
 			soc.Close(client_fd);
 		}
-
-		// Si recibimos "END OF SERVICE" --> Fin de la comunicación
+		string s;
+		// Si recibimos "exit" --> Fin de la comunicación
 		if (0 == strcmp(buffer, MENS_FIN)) {
 			out = true; // Salir del bucle
-		} else {
+		} 
+		// Recibo confirmacion mensaje OCUPADO
+		else if(0 == strcmp(buffer, "OK")){
+			// Envio Info Asientos Libres si el mensaje anterior no ha fallado
+			s = monitor.Estado();	
+			const char* message = s.c_str();		
+			send_bytes = soc.Send(client_fd, message);
+			
+		}else {
 
 			// Parseamos al entrada ante varios delimitadores
 			temp = strtok(buffer, " ,-");
-			int fila = atoi(temp);
-			temp = strtok(NULL, " ,-");
-			int columna = atoi(temp);
-			cout << "Asiento pedido ==> fila: " << fila << " columna: " << columna << endl;
+			temp2 = strtok(NULL, " ,-");
+			int fila,columna;
+			// Valido mensaje
+			if(temp && temp2){
+				fila = atoi(temp);
+				columna = atoi(temp2);
+			}
+			else{
+				fila = -1;
+				columna = -1;
+			}
+			cout << "Asiento pedido ==> fila: " << fila << " columna: " << columna;
 
 			// Gestionamos respuesta
-			int estado = monitor.Entrar(fila,columna);
+			int estado = monitor.Reservar(fila,columna);
 
 			// Enviamos la respuesta
-			string s;
 			if(estado == 0){
 				s = "Asiento solicidado RESERVADO";
 			}
@@ -84,11 +101,14 @@ void servCliente(Socket& soc, int client_fd, Monitor& monitor) {
 			}
 			else{
 				s ="MENSAJE INVALIDO";
+				cout << " -INVALIDO-";
 			}
+			cout <<endl;
 
 			const char* message = s.c_str();
 		
 			int send_bytes = soc.Send(client_fd, message);
+
 			if(send_bytes == -1) {
 				string mensError(strerror(errno));
     			cerr << "Error al enviar datos: " + mensError + "\n";
@@ -99,20 +119,39 @@ void servCliente(Socket& soc, int client_fd, Monitor& monitor) {
 			}
 		}
 	}
-	monitor.Salir();
 	soc.Close(client_fd);
+	monitor.Salir();
 }
 
-void administrador();
+void administrator(Socket& socket, int socket_fd, bool& fin, Monitor& monitor){
+	cout << "To quit write \"exit\""<<endl;
+	string msg;
+	while(msg!="exit"){
+		getline(cin, msg);
+	}
+	cout << "Closing server...."<<endl;
+	fin=true;
+
+	monitor.Finalizar();
+
+	cout << "Socket CLOSED"<<endl;
+
+	socket.Close(socket_fd);
+	exit(1);
+
+
+}
 
 //-------------------------------------------------------------
 int main(int argc, char** argv) {
 	int filas = 10;
 	int columnas = 4;
-	int max_connections = 10;
+	int max_connections = 100;
+	bool fin = false;
 	// Dirección y número donde escucha el proceso servidor
 	string SERVER_ADDRESS = "localhost";
 	int SERVER_PORT = atoi(argv[1]);
+	thread administrador; 
 
     int client_fd;
     Monitor monitor(filas, columnas);
@@ -130,8 +169,7 @@ int main(int argc, char** argv) {
 	}
 
 	// Listen
-
-	int error_code = socket.Listen(max_connections); ///////// ESC
+	int error_code = socket.Listen(max_connections); 
 	if (error_code == -1) {
 		string mensError(strerror(errno));
     	cerr << "Error en el listen: " + mensError + "\n";
@@ -139,8 +177,10 @@ int main(int argc, char** argv) {
 		socket.Close(socket_fd);
 		exit(1);
 	}
+	administrador = thread(&administrator, ref(socket), socket_fd, ref(fin), ref(monitor));
 
-	for (int i=0; i<max_connections; i++) {
+	int i=0;
+	while(i<max_connections){
 		// Accept
 		client_fd = socket.Accept();
 
@@ -153,13 +193,18 @@ int main(int argc, char** argv) {
 		}
 
 		cout << "Lanzo thread nuevo cliente " + to_string(i) + "\n";
-		thread cliente = thread(&servCliente, ref(socket), client_fd, ref(monitor));
+		thread cliente = thread(&servCliente, ref(socket), client_fd, ref(monitor), ref(fin));
 		cliente.detach();
-		cout << "Nuevo cliente " + to_string(i) + " aceptado" + "\n";
+		cout << "Nuevo cliente " + to_string(i);
+		if(!fin) cout << " aceptado" << endl;
+		else cout << " RECHAZADO" <<endl;
+		++i;	
 	}
 	
 	//¿Qué pasa si algún thread acaba inesperadamente?
 	monitor.Finalizar();
+	administrador.join();
+
 
     // Cerramos el socket del servidor
     error_code = socket.Close(socket_fd);
