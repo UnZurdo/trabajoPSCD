@@ -1,8 +1,5 @@
 #*****************************************************************
 # File:   Makefile
-# Author: Abel Chils Trabanco
-#         Jorge Aznar López
-#         Daniel Fraile Belmonte
 # Date:   enero 2017
 # Coms:   Ejecutar como "make"
 #         Para compilar en Hendrix (Solaris OS), descomentar
