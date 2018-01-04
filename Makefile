@@ -18,25 +18,21 @@ CPP=g++ # Comando de compilacion
 
 #Librerias
 SOCKET=Socket
-RESTAURANTE=Restaurante
-MONUMENTO=Monumento
-JSONDOWNLOAD=JsonDownload
-SEMAFORO=Semaphore
-UTM2LL=LatLong-UTMconversion
+IMAGEDOWNLOADER=ImageDownloader
 
 #Modulos servidor
-DBMONUMENTOSRESTAURANTES=DbMonumentosRestaurantes
-DBSESION=DbSesion
-GESTORCONEXIONES=GestorConexiones
-GESTORPRECIOS=GestorPrecios
+VALLA=Valla
+ADMINISTRADOR=Administrador
+MONITOR=Monitor
+GESTOR=Gestor
 SERVIDOR=Servidor
 
 #Modulos cliente
-CLIENTEMANUAL=Clientemanual
-CLIENTEAUTOMATICO=Clienteauto
+CLIENTE=Cliente
+CLIENTEAUTOMATICO=ClienteAuto
 
 #Target
-TARGET=${SERVIDOR} ${CLIENTEMANUAL} ${CLIENTEAUTOMATICO}
+TARGET=${SERVIDOR} ${CLIENTE} ${CLIENTEAUTOMATICO}
 
 # #################### #
 # FLAGS DE COMPILACION #
@@ -54,77 +50,56 @@ all: ${TARGET}
 
 
 # Compilacion de librerias servidor
-bin/${SOCKET}.o: src/librerias/Socket/${SOCKET}.h src/librerias/Socket/${SOCKET}.cpp
-	${CPP} -c ${CPPFLAGS} src/librerias/Socket/${SOCKET}.cpp -o bin/${SOCKET}.o
+bin/${SOCKET}.o: src/librerias/${SOCKET}.h src/librerias/${SOCKET}.cpp
+	${CPP} -c ${CPPFLAGS} src/librerias/${SOCKET}.cpp -o bin/${SOCKET}.o
 #-----------------------------------------------------------
-bin/${RESTAURANTE}.o: src/librerias/Restaurante/${RESTAURANTE}.h src/librerias/Restaurante/${RESTAURANTE}.cpp
-	${CPP} -c ${CPPFLAGS} src/librerias/Restaurante/${RESTAURANTE}.cpp -o bin/${RESTAURANTE}.o
+bin/${IMAGEDOWNLOADER}.o: src/librerias/IMAGEDOWNLOADER/${IMAGEDOWNLOADER}.h src/librerias/IMAGEDOWNLOADER/${IMAGEDOWNLOADER}.cpp
+	${CPP} -c ${CPPFLAGS} src/librerias/IMAGEDOWNLOADER/${IMAGEDOWNLOADER}.cpp -o bin/${IMAGEDOWNLOADER}.o
 #-----------------------------------------------------------
-bin/${SEMAFORO}.o: src/librerias/Semaphore/${SEMAFORO}.h src/librerias/Semaphore/${SEMAFORO}.cpp
-	${CPP} -c ${CPPFLAGS} src/librerias/Semaphore/${SEMAFORO}.cpp -o bin/${SEMAFORO}.o
+bin/${ADMINISTRADOR}.o: src/servidor/${ADMINISTRADOR}.h src/servidor/${ADMINISTRADOR}.cpp
+	${CPP} -c ${CPPFLAGS} src/servidor/${ADMINISTRADOR}.cpp -o bin/${ADMINISTRADOR}.o
 #-----------------------------------------------------------
-bin/${MONUMENTO}.o: src/librerias/Monumento/${MONUMENTO}.h src/librerias/Monumento/${MONUMENTO}.cpp
-	${CPP} -c ${CPPFLAGS} src/librerias/Monumento/${MONUMENTO}.cpp -o bin/${MONUMENTO}.o
+bin/${GESTOR}.o: src/servidor/${GESTOR}.h src/servidor/${GESTOR}.cpp
+	${CPP} -c ${CPPFLAGS} src/servidor/${GESTOR}.cpp -o bin/${GESTOR}.o
 #-----------------------------------------------------------
-bin/${JSONDOWNLOAD}.o: src/librerias/JsonDownload/${JSONDOWNLOAD}.h src/librerias/JsonDownload/${JSONDOWNLOAD}.cpp
-	${CPP} -c ${CPPFLAGS} src/librerias/JsonDownload/${JSONDOWNLOAD}.cpp -o bin/${JSONDOWNLOAD}.o
+bin/${MONITOR}.o: src/servidor/${MONITOR}.cpp
+	${CPP} -c ${CPPFLAGS} src/servidor/${MONITOR}.cpp -o bin/${MONITOR}.o
 #-----------------------------------------------------------
-bin/${DBMONUMENTOSRESTAURANTES}.o: src/servidor/DbMonumentosRestaurantes/${DBMONUMENTOSRESTAURANTES}.h src/servidor/DbMonumentosRestaurantes/${DBMONUMENTOSRESTAURANTES}.cpp
-	${CPP} -c ${CPPFLAGS} src/servidor/DbMonumentosRestaurantes/${DBMONUMENTOSRESTAURANTES}.cpp -o bin/${DBMONUMENTOSRESTAURANTES}.o
-#-----------------------------------------------------------
-bin/${DBSESION}.o: src/servidor/DbSesion/${DBSESION}.h src/servidor/DbSesion/${DBSESION}.cpp
-	${CPP} -c ${CPPFLAGS} src/servidor/DbSesion/${DBSESION}.cpp -o bin/${DBSESION}.o
-#-----------------------------------------------------------
-bin/${GESTORPRECIOS}.o: src/servidor/GestorPrecios/${GESTORPRECIOS}.h src/servidor/GestorPrecios/${GESTORPRECIOS}.cpp
-	${CPP} -c ${CPPFLAGS} src/servidor/GestorPrecios/${GESTORPRECIOS}.cpp -o bin/${GESTORPRECIOS}.o
-#-----------------------------------------------------------
-bin/${UTM2LL}.o: src/librerias/UTM2LL/${UTM2LL}.h src/librerias/UTM2LL/${UTM2LL}.cpp
-	${CPP} -c $(CPPFLAGS) src/librerias/UTM2LL/${UTM2LL}.cpp -o bin/${UTM2LL}.o
-#-----------------------------------------------------------
-bin/${GESTORCONEXIONES}.o: src/servidor/GestorConexiones/${GESTORCONEXIONES}.cpp
-	${CPP} -c ${CPPFLAGS} src/servidor/GestorConexiones/${GESTORCONEXIONES}.cpp  -o bin/${GESTORCONEXIONES}.o
+bin/${VALLA}.o: src/servidor/${VALLA}.cpp
+	${CPP} -c ${CPPFLAGS} src/servidor/${VALLA}.cpp -o bin/${VALLA}.o
 #-----------------------------------------------------------
 
 # Compilacion de librerias cliente
-bin/${CLIENTEMANUAL}.o: src/cliente/${CLIENTEMANUAL}.cpp
-	${CPP} -c $(CPPFLAGS) src/cliente/${CLIENTEMANUAL}.cpp -o bin/${CLIENTEMANUAL}.o
+bin/${CLIENTE}.o: src/cliente/${CLIENTE}.cpp
+	${CPP} -c $(CPPFLAGS) src/cliente/${CLIENTE}.cpp -o bin/${CLIENTE}.o
 #-----------------------------------------------------------
 bin/${CLIENTEAUTOMATICO}.o: src/cliente/${CLIENTEAUTOMATICO}.cpp
 	${CPP} -c $(CPPFLAGS) src/cliente/${CLIENTEAUTOMATICO}.cpp -o bin/${CLIENTEAUTOMATICO}.o
 
 #-----------------------------------------------------------
 # Linkado
-${SERVIDOR}: bin/${GESTORCONEXIONES}.o bin/${DBMONUMENTOSRESTAURANTES}.o bin/${RESTAURANTE}.o bin/${MONUMENTO}.o bin/${JSONDOWNLOAD}.o bin/${GESTORPRECIOS}.o bin/${DBSESION}.o bin/${SOCKET}.o bin/${SEMAFORO}.o bin/${UTM2LL}.o
-	${CPP} bin/${GESTORCONEXIONES}.o bin/${DBMONUMENTOSRESTAURANTES}.o bin/${RESTAURANTE}.o bin/${MONUMENTO}.o bin/${JSONDOWNLOAD}.o bin/${GESTORPRECIOS}.o bin/${DBSESION}.o bin/${SOCKET}.o bin/${SEMAFORO}.o bin/${UTM2LL}.o -o  bin/${SERVIDOR} ${LDFLAGS} #${SOCKETSFLAGS} #descomentar para Hendrix
+${SERVIDOR}: bin/${MONITOR}.o bin/${IMAGEDOWNLOADER}.o bin/${VALLA}.o bin/${GESTOR}.o bin/${ADMINISTRADOR}.o bin/${SOCKET}.o
+	${CPP} bin/${MONITOR}.o bin/${IMAGEDOWNLOADER}.o bin/${VALLA}.o bin/${GESTOR}.o bin/${ADMINISTRADOR}.o bin/${SOCKET}.o -o  bin/${SERVIDOR} ${LDFLAGS} #${SOCKETSFLAGS} #descomentar para Hendrix
 #-----------------------------------------------------------
 # Linkado
-${CLIENTEMANUAL}: bin/${CLIENTEMANUAL}.o bin/${SOCKET}.o
-	${CPP} bin/${CLIENTEMANUAL}.o bin/${SOCKET}.o -o bin/${CLIENTEMANUAL} ${LDFLAGS} #${SOCKETSFLAGS}
+${CLIENTE}: bin/${CLIENTE}.o bin/${SOCKET}.o
+	${CPP} bin/${CLIENTE}.o bin/${SOCKET}.o -o bin/${CLIENTE} ${LDFLAGS} #${SOCKETSFLAGS}
 #-----------------------------------------------------------
 ${CLIENTEAUTOMATICO}: bin/${CLIENTEAUTOMATICO}.o bin/${SOCKET}.o
 	${CPP} bin/${CLIENTEAUTOMATICO}.o bin/${SOCKET}.o -o bin/${CLIENTEAUTOMATICO} ${LDFLAGS} #${SOCKETSFLAGS}
 #-----------------------------------------------------------
 
 # LIMPIEZA
-
 clean:
-	$(RM) bin/${GESTORCONEXIONES}.o
-	$(RM) bin/${GESTORPRECIOS}.o
-	$(RM) bin/${DBSESION}.o
+	$(RM) bin/${VALLA}.o
+	$(RM) bin/${MONITOR}.o
+	$(RM) bin/${GESTOR}.o
+	$(RM) bin/${ADMINISTRADOR}.o
 	$(RM) bin/${SOCKET}.o
-	$(RM) bin/${DBMONUMENTOSRESTAURANTES}.o
-	$(RM) bin/${RESTAURANTE}.o
-	$(RM) bin/${MONUMENTO}.o
-	$(RM) bin/${JSONDOWNLOAD}.o
-	$(RM) bin/${SEMAFORO}.o
-	$(RM) bin/${GESTORPRECIOS}.o
-	$(RM) bin/${UTM2LL}.o
-	$(RM) bin/${CLIENTEMANUAL}.o:
+	$(RM) bin/${IMAGEDOWNLOADER}.o
+	$(RM) bin/${CLIENTE}.o:
 	$(RM) bin/${CLIENTEAUTOMATICO}.o:
 	$(RM) bin/${SERVIDOR}
-	$(RM) bin/${CLIENTEMANUAL}
+	$(RM) bin/${CLIENTE}
 	$(RM) bin/${CLIENTEAUTOMATICO}
-	$(RM) bin/Clienteauto.o
-	$(RM) bin/Clientemanual.o
-	$(RM) bin/monumentos.json
-	$(RM) bin/restaurantes.json
+	$(RM) imagenes/*.*
