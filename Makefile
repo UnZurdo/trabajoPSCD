@@ -19,6 +19,7 @@ CPP=g++ # Comando de compilacion
 #Librerias
 SOCKET=Socket
 IMAGEDOWNLOADER=ImageDownloader
+SEMAPHORE=Semaphore
 
 #Modulos servidor
 VALLA=Valla
@@ -53,8 +54,11 @@ all: ${TARGET}
 bin/${SOCKET}.o: src/librerias/${SOCKET}.h src/librerias/${SOCKET}.cpp
 	${CPP} -c ${CPPFLAGS} src/librerias/${SOCKET}.cpp -o bin/${SOCKET}.o
 #-----------------------------------------------------------
-bin/${IMAGEDOWNLOADER}.o: src/librerias/IMAGEDOWNLOADER/${IMAGEDOWNLOADER}.h src/librerias/IMAGEDOWNLOADER/${IMAGEDOWNLOADER}.cpp
-	${CPP} -c ${CPPFLAGS} src/librerias/IMAGEDOWNLOADER/${IMAGEDOWNLOADER}.cpp -o bin/${IMAGEDOWNLOADER}.o
+bin/${IMAGEDOWNLOADER}.o: src/librerias/${IMAGEDOWNLOADER}.h src/librerias/${IMAGEDOWNLOADER}.cpp
+	${CPP} -c ${CPPFLAGS} src/librerias/${IMAGEDOWNLOADER}.cpp -o bin/${IMAGEDOWNLOADER}.o
+#-----------------------------------------------------------
+bin/${SEMAPHORE}.o: src/librerias/${SEMAPHORE}.h src/librerias/${SEMAPHORE}.cpp
+	${CPP} -c ${CPPFLAGS} src/librerias/${SEMAPHORE}.cpp -o bin/${SEMAPHORE}.o
 #-----------------------------------------------------------
 bin/${ADMINISTRADOR}.o: src/servidor/${ADMINISTRADOR}.h src/servidor/${ADMINISTRADOR}.cpp
 	${CPP} -c ${CPPFLAGS} src/servidor/${ADMINISTRADOR}.cpp -o bin/${ADMINISTRADOR}.o
@@ -75,11 +79,10 @@ bin/${CLIENTE}.o: src/cliente/${CLIENTE}.cpp
 #-----------------------------------------------------------
 bin/${CLIENTEAUTOMATICO}.o: src/cliente/${CLIENTEAUTOMATICO}.cpp
 	${CPP} -c $(CPPFLAGS) src/cliente/${CLIENTEAUTOMATICO}.cpp -o bin/${CLIENTEAUTOMATICO}.o
-
 #-----------------------------------------------------------
 # Linkado
-${SERVIDOR}: bin/${MONITOR}.o bin/${IMAGEDOWNLOADER}.o bin/${VALLA}.o bin/${GESTOR}.o bin/${ADMINISTRADOR}.o bin/${SOCKET}.o
-	${CPP} bin/${MONITOR}.o bin/${IMAGEDOWNLOADER}.o bin/${VALLA}.o bin/${GESTOR}.o bin/${ADMINISTRADOR}.o bin/${SOCKET}.o -o  bin/${SERVIDOR} ${LDFLAGS} #${SOCKETSFLAGS} #descomentar para Hendrix
+${SERVIDOR}: bin/${MONITOR}.o bin/${IMAGEDOWNLOADER}.o bin/${SEMAPHORE}.o bin/${VALLA}.o bin/${GESTOR}.o bin/${ADMINISTRADOR}.o bin/${SOCKET}.o
+	${CPP} bin/${MONITOR}.o bin/${IMAGEDOWNLOADER}.o bin/${SEMAPHORE}.o bin/${VALLA}.o bin/${GESTOR}.o bin/${ADMINISTRADOR}.o bin/${SOCKET}.o -o  bin/${SERVIDOR} ${LDFLAGS} #${SOCKETSFLAGS} #descomentar para Hendrix
 #-----------------------------------------------------------
 # Linkado
 ${CLIENTE}: bin/${CLIENTE}.o bin/${SOCKET}.o
@@ -97,6 +100,7 @@ clean:
 	$(RM) bin/${ADMINISTRADOR}.o
 	$(RM) bin/${SOCKET}.o
 	$(RM) bin/${IMAGEDOWNLOADER}.o
+	$(RM) bin/${SEMAPHORE}.o
 	$(RM) bin/${CLIENTE}.o:
 	$(RM) bin/${CLIENTEAUTOMATICO}.o:
 	$(RM) bin/${SERVIDOR}

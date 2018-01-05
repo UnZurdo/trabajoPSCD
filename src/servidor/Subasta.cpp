@@ -69,7 +69,7 @@ int Subasta::obtenerPujaMin(){
 };
 
 
-// Tiempo que se mostrara la imagen 
+// Tiempo que se mostrara la imagen
 int Subasta::obtenerDuracion(){
 	return duracion;
 };
@@ -86,8 +86,15 @@ void Subasta::iniciar(){
 	<< "abierta durante: "<<tInicial<< "segundos"<<endl
 	<< "Puja inicial: " << precioInicial<<endl;
 
-}
+};
 
+bool Subasta::finTiempo(){
+ return time(NULL) >= tiempoRestante
+};
+
+void finalizarSubasta(){
+  fin=true;
+};
 
 // Precio al que se abre la subasta
 int Subasta::pujaInicial(){
@@ -123,4 +130,3 @@ string Subasta::infoHistorica(){
 
     return oss.str();
 };
-

@@ -34,6 +34,8 @@ class Subasta{
     int nImagenes;
     int tiempoTotal;
     int tiempoMedio;
+    // Terminar subasta
+    bool fin;
 
 
     public:
@@ -45,8 +47,10 @@ class Subasta{
         void nuevo(int min);
         // Precio PRIVADO minimo necesario para vender valla
         int obtenerPujaMin();
-        // Tiempo que se mostrara la imagen 
+        // Tiempo que se mostrara la imagen
         int obtenerDuracion();
+        // Devuelve true si el tiempo de la subasta se ha agotado
+        bool finTiempo();
         // Fecha final en la que se cerrara la subasta
         int cierreSubasta();
         // Precio al que se abre la subasta
@@ -59,6 +63,9 @@ class Subasta{
         // y genera una nueva suabsta
         // Parcial: si no hay ganador
         bool cerrarSubasta(int& user_id);
+        // Fin := true, no se realizaran nuevas subastas y esperara a que finalice
+        // la actual.
+        void finalizarSubasta();
         string infoHistorica();
 
 };
