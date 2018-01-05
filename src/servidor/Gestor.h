@@ -13,7 +13,7 @@
 #include <ctime>
 #include <iomanip>
 #include <queue>
-#include "ImageDownloader.hpp"
+#include "../librerias/ImageDownloader.hpp"
 #include "CImg.h"
 #include "Valla.h"
 
