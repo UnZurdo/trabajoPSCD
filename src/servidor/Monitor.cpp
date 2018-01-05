@@ -1,7 +1,6 @@
 //*****************************************************************
 // File:   Monitor.cpp
-// Author: Alberto García Hernández
-// Date:   noviembre 2017
+// Date:   diciembre 2017
 // Coms:   Ejercicio 5 de PSCD
 //         Compilar mediante
 //           g++ -std=c++11 -pthread Monitor.cpp -c
