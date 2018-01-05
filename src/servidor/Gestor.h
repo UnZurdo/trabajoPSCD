@@ -14,6 +14,7 @@
 #include <iomanip>
 #include <queue>
 #include "../librerias/ImageDownloader.hpp"
+#include "../librerias/Semaphore.hpp"
 #include "CImg.h"
 #include "Valla.h"
 
