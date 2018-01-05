@@ -28,6 +28,9 @@ class Administrador{
     public:
         Administrador(Gestor* gestor, Subasta* subasta, Monitor* monitor);
         void apagarServidor();
+	void mostrarEstado();
+	void mostrarHistoria();
+	void apagarServidor();
         // Bucle infinito hasta END OF SERVICE en el que se leeran las ordenes
         // por la linea de comandos (mostrar Estado, Historia o apagar)
         void iniciarAdmin();
