@@ -13,7 +13,7 @@ using namespace std;
 
 void crear(Valla& s, string url, string path, int d){
     s.URL=url;
-    s.path= "../imagenes/" + path;
+    s.path= "../../imagenes/" + path;
     s.duracion=d;
 }
 
