@@ -1,5 +1,5 @@
 //*****************************************************************
-// File:   Monitor.h
+// File:   Administrador.h
 // Date:   december 2017
 // Coms:   TP6 PSCD
 //         Compilar mediante
