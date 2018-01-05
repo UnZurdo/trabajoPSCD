@@ -6,7 +6,7 @@
 //         Compilar el fichero "Makefile" asociado, mediante "make".
 //*****************************************************************
 
-#include "Socket.h"
+#include "../librerias/Socket.h"
 #include <iostream>
 #include <thread>
 #include <sstream>
