@@ -17,15 +17,15 @@
 
 Gestor::Gestor();{
     fin = false;
-    //CREAR VALLA
 }
 //Falta gestion valla
 void anyadirValla::Gestor(Valla valla){
- 
-    if (!(Gestor.q).empty()){
-       Gestor.push(valla);
-    }
-    
+    // Si fin no añado ninguna más
+       if(!fin) {
+           q.push(valla);
+        // s.signal()
+       }
+        
     
  }
  
@@ -34,7 +34,10 @@ void anyadirValla::Gestor(Valla valla){
  }
  
  void iniciar::Gestor(bool& fin){
-     while(!fin){
+     // No acabar hasta que fin y se hallan mostrado todas las vallas
+     while(!fin || !q.empty()){
          //mostrar imagen de la valla en cola
+         // Si no se puede mostrar nada == > ESPERAR
+         // s.wait()
      }
  }
