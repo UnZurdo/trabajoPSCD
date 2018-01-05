@@ -15,7 +15,7 @@
 #include "Valla.h"
 
 
-Gestor:;Gestor();{
+Gestor::Gestor();{
     fin = false;
     //CREAR VALLA
 }
@@ -33,7 +33,7 @@ void anyadirValla::Gestor(Valla valla){
       Gestor.fin = true;
  }
  
- void iniciar(bool& fin){
+ void iniciar::Gestor(bool& fin){
      while(!fin){
          //mostrar imagen de la valla en cola
      }
