@@ -19,6 +19,26 @@ using namespace std;
 
 const int MESSAGE_SIZE = 4001; //mensajes de no más 4000 caracteres
 
+void lectura(Socket socket_fd, bool& fin){
+	int read_bytes;
+	string buffer;
+	while(!fin){
+		read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
+		
+	}
+	
+}
+void escritura(Socket socket_fd, bool& fin){
+	int send_bytes;
+	string mensaje;
+	while(!fin){
+		send_bytes = socket.Send(socket_fd, mensaje);
+		
+	}
+	
+}	
+	
+}
 void handle_sigalrm(int signo){
 	signal(SIGINT, handle_sigalrm);
 }
@@ -26,7 +46,9 @@ void handle_sigalrm(int signo){
 int main(int argc, char* argv[]) {
 	string SERVER_ADDRESS = argv[1];
 	int SERVER_PORT = atoi(argv[2]);
-
+	bool fin = false;
+	
+	
 	const string MENS_FIN("exit");
 	const string LLENO ("Vuelo esta LLENO");
 	const string RECHAZADO("rechazado");
