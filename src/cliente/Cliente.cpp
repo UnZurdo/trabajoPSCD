@@ -31,7 +31,7 @@ void lectura(Socket socket_fd, bool& fin){
 void escritura(Socket socket_fd, bool& fin){
 	int send_bytes;
 	string mensaje;
-	while(!fin){
+	while(!fin){*
 		send_bytes = socket.Send(socket_fd, mensaje);
 		
 	}
@@ -47,7 +47,6 @@ int main(int argc, char* argv[]) {
 	string SERVER_ADDRESS = argv[1];
 	int SERVER_PORT = atoi(argv[2]);
 	bool fin = false;
-	
 	
 	const string MENS_FIN("exit");
 	const string LLENO ("Vuelo esta LLENO");
@@ -83,6 +82,13 @@ int main(int argc, char* argv[]) {
     if(socket_fd == -1){
     	return socket_fd;
     }
+
+    thread lec;
+    thread esc;
+    lec = thread(&lectura,ref(socket_fd),ref(fin));
+    esc = thread(&escritura,ref(socket_fd),ref(fin));
+		
+	
 
     // Recibimos la respuesta del servidor 
     string aux; 
