@@ -5,7 +5,7 @@
 //         Compilar mediante
 //           g++ -std=c++11 -pthread Subasta.cpp -c
 //*****************************************************************
-
+#include "Gestor.h"
 Gestor::Gestor();{
     fin = false;
 }
