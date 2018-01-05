@@ -11,16 +11,19 @@
 #include <iomanip>
 using namespace std;
 
-void crear::Valla(Valla& s){
+void crear(Valla& s, string url, string path, int d){
+    s.URL=url;
+    s.path=path;
+    s.duracion=d;
 }
 
 
-void actualizarUrl::Valla(Valla& s, string url){
+void actualizarUrl(Valla& s, string url){
     s.URL = url;
 }
 
 
-void actualizarPath::Valla(Valla& s, string path){
+void actualizarPath(Valla& s, string path){
     s.path = path;
 }
 
@@ -29,4 +32,13 @@ string obtenerUrl(const Valla& s){
 }
 string obtenerPath(const Valla& s){
   return s.path;
+}
+
+int marcarDuracion(Valla& s, int d){
+   s.duracion = d;
+}
+    
+int obtenerDuracion(const Valla& s){
+    return s.duracion;
+    
 }
