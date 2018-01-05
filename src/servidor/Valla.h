@@ -29,12 +29,15 @@ struct Valla{
     friend void actualizarPath(Valla& s, string path);
     friend string obtenerUrl(const Valla& s);
     friend string obtenerPath(const Valla& s);
+    friend int marcarDuracion(Valla& s);
+    friend int obtenerDuracion(const Valla& s);
 
     private:
         // Hace falta convertir a char* para utilizar la funcion de downloadImage
         // Link: https://stackoverflow.com/questions/7352099/stdstring-to-char
         string URL;
         string path;
+        int duracion;
 };
 
 
