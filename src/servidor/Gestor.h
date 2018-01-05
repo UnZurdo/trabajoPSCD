@@ -20,7 +20,6 @@
 using namespace std;
 
 class Gestor{
-    Valla valla;
     queue<Valla> q;
     bool fin;
 
