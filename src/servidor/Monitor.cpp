@@ -1,9 +1,9 @@
 //*****************************************************************
 // File:   Monitor.cpp
-// Date:   diciembre 2017
-// Coms:   Ejercicio 5 de PSCD
+// Date:   december 2017
+// Coms:   TP6 PSCD
 //         Compilar mediante
-//           g++ -std=c++11 -pthread Monitor.cpp -c
+//           g++ -std=c++11 -pthread Subasta.cpp -c
 //*****************************************************************
 
 #include "Monitor.h"
