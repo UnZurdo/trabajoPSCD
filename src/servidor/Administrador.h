@@ -13,8 +13,6 @@
 #include <ctime>
 #include <iomanip>
 #include <queue>
-#include "../librerias/ImageDownloader.hpp"
-#include "CImg.h"
 #include "Monitor.h"
 #include "Gestor.h"
 #include "Subasta.h"
@@ -29,9 +27,8 @@ class Administrador{
     public:
         Administrador(Gestor* gestor, Subasta* subasta, Monitor* monitor);
         void apagarServidor();
-	void mostrarEstado();
-	void mostrarHistoria();
-	void apagarServidor();
+		void mostrarEstado();
+		void mostrarHistoria();
         // Bucle infinito hasta END OF SERVICE en el que se leeran las ordenes
         // por la linea de comandos (mostrar Estado, Historia o apagar)
         void iniciarAdmin();

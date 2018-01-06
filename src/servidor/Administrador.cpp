@@ -15,22 +15,23 @@ Administrador::Administrador(Gestor* gestor, Subasta* subasta, Monitor* monitor)
 
 
 void Administrador::mostrarEstado(){
-      cout << (Administrador.monitor).estado() << endl;
+    cout << monitor->estado() << endl;
 };
 
 
 void Administrador::mostrarHistoria(){
-      cout << (Administrador.subasta).infoHistorica() << endl;
+    cout << subasta->infoHistorica() << endl;
 };
 
 
 void Administrador::apagarServidor(){
-    (Administrador.subasta).fin = true;
+    subasta->finalizarSubasta();
 };
 
 
 // Bucle infinito hasta END OF SERVICE en el que se leeran las ordenes
 // por la linea de comandos (mostrar Estado, Historia o apagar)
 void Administrador::iniciarAdmin(){
+
 
 };
