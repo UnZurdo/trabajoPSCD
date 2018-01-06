@@ -20,6 +20,7 @@ int randomD(){
 
 // Crea una nueva Subasta con valores generados aleatoriamente
 Subasta::Subasta(){
+    this->fin=false;
     this->tInicial=randomT();
     this->duracion=randomD();
     this->precioInicial=randomP();
@@ -34,22 +35,24 @@ Subasta::Subasta(){
 };
 
 // Crea una nueva Subasta con valores establecidos
-Subasta::Subasta(int tInicial, int duracion, int precioInicial, int precioMinimo){
-    this->tInicial=tInicial;
-    this->duracion=duracion;
-    this->precioInicial=precioInicial;
-    this->precioMinimo=precioMinimo;
-    this->monitor= new Monitor(precioInicial);
-
-    this->beneficios=0;
-    this->nSubastas=1;
-    this->nImagenes=0;
-    this->tiempoTotal=duracion;
-    this->tiempoMedio=0;
-};
+//Subasta::Subasta(int tInicial, int duracion, int precioInicial, int precioMinimo){
+//    this->fin=false;
+//    this->tInicial=tInicial;
+//    this->duracion=duracion;
+//    this->precioInicial=precioInicial;
+//    this->precioMinimo=precioMinimo;
+//    this->monitor= new Monitor(precioInicial);
+//
+//    this->beneficios=0;
+//    this->nSubastas=1;
+//    this->nImagenes=0;
+//    this->tiempoTotal=duracion;
+//    this->tiempoMedio=0;
+//};
 
 // Sobrescribo datos de la subasta actual con los de una nueva
 void Subasta::nuevo(int min){
+    this->fin=false;
     this->tInicial=randomT();
     this->duracion=randomD();
     this->precioInicial=randomP();
@@ -68,6 +71,9 @@ int Subasta::obtenerPujaMin(){
 	return precioMinimo;
 };
 
+Monitor* Subasta::obtenerMonitor(){
+    return monitor;
+};
 
 // Tiempo que se mostrara la imagen
 int Subasta::obtenerDuracion(){
@@ -89,10 +95,10 @@ void Subasta::iniciar(){
 };
 
 bool Subasta::finTiempo(){
- return time(NULL) >= tiempoRestante
+ return time(NULL) >= tiempoRestante;
 };
 
-void finalizarSubasta(){
+void Subasta::finalizarSubasta(){
   fin=true;
 };
 

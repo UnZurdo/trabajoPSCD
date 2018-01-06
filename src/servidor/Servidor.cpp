@@ -24,7 +24,7 @@ const char AYUDA[]="AYUDA";
 const char PUJAR[]="PUJAR";
 
 //-------------------------------------------------------------
-void recibir(Subasta& s, Monitor& monitor, Socket& soc, int client_fd, string& msg, bool& fin, bool& out){
+void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool& out){
 	// Buffer para recibir el mensaje
 	int length = 100;
 	char buffer[length];
@@ -44,11 +44,10 @@ void recibir(Subasta& s, Monitor& monitor, Socket& soc, int client_fd, string& m
 			out = true;
 		}
 		else if(strcmp(buffer, ESTADO)==0){
-			msg = s.monitor->estado();
+			msg = s.obtenerMonitor()->estado();
 		}
 		else if(strcmp(buffer,  AYUDA)==0){
-			msg = "Escriba \"EXIT\" para abandonar la subasta.\nPara mostrar el estado actual de la subasta
-			escriba ESTADO.\nSi desea pujar escriba: PUJAR <cantidad>\n";
+			msg = "Escriba \"EXIT\" para abandonar la subasta.\nPara mostrar el estado actual de la subasta escriba ESTADO.\nSi desea pujar escriba: PUJAR <cantidad>\n";
 		}
 		else{
 			// Parseamos al entrada ante varios delimitadores
@@ -57,9 +56,9 @@ void recibir(Subasta& s, Monitor& monitor, Socket& soc, int client_fd, string& m
 			// Valido mensaje
 			if(temp && temp2){
 				int puja = atoi(temp2);
-				bool valida=s.monitor->Pujar(puja);
-				if(!valida) msg="PUJA no aceptada" + s.monitor->estado();
-				else msg="PUJA aceptada" + s.monitor->estado();
+				bool valida=s.obtenerMonitor()->Pujar(puja, client_fd);
+				if(!valida) msg="PUJA no aceptada" + s.obtenerMonitor()->estado();
+				else msg="PUJA aceptada" + s.obtenerMonitor()->estado();
 			}
 
 		}
@@ -69,8 +68,9 @@ void recibir(Subasta& s, Monitor& monitor, Socket& soc, int client_fd, string& m
 }
 
 //-------------------------------------------------------------
-void enviar(Subasta& s, Monitor& monitor, Socket& soc, int client_fd, string& msg, bool& fin, bool& out){
+void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool& out){
 	char* messageAUX;
+	int send_bytes;
 	// else messageAUX = ACEPTADO;
 
 	while (!out) {
@@ -94,20 +94,20 @@ void enviar(Subasta& s, Monitor& monitor, Socket& soc, int client_fd, string& ms
 
 //-------------------------------------------------------------
 void servCliente(Socket& soc, int client_fd, bool& fin,  Subasta& subasta) {
-	subasta.monitor->Entrar();
-	subasta.monitor->iniciar();
+	subasta.obtenerMonitor()->Entrar();
+	subasta.obtenerMonitor()->iniciar();
 	string mensaje="";
 	bool out = false;
 
 
-	thread recibir = thread(&recibir , ref(subasta), ref(subasta.monitor), ref(soc), client_fd, ref(mensaje), ref(fin), ref(out));
-	thread escribir = thread(&recibir , ref(subasta), ref(subasta.monitor), ref(soc), client_fd, ref(mensaje), ref(fin), ref(out));
+	thread recibir = thread(&recibir , ref(subasta), ref(soc), client_fd, ref(mensaje), ref(fin), ref(out));
+	thread escribir = thread(&recibir , ref(subasta), ref(soc), client_fd, ref(mensaje), ref(fin), ref(out));
 
 	recibir.join();
 	recibir.join();
 
 	soc.Close(client_fd);
-	subasta.monitor->Salir();
+	subasta.obtenerMonitor()->Salir();
 
 }
 
@@ -120,7 +120,7 @@ void administrator(Socket& socket, int socket_fd, bool& fin, Subasta& s){
 	cout << "Closing server...."<<endl;
 	fin=true;
 
-	subasta.monitor->Finalizar();
+	s.obtenerMonitor()->Finalizar();
 
 	cout << "Socket CLOSED"<<endl;
 
@@ -136,14 +136,14 @@ int main(int argc, char** argv) {
 	bool fin = false;
 
 	// Creo subasta inicial
-	Subasta s();
+	Subasta subasta = Subasta();
 	// Dirección y número donde escucha el proceso servidor
 	string SERVER_ADDRESS = "localhost";
 	int SERVER_PORT = atoi(argv[1]);
 	thread administrador;
 
     int client_fd;
-    Monitor monitor(filas, columnas);
+
 
 	// Creación del socket con el que se llevará a cabo
 	// la comunicación con el servidor.
@@ -166,7 +166,7 @@ int main(int argc, char** argv) {
 		socket.Close(socket_fd);
 		exit(1);
 	}
-	administrador = thread(&administrator, ref(socket), socket_fd, ref(fin), ref(s));
+	administrador = thread(&administrator, ref(socket), socket_fd, ref(fin), ref(subasta));
 
 	int i=0;
 	while(i<max_connections){
@@ -182,7 +182,7 @@ int main(int argc, char** argv) {
 		}
 
 		cout << "Lanzo thread nuevo cliente " + to_string(i) + "\n";
-		thread cliente = thread(&servCliente, ref(socket), client_fd, ref(fin), ref(s));
+		thread cliente = thread(&servCliente, ref(socket), client_fd, ref(fin), ref(subasta));
 		cliente.detach();
 		cout << "Nuevo cliente " + to_string(i);
 		if(!fin) cout << " aceptado" << endl;
@@ -191,7 +191,7 @@ int main(int argc, char** argv) {
 	}
 
 	//¿Qué pasa si algún thread acaba inesperadamente?
-	monitor.Finalizar();
+	subasta.obtenerMonitor()->Finalizar();
 	administrador.join();
 
 
