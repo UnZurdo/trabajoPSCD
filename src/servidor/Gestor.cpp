@@ -55,12 +55,8 @@ void Gestor::iniciar(){
     char *cPATH = new char[URL.length() + 1];
     strcpy(cPATH, URL.c_str());
 
-    delete [] cPATH;
-    delete [] cURL;
-
     // Descargamos una imagen de Internet
     downloader.downloadImage(cURL, cPATH);
-
 
     // Creamos una valla publicitaria con una imagen
     char name[] = "Valla ";
@@ -75,6 +71,10 @@ void Gestor::iniciar(){
 
     // Mostrar imagen durante 5 segundos
     imagen.wait(5000);
+
+    // Libero memoria
+    delete [] cPATH;
+    delete [] cURL;
 
 
  }
