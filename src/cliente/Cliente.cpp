@@ -13,19 +13,19 @@
 #include <signal.h>
 #include <stdio.h>
 #include <unistd.h>
-#include "../librerias/Socket.h"
 #include "../librerias/Semaphore.h"
+#include "../librerias/Socket.h"
 
 using namespace std;
 
 const int MESSAGE_SIZE = 4001; //mensajes de no más 4000 caracteres
 
-void lectura(Socket socket_fd, bool& fin,bool& primeraVez,Semaphore& sem){
+void lectura(Socket& socket, int socket_fd, bool& fin,bool& primeraVez,Semaphore& sem){
 	int read_bytes;
 	string buffer;
 	while(!fin){
 		read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
-		if(readbytes == -1){
+		if(read_bytes == -1){
 			cout << "Error en el recv del cliente" << endl;
 			exit(0);
 		}
@@ -42,7 +42,7 @@ void lectura(Socket socket_fd, bool& fin,bool& primeraVez,Semaphore& sem){
 		}
 	}
 }
-void escritura(Socket socket_fd, bool& fin,bool& primeraVez,Semaphore& sem){
+void escritura(Socket& socket, int socket_fd, bool& fin,bool& primeraVez,Semaphore& sem){
 	int send_bytes;
 	string mensaje;
 	while(!fin){
@@ -50,6 +50,12 @@ void escritura(Socket socket_fd, bool& fin,bool& primeraVez,Semaphore& sem){
 			sem.wait();
 		}
 		getline(cin, mensaje);
+		// Caso usuario no introduce nada, repetimo
+		while(mensaje=="") {
+			cout << "Que asiento desea reservar: ";
+			getline(cin, mensaje);
+		}
+
 		send_bytes = socket.Send(socket_fd, mensaje);
 		if(send_bytes == -1){
 			cout << "Error en el send del cliente" << endl;
@@ -62,12 +68,12 @@ void escritura(Socket socket_fd, bool& fin,bool& primeraVez,Semaphore& sem){
 }
 
 
-}
 void handle_sigalrm(int signo){
 	signal(SIGINT, handle_sigalrm);
 }
 
 int main(int argc, char* argv[]) {
+	const int MAX_ATTEMPS = 3;
 	string SERVER_ADDRESS = argv[1];
 	int SERVER_PORT = atoi(argv[2]);
 	bool fin = false;
@@ -103,13 +109,12 @@ int main(int argc, char* argv[]) {
 
     thread lec;
     thread esc;
-    lec = thread(&lectura,ref(socket_fd),ref(fin),ref(primeraVez),ref(sem));
-    esc = thread(&escritura,ref(socket_fd),ref(fin),ref(primeraVez),ref(sem));
+    lec = thread(&lectura,ref(socket), socket_fd, ref(fin), ref(primeraVez), ref(sem));
+    esc = thread(&escritura,ref(socket), socket_fd, ref(fin), ref(primeraVez), ref(sem));
 
-		esc.join();
-		lec.join();
+	esc.join();
+	lec.join();
 
-
-			socket.Close(socket_fd);
-			exit(1);
+	socket.Close(socket_fd);
+	exit(1);
 }

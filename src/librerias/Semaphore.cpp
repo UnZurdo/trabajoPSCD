@@ -23,7 +23,7 @@
 //notify_all member functions."
 
 
-#include <Semaphore.hpp>
+#include <Semaphore.h>
 
 //----------------------------------------------------------
 Semaphore::Semaphore(int n) {
