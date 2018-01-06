@@ -13,31 +13,55 @@
 #include <signal.h>
 #include <stdio.h>
 #include <unistd.h>
-#include "Socket.h"
+#include "../librerias/Socket.h"
+#include "../librerias/Semaphore.h"
 
 using namespace std;
 
 const int MESSAGE_SIZE = 4001; //mensajes de no más 4000 caracteres
 
-void lectura(Socket socket_fd, bool& fin){
+void lectura(Socket socket_fd, bool& fin,bool& primeraVez,Semaphore& sem){
 	int read_bytes;
 	string buffer;
 	while(!fin){
 		read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
-		
+		if(readbytes == -1){
+			cout << "Error en el recv del cliente" << endl;
+			exit(0);
+		}
+		if(buffer == "FIN"){
+			fin = true;
+			cout << "Final recibido del servidor" << endl;
+		}
+		else{
+			cout << buffer << endl;
+		}
+		if(primeraVez == true){
+			primeraVez = false;
+			sem.signal();
+		}
 	}
-	
 }
-void escritura(Socket socket_fd, bool& fin){
+void escritura(Socket socket_fd, bool& fin,bool& primeraVez,Semaphore& sem){
 	int send_bytes;
 	string mensaje;
-	while(!fin){*
+	while(!fin){
+		if(primeraVez == true){
+			sem.wait();
+		}
+		getline(cin, mensaje);
 		send_bytes = socket.Send(socket_fd, mensaje);
-		
+		if(send_bytes == -1){
+			cout << "Error en el send del cliente" << endl;
+			exit(0);
+		}
+		if (mensaje == "EXIT"){
+				fin = true;
+		}
 	}
-	
-}	
-	
+}
+
+
 }
 void handle_sigalrm(int signo){
 	signal(SIGINT, handle_sigalrm);
@@ -47,13 +71,8 @@ int main(int argc, char* argv[]) {
 	string SERVER_ADDRESS = argv[1];
 	int SERVER_PORT = atoi(argv[2]);
 	bool fin = false;
-	
-	const string MENS_FIN("exit");
-	const string LLENO ("Vuelo esta LLENO");
-	const string RECHAZADO("rechazado");
-	const string ACEPTADO("aceptado");
-	const string OCUPADO("Asiento solicidado ya esta OCUPADO");
-
+	bool primeraVez = true;
+	Semaphore sem(0);
 	// Protegemos frente señal
 	signal(SIGINT, handle_sigalrm);
 
@@ -64,7 +83,6 @@ int main(int argc, char* argv[]) {
 	Socket socket(SERVER_ADDRESS, SERVER_PORT);
 
     // Conectamos con el servidor. Probamos varias conexiones
-	const int MAX_ATTEMPS = 3;
 	int count = 0;
 	int socket_fd;
 	do {
@@ -85,91 +103,10 @@ int main(int argc, char* argv[]) {
 
     thread lec;
     thread esc;
-    lec = thread(&lectura,ref(socket_fd),ref(fin));
-    esc = thread(&escritura,ref(socket_fd),ref(fin));
-		
-	
+    lec = thread(&lectura,ref(socket_fd),ref(fin),ref(primeraVez),ref(sem));
+    esc = thread(&escritura,ref(socket_fd),ref(fin),ref(primeraVez),ref(sem));
 
-    // Recibimos la respuesta del servidor 
-    string aux; 
-    int read_bytes = socket.Recv(socket_fd, aux, MESSAGE_SIZE);
-    // Cerramos Socket
-    if(aux==RECHAZADO){
 
-    	int error_code = socket.Close(socket_fd);
-	    if(error_code == -1){
-			cerr << "Error cerrando el socket: " << strerror(errno) << endl;
-	    }
-	    cout << "Conexión RECHAZADA"<<endl;
-	    return error_code;
-    }
-
-    cout << "\"exit\" para finalizar operación"<<endl;
-    cout << "Para seleccionar asiento escriba: fila columna"<<endl;
-    string mensaje = "";
-
-    // Buffer para almacenar la respuesta
-	string buffer;
-	bool mensajeContinua = false;
-    int i = 0;
-	do{
-
-		if(buffer==OCUPADO){
-			mensaje = "OK";
-			mensajeContinua = true;
-		}
-		// Envio señal de finalizacion
-		else if(i==4) {
-			mensaje = MENS_FIN;
-			cout << "Enviadas demasiadas solicitudes erroneas"<<endl;
-		}
-		else if(buffer == LLENO){
-			mensaje = MENS_FIN;
-			cout << "Vuelo LLENO"<<endl;
-		}
-		else {
-			// Leer mensaje de la entrada estandar
-			cout << "Que asiento desea reservar: ";
-			getline(cin, mensaje);
-			// Caso usuario no introduce nada, repetimo
-			while(mensaje=="") {
-				cout << "Que asiento desea reservar: ";
-				getline(cin, mensaje);
-			}
-		}
-
-		// Enviamos el mensaje
-	    int send_bytes = socket.Send(socket_fd, mensaje);
-
-	    if(send_bytes == -1){
-			cerr << "Error al enviar datos: " << strerror(errno) << endl;
-			// Cerramos el socket
 			socket.Close(socket_fd);
 			exit(1);
-		}
-
-		if(mensaje != MENS_FIN){
-		    if(mensajeContinua){
-		    	int read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
-		    	// Mostramos asientos libres
-		    	cout << buffer << endl;
-		    	mensajeContinua=false;
-		    	++i;
-		    }
-		    else{
-			    // Recibimos la respuesta del servidor  
-			    int read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
-			    // Mostramos la respuesta
-			    cout << "RESPUESTA: " << buffer << endl;
-		    }
-		}
-	} while(mensaje != MENS_FIN);
-
-    // Cerramos el socket
-    int error_code = socket.Close(socket_fd);
-    if(error_code == -1){
-		cerr << "Error cerrando el socket: " << strerror(errno) << endl;
-    }
-
-    return error_code;
 }
