@@ -7,17 +7,20 @@
 //*****************************************************************
 #include "Gestor.h"
 
+
 Gestor::Gestor(){
   this->fin = false;
   this->contador = 0;
+  this->s.setInitValue(0);
 };
+
+
 //Falta gestion valla
 void Gestor::anyadirValla(Valla valla){
   // Si fin no añado ninguna más
   if(!fin) {
     q.push(valla);
     s.signal();
-    ++contador;
   } 
         
     
@@ -27,7 +30,7 @@ void Gestor::apagar(){
   fin = true;
 };
 
-void Gestor::iniciar(bool& fin){
+void Gestor::iniciar(){
   // Tamaños de ventana para las vallas publicitarias
   const int VALLA_WIDTH = 800;
   const int VALLA_HEIGHT = 800;
@@ -63,6 +66,7 @@ void Gestor::iniciar(bool& fin){
     char name[] = "Valla ";
     char indice = contador+'0';
     strcat(name, &indice);
+    ++contador;
 
     cimg_library::CImg<unsigned char> img_principal(cPATH);
     cimg_library::CImgDisplay imagen(img_principal.resize(VALLA_WIDTH,VALLA_HEIGHT), name);

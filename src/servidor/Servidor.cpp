@@ -13,6 +13,10 @@
 #include <cstring> //manejo de cadenas tipo C
 #include "Administrador.h"
 
+#include <signal.h>
+#include <stdio.h>
+#include <unistd.h>
+
 
 using namespace std;
 
@@ -59,6 +63,8 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 				bool valida=s.obtenerMonitor()->Pujar(puja, client_fd);
 				if(!valida) msg="PUJA no aceptada" + s.obtenerMonitor()->estado();
 				else msg="PUJA aceptada" + s.obtenerMonitor()->estado();
+				// Enviar puja actual a todos los usuarios (Monitor)
+				// void informar_all(Subasta& s, Socket& soc)
 			}
 
 		}
@@ -78,7 +84,9 @@ void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool
 			out = true;
 			msg = RECHAZADO;
 		}
-		// Usar semaforo para evitar espera activa
+
+		////////////// Usar semaforo para evitar espera activa ////////
+
 		if(msg!=""){
 			const char* message = msg.c_str();
 			send_bytes = soc.Send(client_fd, message);
@@ -92,6 +100,25 @@ void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool
 	}
 }
 
+// Señal ALARM insegura para reiniciar la Subasta
+void handle_timer(int signo){
+	signal(SIGALRM, handle_timer);
+	// Finalizar Subasta ==> ESTADO: OCUPADO
+	// Informmar ALL ha finalizado
+	// Informar ganador y obtener datos VALLA
+	// Informmar ALL ha nueva Subasta ==> ESTADO: DISPONIBLE
+	// Reiniciar Subasta
+	// Iniciar subasta (Timer)
+	// Set alarm
+}
+
+// Envia mensaje a todos los clientes
+void informar_all(Subasta& s, Socket& soc){
+	// Crear funcion Monitor
+	// get_all(int clients_fd[], int& n)
+
+}
+
 //-------------------------------------------------------------
 void servCliente(Socket& soc, int client_fd, bool& fin,  Subasta& subasta) {
 	subasta.obtenerMonitor()->Entrar();
@@ -99,7 +126,7 @@ void servCliente(Socket& soc, int client_fd, bool& fin,  Subasta& subasta) {
 	string mensaje="";
 	bool out = false;
 
-
+// Enviar puja actual a todos los usuarios (Monitor)
 	thread recibir = thread(&recibir , ref(subasta), ref(soc), client_fd, ref(mensaje), ref(fin), ref(out));
 	thread escribir = thread(&recibir , ref(subasta), ref(soc), client_fd, ref(mensaje), ref(fin), ref(out));
 
@@ -137,10 +164,15 @@ int main(int argc, char** argv) {
 
 	// Creo subasta inicial
 	Subasta subasta = Subasta();
+	// Creo gestor
+	Gestor gestor = Gestor();
+
+
 	// Dirección y número donde escucha el proceso servidor
 	string SERVER_ADDRESS = "localhost";
 	int SERVER_PORT = atoi(argv[1]);
 	thread administrador;
+	thread gestorP;
 
     int client_fd;
 
@@ -167,6 +199,9 @@ int main(int argc, char** argv) {
 		exit(1);
 	}
 	administrador = thread(&administrator, ref(socket), socket_fd, ref(fin), ref(subasta));
+
+	gestorP = thread(&Gestor::iniciar, ref(gestor));
+	
 
 	int i=0;
 	while(i<max_connections){

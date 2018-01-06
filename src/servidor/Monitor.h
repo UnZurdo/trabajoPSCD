@@ -25,6 +25,8 @@ using namespace std;
 
 class Monitor{
 
+    //Lista de clientes
+    
     int nClientes;
     int nPujas;
     // Mayor puja actual

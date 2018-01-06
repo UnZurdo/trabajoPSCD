@@ -32,6 +32,7 @@ SERVIDOR=Servidor
 CLIENTE=Cliente
 CLIENTEAUTOMATICO=ClienteAuto
 
+
 #Target
 TARGET=${SERVIDOR} ${CLIENTE} ${CLIENTEAUTOMATICO}
 
@@ -39,9 +40,9 @@ TARGET=${SERVIDOR} ${CLIENTE} ${CLIENTEAUTOMATICO}
 # FLAGS DE COMPILACION #
 # #################### #
 
-CPPFLAGS=-I. -I/usr/local/include -O2 -std=c++11 #-lsockets # Flags compilacion
+CPPFLAGS=-I. -I/usr/local/include -O2 -std=c++11 -fmax-errors=1 -Werror -lsockets # Flags compilacion
 
-LDFLAGS=-L/usr/local/lib -pthread -lcurl # Flags linkado threads
+LDFLAGS= -L/usr/X11R6/lib -L/usr/local/lib -lm -pthread -lcurl -lX11 # Flags linkado threads
 
 SOCKETSFLAGS=-lsocket -lnsl # Flags linkado sockets (Solaris SunOS)
 
@@ -54,7 +55,7 @@ all: ${TARGET}
 bin/${SOCKET}.o: src/librerias/${SOCKET}.h src/librerias/${SOCKET}.cpp
 	${CPP} -c ${CPPFLAGS} src/librerias/${SOCKET}.cpp -o bin/${SOCKET}.o
 #-----------------------------------------------------------
-bin/${IMAGEDOWNLOADER}.o: src/librerias/${IMAGEDOWNLOADER}.h src/librerias/${IMAGEDOWNLOADER}.cpp
+bin/${IMAGEDOWNLOADER}.o: src/librerias/${IMAGEDOWNLOADER}.hpp src/librerias/${IMAGEDOWNLOADER}.cpp
 	${CPP} -c ${CPPFLAGS} src/librerias/${IMAGEDOWNLOADER}.cpp -o bin/${IMAGEDOWNLOADER}.o
 #-----------------------------------------------------------
 bin/${SEMAPHORE}.o: src/librerias/${SEMAPHORE}.h src/librerias/${SEMAPHORE}.cpp

@@ -29,6 +29,10 @@ void lectura(Socket& socket, int socket_fd, bool& fin,bool& primeraVez,Semaphore
 			cout << "Error en el recv del cliente" << endl;
 			exit(0);
 		}
+		// 1) OCUPADO ==> SERVER NO PUEDE RESPONDER DE MOMENTO
+
+		// 2) GANADOR ==> HA GANADO PUJA Y TIENE QUE INTRODUCIR DATOS
+
 		if(buffer == "FIN"){
 			fin = true;
 			cout << "Final recibido del servidor" << endl;
@@ -64,6 +68,10 @@ void escritura(Socket& socket, int socket_fd, bool& fin,bool& primeraVez,Semapho
 		if (mensaje == "EXIT"){
 				fin = true;
 		}
+
+		// 1) MENSAJE == AYUDA
+
+		// 2) MENSAJE == ESTADO
 	}
 }
 
