@@ -24,12 +24,12 @@ string obtenerUrl(const Valla& s);
 string obtenerPath(const Valla& s);
 
 struct Valla{
-    friend void crear(Valla& s, string url, string path, int d)
+    friend void crear(Valla& s, string url, string path, int d);
     friend void actualizarUrl(Valla& s, string url);
     friend void actualizarPath(Valla& s, string path);
     friend string obtenerUrl(const Valla& s);
     friend string obtenerPath(const Valla& s);
-    friend int marcarDuracion(Valla& s, int d);
+    friend void marcarDuracion(Valla& s, int d);
     friend int obtenerDuracion(const Valla& s);
 
     private:

@@ -6,10 +6,7 @@
 //           g++ -std=c++11 -pthread Valla.cpp -c
 //*****************************************************************
 
-#include <iostream>
-#include <ctime>
-#include <iomanip>
-using namespace std;
+#include "Valla.h"
 
 void crear(Valla& s, string url, string path, int d){
     s.URL=url;
@@ -34,7 +31,7 @@ string obtenerPath(const Valla& s){
   return s.path;
 }
 
-int marcarDuracion(Valla& s, int d){
+void marcarDuracion(Valla& s, int d){
    s.duracion = d;
 }
     

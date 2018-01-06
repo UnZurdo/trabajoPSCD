@@ -42,8 +42,8 @@ class Subasta{
         // Crea una nueva Subasta con valores generados aleatoriamente
         Subasta();
         // Crea una nueva Subasta con valores establecidos
-        //Subasta(int tInicial, int duracion, int precioInicial, int precioMinimo);
-        
+        Subasta(int tInicial, int duracion, int precioInicial, int precioMinimo);
+
         // Sobrescribo datos de la subasta actual con los de una nueva
         void nuevo(int min);
         // Acceso al monitor de Subasta
