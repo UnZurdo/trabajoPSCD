@@ -10,6 +10,8 @@
 
 
 #include <iostream>
+#include <string>
+#include <cstring>
 #include <ctime>
 #include <iomanip>
 #include <queue>
@@ -19,10 +21,13 @@
 #include "Valla.h"
 
 using namespace std;
+using namespace cimg_library;
 
 class Gestor{
     queue<Valla> q;
     bool fin;
+    Semaphore s;
+    int contador;
 
     public:
         Gestor();
