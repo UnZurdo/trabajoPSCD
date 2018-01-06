@@ -26,6 +26,8 @@ const char ACEPTADO[]="ACEPTADO";
 const char ESTADO[]="ESTADO";
 const char AYUDA[]="AYUDA";
 const char PUJAR[]="PUJAR";
+const char OCUPADO[]="OCUPADO";
+
 
 //-------------------------------------------------------------
 void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool& out){

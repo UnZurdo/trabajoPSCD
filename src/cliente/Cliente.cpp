@@ -20,6 +20,14 @@ using namespace std;
 
 const int MESSAGE_SIZE = 4001; //mensajes de no más 4000 caracteres
 
+const char MENS_FIN[]="EXIT";
+const char RECHAZADO[]="RECHAZADO";
+const char ACEPTADO[]="ACEPTADO";
+const char ESTADO[]="ESTADO";
+const char AYUDA[]="AYUDA";
+const char PUJAR[]="PUJAR";
+const char OCUPADO[]="OCUPADO";
+
 void lectura(Socket& socket, int socket_fd, bool& fin,bool& primeraVez,Semaphore& sem){
 	int read_bytes;
 	string buffer;
