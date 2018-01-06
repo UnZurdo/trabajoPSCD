@@ -106,6 +106,9 @@ int main(int argc, char* argv[]) {
     lec = thread(&lectura,ref(socket_fd),ref(fin),ref(primeraVez),ref(sem));
     esc = thread(&escritura,ref(socket_fd),ref(fin),ref(primeraVez),ref(sem));
 
+		esc.join();
+		lec.join();
+
 
 			socket.Close(socket_fd);
 			exit(1);

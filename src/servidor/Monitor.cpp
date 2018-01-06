@@ -38,10 +38,14 @@ int Monitor::pujaActual(){
 string Monitor::estado(){
     unique_lock<mutex> lck(mtx);
     ostringstream oss;
-    oss <<"Puja maxima actual: "<<actual << "del cliente "<<id <<endl
-    <<"Puja siguiente: "<<siguiente<<endl<<"Número de clientes participando"
-    <<nClientes<<endl<< "Número de pujas: "<<nPujas<<endl;
-
+    if (id == -1){
+      oss << "Todavia no hay ninguna puja" << endl;
+    }
+    else{
+      oss <<"Puja maxima actual: "<<actual << "del cliente "<<id <<endl
+      <<"Puja siguiente: "<<siguiente<<endl<<"Número de clientes participando"
+      <<nClientes<<endl<< "Número de pujas: "<<nPujas<<endl;
+    }
     return oss.str();
 };
 
@@ -97,5 +101,3 @@ void Monitor::Salir(){
     --nClientes;
     ocupado.notify_one();
 };
-
-

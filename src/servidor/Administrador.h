@@ -15,6 +15,7 @@
 #include <queue>
 #include "../librerias/ImageDownloader.hpp"
 #include "CImg.h"
+#include "Monitor.h"
 #include "Gestor.h"
 #include "Subasta.h"
 

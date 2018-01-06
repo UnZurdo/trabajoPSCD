@@ -8,22 +8,24 @@
 #include "Administrador.h"
 
 Administrador::Administrador(Gestor* gestor, Subasta* subasta, Monitor* monitor){
-
+      this->gestor = gestor;
+      this->subasta = subasta;
+      this->monitor = monitor;
 };
 
 
 void Administrador::mostrarEstado(){
-
+      cout << (Administrador.monitor).estado() << endl;
 };
 
 
 void Administrador::mostrarHistoria(){
-
+      cout << (Administrador.subasta).infoHistorica() << endl;
 };
 
 
 void Administrador::apagarServidor(){
-
+    (Administrador.subasta).fin = true;
 };
 
 
@@ -32,4 +34,3 @@ void Administrador::apagarServidor(){
 void Administrador::iniciarAdmin(){
 
 };
-
