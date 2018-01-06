@@ -3,8 +3,7 @@
 # TO DO LIST:
 
 #### Terminar: 
-* Servidor: 
-
+           * Servidor: 
            * (funcion admin, handle_timer) y terminar resto de casos           
            * Cliente:  Comprobar todos los casos
            * Admin.cpp: fincion iniciar
