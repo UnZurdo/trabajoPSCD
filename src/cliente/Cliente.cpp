@@ -25,8 +25,11 @@ const char RECHAZADO[]="RECHAZADO";
 const char ACEPTADO[]="ACEPTADO";
 const char ESTADO[]="ESTADO";
 const char AYUDA[]="AYUDA";
-const char PUJAR[]="PUJAR";
 const char OCUPADO[]="OCUPADO";
+// Informar de que se va a enviar datos a continuacion
+const char NOMBRE[]="NOMBRE";
+const char URL[]="URL";
+const char PUJAR[]="PUJAR";
 
 void lectura(Socket& socket, int socket_fd, bool& fin,bool& primeraVez,Semaphore& sem){
 	int read_bytes;
@@ -54,12 +57,21 @@ void lectura(Socket& socket, int socket_fd, bool& fin,bool& primeraVez,Semaphore
 		}
 	}
 }
-void escritura(Socket& socket, int socket_fd, bool& fin,bool& primeraVez,Semaphore& sem){
+void escritura(Socket& socket, string url, int socket_fd, bool& fin,bool& primeraVez,Semaphore& sem){
 	int send_bytes;
 	string mensaje;
+	string name;
 	while(!fin){
 		if(primeraVez == true){
 			sem.wait();
+
+			mensaje= "URL " + url;
+			// name= "NOMBRE " + name;
+			send_bytes = socket.Send(socket_fd, mensaje);
+			if(send_bytes == -1){
+				cout << "Error en el send del cliente" << endl;
+				exit(0);
+			}
 		}
 		getline(cin, mensaje);
 		// Caso usuario no introduce nada, repetimo
@@ -89,6 +101,18 @@ void handle_sigalrm(int signo){
 }
 
 int main(int argc, char* argv[]) {
+	if (argc < 4){
+		cout << "ERROR, inserte los parametros correctamente"<<endl;
+		return 0;
+	}
+
+	string url = argv[3];
+
+	/*
+	string url = argv[4];
+	string name = argv[3];
+	*/
+
 	const int MAX_ATTEMPS = 3;
 	string SERVER_ADDRESS = argv[1];
 	int SERVER_PORT = atoi(argv[2]);
@@ -126,7 +150,7 @@ int main(int argc, char* argv[]) {
     thread lec;
     thread esc;
     lec = thread(&lectura,ref(socket), socket_fd, ref(fin), ref(primeraVez), ref(sem));
-    esc = thread(&escritura,ref(socket), socket_fd, ref(fin), ref(primeraVez), ref(sem));
+    esc = thread(&escritura,ref(socket), url ,socket_fd, ref(fin), ref(primeraVez), ref(sem));
 
 	esc.join();
 	lec.join();
