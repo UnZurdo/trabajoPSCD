@@ -76,7 +76,7 @@ void escritura(Socket& socket, string url, int socket_fd, bool& fin,bool& primer
 		getline(cin, mensaje);
 		// Caso usuario no introduce nada, repetimo
 		while(mensaje=="") {
-			cout << "Que asiento desea reservar: ";
+			//cout << "Que asiento desea reservar: ";
 			getline(cin, mensaje);
 		}
 
