@@ -3,7 +3,7 @@
 // Date:   december 2017
 // Coms:   TP6 PSCD
 //         Compilar mediante
-//           g++ -std=c++11 -pthread Subasta.cpp -c
+//           g++ -std=c++11 -pthread Administrador.cpp -c
 //*****************************************************************
 #ifndef ADMINISTRADOR_H
 #define ADMINISTRADOR_H
