@@ -18,6 +18,7 @@
 
 using namespace std;
 
+//HOla
 const int MESSAGE_SIZE = 4001; //mensajes de no más 4000 caracteres
 
 const char MENS_FIN[]="EXIT";
