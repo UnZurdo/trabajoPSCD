@@ -31,6 +31,8 @@ const char NOMBRE[]="NOMBRE";
 const char URL[]="URL";
 const char PUJAR[]="PUJAR";
 
+bool esGanador = false;
+
 void lectura(Socket& socket, int socket_fd, bool& fin,bool& primeraVez,Semaphore& sem){
 	int read_bytes;
 	string buffer;
@@ -51,6 +53,9 @@ void lectura(Socket& socket, int socket_fd, bool& fin,bool& primeraVez,Semaphore
 			if(buffer == "FIN"){
 				fin = true;
 				cout << "Final recibido del servidor" << endl;
+			}
+			else if(buffer == "URL"){
+				esGanador = true;
 			}
 			else{
 				cout << buffer << endl;
@@ -74,6 +79,7 @@ void escritura(Socket& socket, string url, int socket_fd, bool& fin,bool& primer
 				exit(0);
 			}
 		}
+
 		getline(cin, mensaje);
 		// Caso usuario no introduce nada, repetimo
 		while(mensaje=="") {
@@ -93,6 +99,16 @@ void escritura(Socket& socket, string url, int socket_fd, bool& fin,bool& primer
 		// 1) MENSAJE == AYUDA
 
 		// 2) MENSAJE == ESTADO
+	}
+	//Fuera del bucle???
+	if(esGanador) {
+		mensaje= "URL " + url;
+		// name= "NOMBRE " + name;
+		send_bytes = socket.Send(socket_fd, mensaje);
+		if(send_bytes == -1){
+			cout << "Error en el send del cliente" << endl;
+			exit(0);
+		}
 	}
 }
 

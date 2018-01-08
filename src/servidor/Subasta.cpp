@@ -119,12 +119,12 @@ bool Subasta::cerrarSubasta(int& user_id){
 		++nImagenes;
 		user_id = monitor->getId();
 		delete monitor;
-		return false;
+		return true;
 	}
 	else{
 		cout << "Ho hay ganador, puja minima de "<<precioMinimo<<" no superada."<<endl;
 		delete monitor;
-		return true;
+		return false;
 	}
 };
 

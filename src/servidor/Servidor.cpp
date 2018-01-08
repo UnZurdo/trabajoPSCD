@@ -33,7 +33,7 @@ const char PUJAR[]="PUJAR";
 
 // Mejor no global
 string url_cliente;
-
+bool hayGanador = false;
 
 //-------------------------------------------------------------
 void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool& out){
@@ -99,6 +99,12 @@ void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool
 		if(fin) {
 			out = true;
 			msg = RECHAZADO;
+			//Si hay ganador solicita al cliente la url
+			if(hayGanador) {
+				msg="URL";
+				const char* message = msg.c_str();
+				send_bytes = soc.Send(client_fd, message);
+			}
 		}
 		// Confirmo conexion
 		else if(!fin && primeraVez){
@@ -108,6 +114,11 @@ void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool
 		}
 
 		////////////// Usar semaforo para evitar espera activa ////////
+		/*
+		if(cerrarSubasta(client_fd) {
+			hayGanador=true;
+		}
+		*/
 
 		if(msg!=""){
 			const char* message = msg.c_str();
