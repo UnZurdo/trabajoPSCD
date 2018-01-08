@@ -62,6 +62,8 @@ class Subasta{
         int siguientePuja();
         // Inicializa temporizador y muestra estado
         void iniciar();
+        // Devuelve la duracion de la ronda actual en segundos
+        int obtenerDuracionSubasta();
         // Actualiza datos, guarda datos ganador, los encola en el GESTOR de VALLAS
         // y genera una nueva suabsta
         // Parcial: si no hay ganador

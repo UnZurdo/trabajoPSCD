@@ -137,11 +137,11 @@ void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool
 // Se inicializa desde el comienzo y se reinicia hasta infinitamente hasta que se cierre
 void handle_timer(int signo){
 	signal(SIGALRM, handle_timer);
-	
+
 	// Finalizar Subasta ==> ESTADO: OCUPADO
 	// Informmar ALL ha finalizado
 
-	// Informar ganador y obtener datos VALLA (url, path)
+	// Informar ganador si lo hay y obtener datos VALLA (url, path)
 	// if(client_fd == getID())
 
 	// Informmar ALL ha nueva Subasta ==> ESTADO: DISPONIBLE
@@ -154,6 +154,17 @@ void handle_timer(int signo){
 void informar_all(Subasta& s, Socket& soc){
 	// Crear funcion Monitor
 	// get_all(int clients_fd[], int& n)
+
+}
+
+void gestorSubasta(Subasta& subasta, bool& fin){
+	
+	// Inicializo nueva subasta
+	subasta = Subasta();
+	subasta.iniciar();
+
+	int user_id;
+	bool hayGanador = subasta.cerrarSubasta(user_id);
 
 }
 
@@ -175,6 +186,7 @@ void servCliente(Socket& soc, int client_fd, bool& fin,  Subasta& subasta) {
 	subasta.obtenerMonitor()->Salir();
 
 }
+
 
 void administrator(Socket& socket, int socket_fd, bool& fin, Subasta& s){
 	cout << "To quit write \"exit\""<<endl;
@@ -204,7 +216,7 @@ int main(int argc, char** argv) {
 	bool fin = false;
 
 	// Creo subasta inicial
-	Subasta subasta = Subasta();
+	Subasta subasta;
 	// Creo gestor
 	Gestor gestor = Gestor();
 

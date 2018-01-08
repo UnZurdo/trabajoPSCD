@@ -94,6 +94,10 @@ void Subasta::iniciar(){
 
 };
 
+int Subasta::obtenerDuracionSubasta(){
+    return tInicial;
+}
+
 bool Subasta::finTiempo(){
  return time(NULL) >= tiempoRestante;
 };
