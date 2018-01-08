@@ -40,20 +40,21 @@ void lectura(Socket& socket, int socket_fd, bool& fin,bool& primeraVez,Semaphore
 			cout << "Error en el recv del cliente" << endl;
 			exit(0);
 		}
-		// 1) OCUPADO ==> SERVER NO PUEDE RESPONDER DE MOMENTO
+		else {
+			if(primeraVez == true){
+				primeraVez = false;
+				sem.signal();
+			}
 
-		// 2) GANADOR ==> HA GANADO PUJA Y TIENE QUE INTRODUCIR DATOS
+			//OCUPADO ==> SERVER NO PUEDE RESPONDER DE MOMENTO
 
-		if(buffer == "FIN"){
-			fin = true;
-			cout << "Final recibido del servidor" << endl;
-		}
-		else{
-			cout << buffer << endl;
-		}
-		if(primeraVez == true){
-			primeraVez = false;
-			sem.signal();
+			if(buffer == "FIN"){
+				fin = true;
+				cout << "Final recibido del servidor" << endl;
+			}
+			else{
+				cout << buffer << endl;
+			}
 		}
 	}
 }
@@ -101,28 +102,24 @@ void handle_sigalrm(int signo){
 }
 
 int main(int argc, char* argv[]) {
-	if (argc < 4){
-		cout << "ERROR, inserte los parametros correctamente"<<endl;
-		return 0;
+	if (argc != 5){
+		cout << "ERROR, inserte los parametros correctamente" << endl;
+		exit(1);
 	}
 
-	string url = argv[3];
-
-	/*
-	string url = argv[4];
 	string name = argv[3];
-	*/
+	string url = argv[4];
 
 	const int MAX_ATTEMPS = 3;
+	// Dirección y número donde escucha el proceso servidor
 	string SERVER_ADDRESS = argv[1];
 	int SERVER_PORT = atoi(argv[2]);
 	bool fin = false;
 	bool primeraVez = true;
 	Semaphore sem(0);
+
 	// Protegemos frente señal
 	signal(SIGINT, handle_sigalrm);
-
-    // Dirección y número donde escucha el proceso servidor
 
 	// Creación del socket con el que se llevará a cabo
 	// la comunicación con el servidor.
@@ -147,8 +144,8 @@ int main(int argc, char* argv[]) {
     	return socket_fd;
     }
 
-    thread lec;
-    thread esc;
+    thread lec;			//Proceso de lectura
+    thread esc;			//Proceso de escritura
     lec = thread(&lectura,ref(socket), socket_fd, ref(fin), ref(primeraVez), ref(sem));
     esc = thread(&escritura,ref(socket), url ,socket_fd, ref(fin), ref(primeraVez), ref(sem));
 

@@ -183,8 +183,11 @@ void administrator(Socket& socket, int socket_fd, bool& fin, Subasta& s){
 
 //-------------------------------------------------------------
 int main(int argc, char** argv) {
-	int filas = 10;
-	int columnas = 4;
+	if (argc != 2){
+		cout << "ERROR, inserte los parametros correctamente" << endl;
+		exit(1);
+	}
+
 	int max_connections = 100;
 	bool fin = false;
 
@@ -197,8 +200,9 @@ int main(int argc, char** argv) {
 	// Dirección y número donde escucha el proceso servidor
 	string SERVER_ADDRESS = "localhost";
 	int SERVER_PORT = atoi(argv[1]);
-	thread administrador;
-	thread gestorP;
+
+	thread administrador;		//Proceso administrador
+	thread gestorP;				//Proceso gestor
 
     int client_fd;
 
@@ -224,10 +228,10 @@ int main(int argc, char** argv) {
 		socket.Close(socket_fd);
 		exit(1);
 	}
-	administrador = thread(&administrator, ref(socket), socket_fd, ref(fin), ref(subasta));
 
+	administrador = thread(&administrator, ref(socket), socket_fd, ref(fin), ref(subasta));
 	gestorP = thread(&Gestor::iniciar, ref(gestor));
-	
+
 
 	int i=0;
 	while(i<max_connections){
@@ -264,7 +268,7 @@ int main(int argc, char** argv) {
 	}
 
 	// Mensaje de despedida
-	cout << "Bye bye" << endl;
+	cout << "FIN PROGRAMA" << endl;
 
     return error_code;
 }
