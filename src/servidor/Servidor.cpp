@@ -7,6 +7,7 @@
 //*****************************************************************
 
 #include "../librerias/Socket.h"
+#include "../librerias/Semaphore.h"
 #include <iostream>
 #include <thread>
 #include <sstream>
@@ -34,6 +35,8 @@ const char PUJAR[]="PUJAR";
 // Mejor no global
 string url_cliente;
 bool hayGanador = false;
+Semaphore hayMensaje(0);
+
 
 //-------------------------------------------------------------
 void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool& out){
@@ -55,12 +58,16 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		}
 		if(strcmp(buffer, MENS_FIN)==0){
 			out = true;
+			// Despiero a enviar
+			hayMensaje.signal();
 		}
 		else if(strcmp(buffer, ESTADO)==0){
 			msg = s.obtenerMonitor()->estado();
+			hayMensaje.signal();
 		}
 		else if(strcmp(buffer,  AYUDA)==0){
 			msg = "Escriba \"EXIT\" para abandonar la subasta.\nPara mostrar el estado actual de la subasta escriba ESTADO.\nSi desea pujar escriba: PUJAR <cantidad>\n";
+			hayMensaje.signal();
 		}
 		else{
 			// Parseamos al entrada ante varios delimitadores
@@ -72,7 +79,10 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 					int puja = atoi(temp2);
 					bool valida=s.obtenerMonitor()->Pujar(puja, client_fd);
 					if(!valida) msg="PUJA no aceptada" + s.obtenerMonitor()->estado();
-					else msg="PUJA aceptada" + s.obtenerMonitor()->estado();
+					else {
+						msg="PUJA aceptada" + s.obtenerMonitor()->estado();
+						hayMensaje.signal();
+					}
 					// Enviar puja actual a todos los usuarios (Monitor)
 					// void informar_all(Subasta& s, Socket& soc)
 				}
@@ -99,13 +109,8 @@ void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool
 		if(fin) {
 			out = true;
 			msg = RECHAZADO;
-			//Si hay ganador solicita al cliente la url
-			if(hayGanador) {
-				msg="URL";
-				const char* message = msg.c_str();
-				send_bytes = soc.Send(client_fd, message);
-			}
 		}
+
 		// Confirmo conexion
 		else if(!fin && primeraVez){
 			primeraVez=false;
@@ -113,16 +118,11 @@ void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool
 			out = true;
 		}
 
-		////////////// Usar semaforo para evitar espera activa ////////
-		/*
-		if(cerrarSubasta(client_fd) {
-			hayGanador=true;
-		}
-		*/
-
 		if(msg!=""){
 			const char* message = msg.c_str();
 			send_bytes = soc.Send(client_fd, message);
+			// Envio primer mensaje ACEPTO /RECHAZO conexion y espero al siguiente
+			hayMensaje.wait();
 		}
 	}
 	// Desbloqueo espera:  recv() del cliente
@@ -137,6 +137,7 @@ void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool
 // Se inicializa desde el comienzo y se reinicia hasta infinitamente hasta que se cierre
 void handle_timer(int signo){
 	signal(SIGALRM, handle_timer);
+	
 	// Finalizar Subasta ==> ESTADO: OCUPADO
 	// Informmar ALL ha finalizado
 

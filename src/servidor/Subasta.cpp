@@ -113,6 +113,7 @@ int Subasta::pujaInicial(){
 // Parcial: si no hay ganador
 bool Subasta::cerrarSubasta(int& user_id){
 	cout << "Tiempo agotado"<<endl;
+    // Si hay ganador
 	if(monitor->getId()!=-1){
 		cout <<"Ganador: "<<monitor->getId()<<"Puja cerrada a "<<monitor->pujaActual() <<"€"<<endl;
 		beneficios+=monitor->pujaActual();

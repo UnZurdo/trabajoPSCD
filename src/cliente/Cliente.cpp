@@ -32,10 +32,31 @@ const char URL[]="URL";
 const char PUJAR[]="PUJAR";
 
 bool esGanador = false;
+string url;
+
+void enviarURL(Socket& socket, int socket_fd, bool& fin, Semaphore& ganador){
+	while(!fin){
+		string mensaje;
+		//Espero a que me den permiso para enviar la url
+		ganador.wait();
+		if(esGanador) {
+			mensaje= "URL " + url;
+			// name= "NOMBRE " + name;
+			int send_bytes = socket.Send(socket_fd, mensaje);
+			if(send_bytes == -1){
+				cout << "Error en el send del cliente" << endl;
+				exit(0);
+			}
+		}
+	}
+}
 
 void lectura(Socket& socket, int socket_fd, bool& fin,bool& primeraVez,Semaphore& sem){
 	int read_bytes;
 	string buffer;
+	Semaphore ganador(0);
+	// Lanzo nuevo proceso encargado de enviar la URL
+	thread enviar = thread(&enviarURL, ref(socket), ref(fin), url, socket_fd, ref(ganador));
 	while(!fin){
 		read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
 		if(read_bytes == -1){
@@ -56,14 +77,20 @@ void lectura(Socket& socket, int socket_fd, bool& fin,bool& primeraVez,Semaphore
 			}
 			else if(buffer == "URL"){
 				esGanador = true;
+				ganador.signal();
 			}
 			else{
 				cout << buffer << endl;
 			}
 		}
 	}
+	// Lo despierto para que salgfa del bucle
+	ganador.signal();
+	enviar.join();
 }
-void escritura(Socket& socket, string url, int socket_fd, bool& fin,bool& primeraVez,Semaphore& sem){
+
+
+void escritura(Socket& socket, int socket_fd, bool& fin,bool& primeraVez,Semaphore& sem){
 	int send_bytes;
 	string mensaje;
 	string name;
@@ -100,16 +127,7 @@ void escritura(Socket& socket, string url, int socket_fd, bool& fin,bool& primer
 
 		// 2) MENSAJE == ESTADO
 	}
-	//Fuera del bucle???
-	if(esGanador) {
-		mensaje= "URL " + url;
-		// name= "NOMBRE " + name;
-		send_bytes = socket.Send(socket_fd, mensaje);
-		if(send_bytes == -1){
-			cout << "Error en el send del cliente" << endl;
-			exit(0);
-		}
-	}
+
 }
 
 
@@ -124,7 +142,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	string name = argv[3];
-	string url = argv[4];
+	url = argv[4];
 
 	const int MAX_ATTEMPS = 3;
 	// Dirección y número donde escucha el proceso servidor
@@ -163,7 +181,7 @@ int main(int argc, char* argv[]) {
     thread lec;			//Proceso de lectura
     thread esc;			//Proceso de escritura
     lec = thread(&lectura,ref(socket), socket_fd, ref(fin), ref(primeraVez), ref(sem));
-    esc = thread(&escritura,ref(socket), url ,socket_fd, ref(fin), ref(primeraVez), ref(sem));
+    esc = thread(&escritura,ref(socket) ,socket_fd, ref(fin), ref(primeraVez), ref(sem));
 
 	esc.join();
 	lec.join();
