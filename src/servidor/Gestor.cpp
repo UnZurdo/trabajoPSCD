@@ -48,14 +48,18 @@ void Gestor::iniciar(){
     string URL = obtenerUrl(valla);
     string path = obtenerPath(valla);
 
+    cout << "GESTOR==> "<< "URL: " << URL << "   path: " << path <<endl;
+
     char *cURL = new char[URL.length() + 1];
     strcpy(cURL, URL.c_str());
 
-    char *cPATH = new char[URL.length() + 1];
-    strcpy(cPATH, URL.c_str());
+    char *cPATH = new char[path.length() + 1];
+    strcpy(cPATH, path.c_str());
 
     // Descargamos una imagen de Internet
     downloader.downloadImage(cURL, cPATH);
+
+    cout << "GESTOR==>IMAGEN DESCRGADA"<<endl;
 
     // Creamos una valla publicitaria con una imagen
     char name[] = "Valla ";
@@ -65,6 +69,7 @@ void Gestor::iniciar(){
 
     cimg_library::CImg<unsigned char> img_principal(cPATH);
     cimg_library::CImgDisplay imagen(img_principal.resize(VALLA_WIDTH,VALLA_HEIGHT), name);
+    cout << "GESTOR==>VALLA CREADA"<<endl;
     imagen.resize(VALLA_WIDTH,VALLA_HEIGHT);
     imagen.move(0,0); // Esquina superior izquierda
 

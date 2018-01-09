@@ -41,6 +41,7 @@ void enviarURL(Socket& socket, int socket_fd, bool& fin){
 		//Espero a que me den permiso para enviar la url
 		ganador.wait();
 		if(esGanador) {
+			esGanador = false;
 			mensaje= "URL " + url;
 			// name= "NOMBRE " + name;
 			int send_bytes = socket.Send(socket_fd, mensaje);
@@ -87,7 +88,8 @@ void lectura(Socket& socket, int socket_fd, bool& fin, bool& primeraVez, Semapho
 				ganador.signal();
 			}
 			else{
-				cout <<"RESPUESTA: "<< buffer << endl;
+				if(buffer!="ACK")cout <<"RESPUESTA: "<< buffer << endl;
+				
 			}
 		}
 	}

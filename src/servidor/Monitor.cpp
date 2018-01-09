@@ -19,7 +19,7 @@ Monitor::Monitor(int min){
     this->nPujas=0;
     this->siguiente=min+randomS();
     this->actual=min;
-    this->id=-1;
+    this->id_ganador=-1;
     // Inicializo vector a 0
     for(int i = 0; i<MAX; ++i){
         this->clientList[i]=0;
@@ -29,7 +29,7 @@ Monitor::Monitor(int min){
 void Monitor::nuevo(int min){
     this->siguiente=min+randomS();
     this->actual=min;
-    this->id=-1;
+    this->id_ganador=-1;
 }
 
 int Monitor::pujaActual(){
@@ -40,12 +40,12 @@ int Monitor::pujaActual(){
 string Monitor::estado(){
     unique_lock<mutex> lck(mtx);
     ostringstream oss;
-    if (id == -1){
+    if (id_ganador == -1){
       oss << "Todavia no hay ninguna puja" << endl
       <<"Puja iniciada a: "<<actual<<endl;
     }
     else{
-      oss <<"Puja maxima actual: "<<actual << "del cliente "<<id <<endl
+      oss <<"Puja maxima actual: "<<actual << "del cliente "<<id_ganador <<endl
       <<"Puja siguiente: "<<siguiente<<endl<<"Número de clientes participando"
       <<nClientes<<endl<< "Número de pujas: "<<nPujas<<endl;
     }
@@ -60,7 +60,7 @@ int Monitor::siguientePuja(){
 
 int Monitor::getId(){
     unique_lock<mutex> lck(mtx);
-    return id;
+    return id_ganador;
 };
 
 // PROBLEMA CON REFERENCIA
@@ -85,9 +85,9 @@ bool Monitor::Pujar(const int dinero, int id){
         return false;
     }
     else{
-        actual=siguiente;
-        siguiente=siguiente+randomS();
-        id=id;
+        actual=dinero;
+        siguiente=dinero+randomS();
+        id_ganador=id;
         return true;
     }
 };

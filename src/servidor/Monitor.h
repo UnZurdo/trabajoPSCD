@@ -34,7 +34,7 @@ class Monitor{
     // Mayor puja actual
     int actual; 
     int siguiente;
-    int id;
+    int id_ganador;
     mutex mtx;
     condition_variable ocupado;
     int clientList[MAX];

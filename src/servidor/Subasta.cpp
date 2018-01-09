@@ -158,7 +158,7 @@ bool Subasta::cerrarSubasta(int& user_id, string& estado){
 		user_id = monitor->getId();
 		
         //delete monitor;
-		return true;
+		return false;
 	}
 	else{
 		oss <<"--SUBASTA CERRADA--"<<endl<< "No hay ganador, puja minima de "<<precioMinimo<<" no superada."<<endl;
@@ -166,7 +166,7 @@ bool Subasta::cerrarSubasta(int& user_id, string& estado){
         cout << estado;
 		
         //delete monitor;
-		return false;
+		return true;
 	}
 };
 

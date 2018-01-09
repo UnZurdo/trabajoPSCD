@@ -40,6 +40,25 @@ Semaphore esperarURL(0);
 Semaphore aceptar(0);
 
 
+// Envia mensaje a todos los clientes
+void informar_all(Subasta& s, Socket& soc, string msg){
+	int clients_id[MAX];
+	int N;
+	s.obtenerMonitor()->get_all_clients(clients_id, &N); /////////////////////////////////////////////////////
+	for(int i = 0; i< N; ++i){
+		cout << "Client: "<<clients_id[i] <<endl;
+		const char* message = msg.c_str();
+		int send_bytes = soc.Send(clients_id[i], message);
+		if(send_bytes == -1) {
+			string mensError(strerror(errno));
+			cerr << "Error al enviar datos: " + mensError + "\n";
+			// Cerramos los sockets
+			exit(1);
+		}
+	}
+	cout << "nClientes: "<<N<<endl;
+}
+
 //-------------------------------------------------------------
 void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool& out){
 	// Buffer para recibir el mensaje
@@ -55,7 +74,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 	while(!out && !fin){
 		msg="";
 		int rcv_bytes = soc.Recv(client_fd,buffer,length);
-		cout << "BUFFER: "<<buffer<<endl;
+		if(strcmp(buffer, "ACK")!=0)cout << "BUFFER: "<<buffer<<endl;
 		if (rcv_bytes == -1) {
 			string mensError(strerror(errno));
     		cerr << "Error al recibir datos: " + mensError + "\n";
@@ -90,9 +109,13 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 						cout << msg;
 					}
 					else {
-						msg="PUJA aceptada " + s.obtenerMonitor()->estado();
+						string info= s.obtenerMonitor()->estado();
+						msg="PUJA aceptada ";
+						informar_all(s, soc, info);
+						msg = msg + info;
 						cout << msg;
 						hayMensaje.signal();
+						
 					}
 					// Enviar puja actual a todos los usuarios (Monitor)
 					// void informar_all(Subasta& s, Socket& soc)
@@ -163,25 +186,6 @@ void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool
 	}
 }
 
-
-// Envia mensaje a todos los clientes
-void informar_all(Subasta& s, Socket& soc, string msg){
-	int clients_id[MAX];
-	int N;
-	s.obtenerMonitor()->get_all_clients(clients_id, &N); /////////////////////////////////////////////////////
-	for(int i = 0; i< N; ++i){
-		cout << "Client: "<<clients_id[i] <<endl;
-		const char* message = msg.c_str();
-		int send_bytes = soc.Send(clients_id[i], message);
-		if(send_bytes == -1) {
-			string mensError(strerror(errno));
-			cerr << "Error al enviar datos: " + mensError + "\n";
-			// Cerramos los sockets
-			exit(1);
-		}
-	}
-	cout << "nClientes: "<<N<<endl;
-}
 /*
 
 	IMPLEMENTAR ESTADOS??	
@@ -198,7 +202,7 @@ void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, bool& fin){
 
 		int user_id;
 		// Finalizar Subasta ==> ESTADO: OCUPADO
-		bool hayGanador = subasta.cerrarSubasta(user_id, estado);
+		bool hayGanador = !(subasta.cerrarSubasta(user_id, estado));
 		// Informmar ALL ha finalizado
 		informar_all(subasta, soc, estado);
 
@@ -222,8 +226,10 @@ void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, bool& fin){
 			Valla valla;
 			// creo un nombre con el que se mostrara la valla
 			string path = "valla" + to_string(subasta.nVallas());
-			crear(valla, URL, path, d);
+			cout << "Nueva Valla: "<< url_cliente << "   path"<<path<<endl;
+			crear(valla, url_cliente, path, d);
 			gestor.anyadirValla(valla);
+			cout << "valla anadida"<<endl<<endl;
 		}
 
 		// Informmar ALL ha nueva Subasta ==> ESTADO: DISPONIBLE

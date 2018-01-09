@@ -39,7 +39,7 @@ void Administrador::iniciarAdmin(bool& fin){
 
 
 	*/
-	while(msg!="exit"){
+	while(msg!="EXIT"){
 		getline(cin, msg);
 	}
 	cout << "Closing server...."<<endl;
