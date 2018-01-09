@@ -7,10 +7,9 @@
 //*****************************************************************
 #include "Gestor.h"
 
-
 Gestor::Gestor(){
   this->fin = false;
-  this->contador = 0;
+  this->contador=0;
   this->s.setInitValue(0);
 };
 
@@ -22,13 +21,13 @@ void Gestor::anyadirValla(Valla valla){
     q.push(valla);
     s.signal();
   } 
-        
-    
  };
+ 
  
 void Gestor::apagar(){
   fin = true;
 };
+
 
 void Gestor::iniciar(){
   // Tamaños de ventana para las vallas publicitarias

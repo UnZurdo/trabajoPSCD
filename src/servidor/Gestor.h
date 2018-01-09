@@ -30,6 +30,7 @@ class Gestor{
     int contador;
 
     public:
+        // Defino constructor por defecto
         Gestor();
         void anyadirValla(Valla valla);
         // fin := true, establecido por el admin

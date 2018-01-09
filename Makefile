@@ -27,6 +27,7 @@ ADMINISTRADOR=Administrador
 MONITOR=Monitor
 GESTOR=Gestor
 SERVIDOR=Servidor
+SUBASTA=Subasta
 
 #Modulos cliente
 CLIENTE=Cliente
@@ -61,11 +62,14 @@ bin/${IMAGEDOWNLOADER}.o: src/librerias/${IMAGEDOWNLOADER}.hpp src/librerias/${I
 bin/${SEMAPHORE}.o: src/librerias/${SEMAPHORE}.h src/librerias/${SEMAPHORE}.cpp
 	${CPP} -c ${CPPFLAGS} src/librerias/${SEMAPHORE}.cpp -o bin/${SEMAPHORE}.o
 #-----------------------------------------------------------
-bin/${ADMINISTRADOR}.o: src/servidor/${ADMINISTRADOR}.h src/servidor/${ADMINISTRADOR}.cpp
+bin/${ADMINISTRADOR}.o: src/servidor/${ADMINISTRADOR}.h src/servidor/${ADMINISTRADOR}.cpp 
 	${CPP} -c ${CPPFLAGS} src/servidor/${ADMINISTRADOR}.cpp -o bin/${ADMINISTRADOR}.o
 #-----------------------------------------------------------
 bin/${GESTOR}.o: src/servidor/${GESTOR}.h src/servidor/${GESTOR}.cpp
 	${CPP} -c ${CPPFLAGS} src/servidor/${GESTOR}.cpp -o bin/${GESTOR}.o
+#-----------------------------------------------------------
+bin/${SUBASTA}.o: src/servidor/${SUBASTA}.h src/servidor/${SUBASTA}.cpp
+	${CPP} -c ${CPPFLAGS} src/servidor/${SUBASTA}.cpp -o bin/${SUBASTA}.o
 #-----------------------------------------------------------
 bin/${MONITOR}.o: src/servidor/${MONITOR}.cpp
 	${CPP} -c ${CPPFLAGS} src/servidor/${MONITOR}.cpp -o bin/${MONITOR}.o
@@ -82,8 +86,8 @@ bin/${CLIENTEAUTOMATICO}.o: src/cliente/${CLIENTEAUTOMATICO}.cpp
 	${CPP} -c $(CPPFLAGS) src/cliente/${CLIENTEAUTOMATICO}.cpp -o bin/${CLIENTEAUTOMATICO}.o
 #-----------------------------------------------------------
 # Linkado
-${SERVIDOR}: bin/${MONITOR}.o bin/${IMAGEDOWNLOADER}.o bin/${SEMAPHORE}.o bin/${VALLA}.o bin/${GESTOR}.o bin/${ADMINISTRADOR}.o bin/${SOCKET}.o
-	${CPP} bin/${MONITOR}.o bin/${IMAGEDOWNLOADER}.o bin/${SEMAPHORE}.o bin/${VALLA}.o bin/${GESTOR}.o bin/${ADMINISTRADOR}.o bin/${SOCKET}.o -o  bin/${SERVIDOR} ${LDFLAGS} #${SOCKETSFLAGS} #descomentar para Hendrix
+${SERVIDOR}: bin/${MONITOR}.o bin/${IMAGEDOWNLOADER}.o bin/${SEMAPHORE}.o bin/${VALLA}.o bin/${GESTOR}.o bin/${SUBASTA}.o bin/${ADMINISTRADOR}.o bin/${SOCKET}.o
+	${CPP} bin/${MONITOR}.o bin/${IMAGEDOWNLOADER}.o bin/${SEMAPHORE}.o bin/${VALLA}.o bin/${GESTOR}.o bin/${SUBASTA}.o bin/${ADMINISTRADOR}.o bin/${SOCKET}.o -o  bin/${SERVIDOR} ${LDFLAGS} #${SOCKETSFLAGS} #descomentar para Hendrix
 #-----------------------------------------------------------
 # Linkado
 ${CLIENTE}: bin/${CLIENTE}.o bin/${SOCKET}.o
@@ -98,6 +102,7 @@ clean:
 	$(RM) bin/${VALLA}.o
 	$(RM) bin/${MONITOR}.o
 	$(RM) bin/${GESTOR}.o
+	$(RM) bin/${SUBASTA}.o
 	$(RM) bin/${ADMINISTRADOR}.o
 	$(RM) bin/${SOCKET}.o
 	$(RM) bin/${IMAGEDOWNLOADER}.o

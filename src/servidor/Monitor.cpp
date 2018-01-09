@@ -14,20 +14,16 @@ int randomT(){
     return randomT;
 }
 
-Monitor::Monitor(){
-    this->nClientes=0;
-    this->nPujas=0;
-    this->siguiente=0;
-    this->actual=0;
-    this->id=-1;
-};
-
 Monitor::Monitor(int min){
     this->nClientes=0;
     this->nPujas=0;
     this->siguiente=min+randomT();
     this->actual=min;
     this->id=-1;
+    // Inicializo vector a 0
+    for(int i = 0; i<MAX; ++i){
+        this->clientList[i]=0;
+    }
 };
 
 int Monitor::pujaActual(){
@@ -61,6 +57,18 @@ int Monitor::getId(){
     return id;
 };
 
+void Monitor::get_all_clients(int clients_fd[], int& n){
+    int j = 0;
+    for(int i = 0; i< MAX;++i){
+        if(clientList[i]!=0){
+            clients_fd[j]= clientList[i];
+            ++j;
+        }
+    }
+    n = j;
+}
+
+
 // Falso si puja es menor que la actual
 bool Monitor::Pujar(const int dinero, int id){
     unique_lock<mutex> lck(mtx);
@@ -91,14 +99,28 @@ void Monitor::Finalizar(){
 };
 
 
-void Monitor::Entrar(){
+void Monitor::Entrar(int id){
     unique_lock<mutex> lck(mtx);
+    int i = 0;
+    // Añado al nuevo cliente 
+    while(clientList[i]==0){
+        ++i;
+    }
+    clientList[i]=id;
+
     ++nClientes;
 };
 
 
-void Monitor::Salir(){
+void Monitor::Salir(int id){
     unique_lock<mutex> lck(mtx);
+    int i = 0;
+    // Busco cliente
+    while(clientList[i]!=id){
+        ++i;
+    }
+    // Lo borro
+    clientList[i]=0;
     --nClientes;
     ocupado.notify_one();
 };

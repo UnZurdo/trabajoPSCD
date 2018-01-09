@@ -36,6 +36,7 @@ const char PUJAR[]="PUJAR";
 string url_cliente;
 bool hayGanador = false;
 Semaphore hayMensaje(0);
+Semaphore esperarURL(0);
 
 
 //-------------------------------------------------------------
@@ -89,6 +90,8 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 				else if(strcmp(temp,URL)){
 					// Actualiza info concursante
 					url_cliente = temp2;
+					// Despierto al gestorSubasta
+					esperarURL.signal();
 				}
 			}
 
@@ -133,44 +136,62 @@ void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool
 	}
 }
 
-// Señal ALARM insegura para reiniciar la Subasta
-// Se inicializa desde el comienzo y se reinicia hasta infinitamente hasta que se cierre
-void handle_timer(int signo){
-	signal(SIGALRM, handle_timer);
 
+// Envia mensaje a todos los clientes
+void informar_all(Subasta& s, Socket& soc, string msg){
+	int clients_id[MAX];
+	int n;
+	s.obtenerMonitor()->get_all_clients(clients_id, ref(n)); /////////////////////////////////////////////////////
+	for(int i = 0; i< n; ++i){
+		const char* message = msg.c_str();
+		int send_bytes = soc.Send(clients_id[i], message);
+	}
+}
+/*
+
+	IMPLEMENTAR ESTADOS??	
+
+*/
+void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, bool& fin){
+	string estado;
+
+	// Inicializo nueva subasta
+	subasta.iniciar(estado);
+	// Informmar ALL ha comenzado
+	informar_all(subasta, soc, estado);
+
+	int user_id;
 	// Finalizar Subasta ==> ESTADO: OCUPADO
+	bool hayGanador = subasta.cerrarSubasta(user_id, estado);
 	// Informmar ALL ha finalizado
+	informar_all(subasta, soc, estado);
 
-	// Informar ganador si lo hay y obtener datos VALLA (url, path)
-	// if(client_fd == getID())
+	// Informar ganador si lo hay y obtener datos url
+	if(hayGanador){
+		// Pido URL al cliente, la recibo en el proceso de recibir
+		string msg = URL;
+		const char* message = msg.c_str();
+		int send_bytes = soc.Send(user_id, message);
+
+	}
+	// Espero ha que el cliente me envie la URL
+	esperarURL.wait();
+	int d = subasta.obtenerDuracionSubasta();
+	Valla valla;
+	// creo un nombre con el que se mostrara la valla
+	string path = "valla" + to_string(subasta.nVallas());
+	crear(valla, URL, path, d);
+	gestor.anyadirValla(valla);
 
 	// Informmar ALL ha nueva Subasta ==> ESTADO: DISPONIBLE
 	// Reiniciar Subasta
-	// Iniciar subasta (Timer)
-	// Set alarm
-}
-
-// Envia mensaje a todos los clientes
-void informar_all(Subasta& s, Socket& soc){
-	// Crear funcion Monitor
-	// get_all(int clients_fd[], int& n)
-
-}
-
-void gestorSubasta(Subasta& subasta, bool& fin){
-	
-	// Inicializo nueva subasta
-	subasta = Subasta();
-	subasta.iniciar();
-
-	int user_id;
-	bool hayGanador = subasta.cerrarSubasta(user_id);
+	subasta.nuevo();
 
 }
 
 //-------------------------------------------------------------
 void servCliente(Socket& soc, int client_fd, bool& fin,  Subasta& subasta) {
-	subasta.obtenerMonitor()->Entrar();
+	subasta.obtenerMonitor()->Entrar(client_fd);
 	subasta.obtenerMonitor()->iniciar();
 	string mensaje="";
 	bool out = false;
@@ -183,24 +204,13 @@ void servCliente(Socket& soc, int client_fd, bool& fin,  Subasta& subasta) {
 	recibir.join();
 
 	soc.Close(client_fd);
-	subasta.obtenerMonitor()->Salir();
+	subasta.obtenerMonitor()->Salir(client_fd);
 
 }
 
 
-void administrator(Socket& socket, int socket_fd, bool& fin, Subasta& s){
-	cout << "To quit write \"exit\""<<endl;
-	string msg;
-	while(msg!="exit"){
-		getline(cin, msg);
-	}
-	cout << "Closing server...."<<endl;
-	fin=true;
-
-	s.obtenerMonitor()->Finalizar();
-
-	cout << "Socket CLOSED"<<endl;
-
+void administrator(Socket& socket, int socket_fd, bool& fin, Administrador& admin){
+	admin.iniciarAdmin(fin);
 	socket.Close(socket_fd);
 	exit(1);
 }
@@ -218,7 +228,9 @@ int main(int argc, char** argv) {
 	// Creo subasta inicial
 	Subasta subasta;
 	// Creo gestor
-	Gestor gestor = Gestor();
+	Gestor gestor;
+	// Creo modulo administrador
+	Administrador admin(&gestor, &subasta);
 
 
 	// Dirección y número donde escucha el proceso servidor
@@ -227,6 +239,7 @@ int main(int argc, char** argv) {
 
 	thread administrador;		//Proceso administrador
 	thread gestorP;				//Proceso gestor
+	thread subastador;			//Proceso control de la subasta
 
     int client_fd;
 
@@ -253,8 +266,9 @@ int main(int argc, char** argv) {
 		exit(1);
 	}
 
-	administrador = thread(&administrator, ref(socket), socket_fd, ref(fin), ref(subasta));
+	administrador = thread(&administrator, ref(socket), socket_fd, ref(fin), ref(admin));
 	gestorP = thread(&Gestor::iniciar, ref(gestor));
+	subastador = thread(&gestorSubasta, ref(socket), ref(subasta), ref(gestor), ref(fin));
 
 
 	int i=0;

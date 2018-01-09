@@ -14,6 +14,9 @@
 #include <iomanip>
 #include "Valla.h"
 #include "Monitor.h"
+#include <signal.h>
+#include <unistd.h>
+#include "../librerias/Semaphore.h"
 
 using namespace std;
 
@@ -37,6 +40,8 @@ class Subasta{
     // Terminar subasta
     bool fin;
 
+    static Semaphore esperar;
+
 
     public:
         // Crea una nueva Subasta con valores generados aleatoriamente
@@ -45,13 +50,15 @@ class Subasta{
         Subasta(int tInicial, int duracion, int precioInicial, int precioMinimo);
 
         // Sobrescribo datos de la subasta actual con los de una nueva
-        void nuevo(int min);
+        void nuevo();
         // Acceso al monitor de Subasta
         Monitor* obtenerMonitor();
         // Precio PRIVADO minimo necesario para vender valla
         int obtenerPujaMin();
         // Tiempo que se mostrara la imagen
         int obtenerDuracion();
+        // Devuelve el numero de vallas ofertadas hasta el momento
+        int nVallas();
         // Devuelve true si el tiempo de la subasta se ha agotado
         bool finTiempo();
         // Fecha final en la que se cerrara la subasta
@@ -60,18 +67,23 @@ class Subasta{
         int pujaInicial();
         // Aumentar precio para siguiente puja
         int siguientePuja();
-        // Inicializa temporizador y muestra estado
-        void iniciar();
+        // Si !fin ==> Inicializa temporizador y muestra estado
+        void iniciar(string& estado);
         // Devuelve la duracion de la ronda actual en segundos
         int obtenerDuracionSubasta();
         // Actualiza datos, guarda datos ganador, los encola en el GESTOR de VALLAS
         // y genera una nueva suabsta
         // Parcial: si no hay ganador
-        bool cerrarSubasta(int& user_id);
+        bool cerrarSubasta(int& user_id, string& estado);
         // Fin := true, no se realizaran nuevas subastas y esperara a que finalice
         // la actual.
         void finalizarSubasta();
         string infoHistorica();
+
+        // Funcion AUX Subasta
+        // Señal ALARM insegura para reiniciar la Subasta
+        // Se inicializa desde el comienzo y se reinicia infinitamente hasta que se cierre
+        static void handle_timer(int signo);
 
 };
 

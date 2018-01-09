@@ -2,20 +2,20 @@
 
 int randomP(){
     srand (time(NULL));
-    int randomP = rand() % 200 + 400;
-    return randomP;
+    int random = rand() % 200 + 400;
+    return random;
 }
 
 int randomT(){
     srand (time(NULL));
-    int randomT = rand() % 40 + 10;
-    return randomT;
+    int random = rand() % 40 + 10;
+    return random;
 }
 
 int randomD(){
     srand (time(NULL));
-    int randomP = rand() % 15 + 5;
-    return randomP;
+    int random = rand() % 15 + 5;
+    return random;
 }
 
 // Crea una nueva Subasta con valores generados aleatoriamente
@@ -25,6 +25,7 @@ Subasta::Subasta(){
     this->duracion=randomD();
     this->precioInicial=randomP();
     this->precioMinimo=randomP()+(randomP()/5);
+    this->esperar.setInitValue(0);
     this->monitor= new Monitor(precioInicial);
 
     this->beneficios=0;
@@ -41,6 +42,7 @@ Subasta::Subasta(int tInicial, int duracion, int precioInicial, int precioMinimo
     this->duracion=duracion;
     this->precioInicial=precioInicial;
     this->precioMinimo=precioMinimo;
+    this->esperar.setInitValue(0);
     this->monitor= new Monitor(precioInicial);
 
     this->beneficios=0;
@@ -51,12 +53,13 @@ Subasta::Subasta(int tInicial, int duracion, int precioInicial, int precioMinimo
 };
 
 // Sobrescribo datos de la subasta actual con los de una nueva
-void Subasta::nuevo(int min){
+void Subasta::nuevo(){
     this->fin=false;
     this->tInicial=randomT();
     this->duracion=randomD();
     this->precioInicial=randomP();
     this->precioMinimo=randomP()+(randomP()/5);
+    this->esperar.setInitValue(0);
     this->monitor= new Monitor(precioInicial);
 
     this->nSubastas++;
@@ -69,6 +72,10 @@ void Subasta::nuevo(int min){
 // Precio PRIVADO minimo necesario para vender valla
 int Subasta::obtenerPujaMin(){
 	return precioMinimo;
+};
+
+int Subasta::nVallas(){
+    return nImagenes;
 };
 
 Monitor* Subasta::obtenerMonitor(){
@@ -86,11 +93,31 @@ int Subasta::cierreSubasta(){
 	return duracion;
 };
 
-void Subasta::iniciar(){
-	tiempoRestante=time(NULL)+tInicial;
-	cout << "Subasta iniciada para Valla Publicitaria de "<<duracion<<"segundos"<<endl
-	<< "abierta durante: "<<tInicial<< "segundos"<<endl
-	<< "Puja inicial: " << precioInicial<<endl;
+// Static function
+void Subasta::handle_timer(int signo){
+    signal(SIGALRM, handle_timer);
+    esperar.signal();
+};
+
+void Subasta::iniciar(string& estado){
+    ostringstream oss;
+    if(!fin){
+        signal(SIGALRM, handle_timer);
+    	tiempoRestante=time(NULL)+tInicial;
+        // Set alarm
+        alarm(tInicial);
+
+    	oss << "--SUBASTA ABIERTA--" <<endl <<"Valla Publicitaria de "<<duracion<<"segundos"<<endl
+    	<< "abierta durante: "<<tInicial<< "segundos"<<endl
+    	<< "Puja inicial: " << precioInicial<<endl;
+        estado=oss.str();
+        cout << estado;
+    }
+    else{
+        oss << "SUBASTA CERRADA PERMANENTEMENTE" <<endl;
+        estado=oss.str();
+        cout << estado;
+    }
 
 };
 
@@ -115,11 +142,16 @@ int Subasta::pujaInicial(){
 // Actualiza datos, guarda datos ganador, los encola en el GESTOR de VALLAS
 // y genera una nueva suabsta
 // Parcial: si no hay ganador
-bool Subasta::cerrarSubasta(int& user_id){
+bool Subasta::cerrarSubasta(int& user_id, string& estado){
+    ostringstream oss;
+    // Si aun no ha finalizaod espero
+    if(!finTiempo()) esperar.wait();
 	cout << "Tiempo agotado"<<endl;
     // Si hay ganador
 	if(monitor->getId()!=-1){
-		cout <<"Ganador: "<<monitor->getId()<<"Puja cerrada a "<<monitor->pujaActual() <<"€"<<endl;
+        oss <<"--SUBASTA CONCLUIDA--"<<endl << "Ganador: "<<monitor->getId()<<"Puja cerrada a "<<monitor->pujaActual() <<"€"<<endl;
+        estado=oss.str();
+        cout << estado;
 		beneficios+=monitor->pujaActual();
 		++nImagenes;
 		user_id = monitor->getId();
@@ -127,7 +159,9 @@ bool Subasta::cerrarSubasta(int& user_id){
 		return true;
 	}
 	else{
-		cout << "Ho hay ganador, puja minima de "<<precioMinimo<<" no superada."<<endl;
+		oss <<"--SUBASTA CERRADA--"<<endl<< "No hay ganador, puja minima de "<<precioMinimo<<" no superada."<<endl;
+        estado=oss.str();
+        cout << estado;
 		delete monitor;
 		return false;
 	}

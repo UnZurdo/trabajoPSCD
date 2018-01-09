@@ -22,16 +22,15 @@ using namespace std;
 class Administrador{
 	Gestor* gestor;
 	Subasta* subasta;
-	Monitor* monitor;
 
     public:
-        Administrador(Gestor* gestor, Subasta* subasta, Monitor* monitor);
+        Administrador(Gestor* gestor, Subasta* subasta);
         void apagarServidor();
-		void mostrarEstado();
-		void mostrarHistoria();
+		string mostrarEstado();
+		string mostrarHistoria();
         // Bucle infinito hasta END OF SERVICE en el que se leeran las ordenes
         // por la linea de comandos (mostrar Estado, Historia o apagar)
-        void iniciarAdmin();
+        void iniciarAdmin(bool& fin);
 
 };
 
