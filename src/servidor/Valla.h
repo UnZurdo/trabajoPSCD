@@ -2,8 +2,6 @@
 // File:   Valla.h
 // Date:   december 2017
 // Coms:   TP6 PSCD
-//         Compilar mediante
-//           g++ -std=c++11 -pthread Valla.cpp -c
 //*****************************************************************
 #ifndef VALLA_H
 #define VALLA_H
