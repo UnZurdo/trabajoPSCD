@@ -1,4 +1,8 @@
 #include "Subasta.h"
+#include <ctime>
+#include <cstdlib>
+
+Semaphore Subasta::esperar(0);
 
 int randomP(){
     srand (time(NULL));
@@ -25,7 +29,6 @@ Subasta::Subasta(){
     this->duracion=randomD();
     this->precioInicial=randomP();
     this->precioMinimo=randomP()+(randomP()/5);
-    this->esperar.setInitValue(0);
     this->monitor= new Monitor(precioInicial);
 
     this->beneficios=0;
@@ -42,7 +45,6 @@ Subasta::Subasta(int tInicial, int duracion, int precioInicial, int precioMinimo
     this->duracion=duracion;
     this->precioInicial=precioInicial;
     this->precioMinimo=precioMinimo;
-    this->esperar.setInitValue(0);
     this->monitor= new Monitor(precioInicial);
 
     this->beneficios=0;
@@ -59,7 +61,6 @@ void Subasta::nuevo(){
     this->duracion=randomD();
     this->precioInicial=randomP();
     this->precioMinimo=randomP()+(randomP()/5);
-    this->esperar.setInitValue(0);
     this->monitor= new Monitor(precioInicial);
 
     this->nSubastas++;

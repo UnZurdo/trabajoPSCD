@@ -8,16 +8,16 @@
 
 #include "Monitor.h"
 
-int randomT(){
+int randomS(){
     srand (time(NULL));
-    int randomT = rand() % 100 + 10;
-    return randomT;
+    int random = rand() % 100 + 10;
+    return random;
 }
 
 Monitor::Monitor(int min){
     this->nClientes=0;
     this->nPujas=0;
-    this->siguiente=min+randomT();
+    this->siguiente=min+randomS();
     this->actual=min;
     this->id=-1;
     // Inicializo vector a 0
@@ -78,7 +78,7 @@ bool Monitor::Pujar(const int dinero, int id){
     }
     else{
         actual=siguiente;
-        siguiente=siguiente+randomT();
+        siguiente=siguiente+randomS();
         id=id;
         return true;
     }

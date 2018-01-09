@@ -51,6 +51,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 	while(!out && !fin){
 		msg="";
 		int rcv_bytes = soc.Recv(client_fd,buffer,length);
+		cout << "BUFFER: "<<buffer<<endl;
 		if (rcv_bytes == -1) {
 			string mensError(strerror(errno));
     		cerr << "Error al recibir datos: " + mensError + "\n";
@@ -117,7 +118,8 @@ void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool
 		// Confirmo conexion
 		else if(!fin && primeraVez){
 			primeraVez=false;
-			msg=ACEPTADO;
+			msg= ACEPTADO;
+			msg = msg + "\n" + s.obtenerMonitor()->estado();
 			out = true;
 		}
 
@@ -155,53 +157,57 @@ void informar_all(Subasta& s, Socket& soc, string msg){
 void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, bool& fin){
 	string estado;
 
-	// Inicializo nueva subasta
-	subasta.iniciar(estado);
-	// Informmar ALL ha comenzado
-	informar_all(subasta, soc, estado);
+	while(!fin){
+		// Inicializo nueva subasta
+		subasta.iniciar(estado);
+		// Informmar ALL ha comenzado
+		informar_all(subasta, soc, estado);
 
-	int user_id;
-	// Finalizar Subasta ==> ESTADO: OCUPADO
-	bool hayGanador = subasta.cerrarSubasta(user_id, estado);
-	// Informmar ALL ha finalizado
-	informar_all(subasta, soc, estado);
+		int user_id;
+		// Finalizar Subasta ==> ESTADO: OCUPADO
+		bool hayGanador = subasta.cerrarSubasta(user_id, estado);
+		// Informmar ALL ha finalizado
+		informar_all(subasta, soc, estado);
 
-	// Informar ganador si lo hay y obtener datos url
-	if(hayGanador){
-		// Pido URL al cliente, la recibo en el proceso de recibir
-		string msg = URL;
-		const char* message = msg.c_str();
-		int send_bytes = soc.Send(user_id, message);
+		// Informar ganador si lo hay y obtener datos url
+		if(hayGanador){
+			// Pido URL al cliente, la recibo en el proceso de recibir
+			string msg = URL;
+			const char* message = msg.c_str();
+			int send_bytes = soc.Send(user_id, message);
 
+
+			// Espero ha que el cliente me envie la URL
+			esperarURL.wait();
+			int d = subasta.obtenerDuracionSubasta();
+			Valla valla;
+			// creo un nombre con el que se mostrara la valla
+			string path = "valla" + to_string(subasta.nVallas());
+			crear(valla, URL, path, d);
+			gestor.anyadirValla(valla);
+		}
+
+		// Informmar ALL ha nueva Subasta ==> ESTADO: DISPONIBLE
+		// Reiniciar Subasta
+		subasta.nuevo();
 	}
-	// Espero ha que el cliente me envie la URL
-	esperarURL.wait();
-	int d = subasta.obtenerDuracionSubasta();
-	Valla valla;
-	// creo un nombre con el que se mostrara la valla
-	string path = "valla" + to_string(subasta.nVallas());
-	crear(valla, URL, path, d);
-	gestor.anyadirValla(valla);
-
-	// Informmar ALL ha nueva Subasta ==> ESTADO: DISPONIBLE
-	// Reiniciar Subasta
-	subasta.nuevo();
 
 }
 
 //-------------------------------------------------------------
 void servCliente(Socket& soc, int client_fd, bool& fin,  Subasta& subasta) {
 	subasta.obtenerMonitor()->Entrar(client_fd);
-	subasta.obtenerMonitor()->iniciar();
+
 	string mensaje="";
 	bool out = false;
 
-// Enviar puja actual a todos los usuarios (Monitor)
-	thread recibir = thread(&recibir , ref(subasta), ref(soc), client_fd, ref(mensaje), ref(fin), ref(out));
-	thread escribir = thread(&recibir , ref(subasta), ref(soc), client_fd, ref(mensaje), ref(fin), ref(out));
+	
+	// Enviar puja actual a todos los usuarios (Monitor)
+	thread rec = thread(&recibir , ref(subasta), ref(soc), client_fd, ref(mensaje), ref(fin), ref(out));
+	thread env = thread(&enviar , ref(subasta), ref(soc), client_fd, ref(mensaje), ref(fin), ref(out));
 
-	recibir.join();
-	recibir.join();
+	rec.join();
+	env.join();
 
 	soc.Close(client_fd);
 	subasta.obtenerMonitor()->Salir(client_fd);

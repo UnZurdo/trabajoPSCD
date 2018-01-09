@@ -8,9 +8,7 @@
 #ifndef SUBASTA_H
 #define SUBASTA_H
 
-
 #include <iostream>
-#include <ctime>
 #include <iomanip>
 #include "Valla.h"
 #include "Monitor.h"

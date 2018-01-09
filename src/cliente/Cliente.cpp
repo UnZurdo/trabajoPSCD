@@ -51,12 +51,12 @@ void enviarURL(Socket& socket, int socket_fd, bool& fin, Semaphore& ganador){
 	}
 }
 
-void lectura(Socket& socket, int socket_fd, bool& fin,bool& primeraVez,Semaphore& sem){
+void lectura(Socket& socket, int socket_fd, bool& fin, bool& primeraVez, Semaphore& sem){
 	int read_bytes;
 	string buffer;
 	Semaphore ganador(0);
 	// Lanzo nuevo proceso encargado de enviar la URL
-	thread enviar = thread(&enviarURL, ref(socket), ref(fin), url, socket_fd, ref(ganador));
+	thread enviar = thread(&enviarURL, ref(socket), socket_fd, ref(fin), ref(ganador));
 	while(!fin){
 		read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
 		if(read_bytes == -1){
@@ -90,7 +90,7 @@ void lectura(Socket& socket, int socket_fd, bool& fin,bool& primeraVez,Semaphore
 }
 
 
-void escritura(Socket& socket, int socket_fd, bool& fin,bool& primeraVez,Semaphore& sem){
+void escritura(Socket& socket, int socket_fd, bool& fin, bool& primeraVez, Semaphore& sem){
 	int send_bytes;
 	string mensaje;
 	string name;
@@ -105,6 +105,7 @@ void escritura(Socket& socket, int socket_fd, bool& fin,bool& primeraVez,Semapho
 				cout << "Error en el send del cliente" << endl;
 				exit(0);
 			}
+			primeraVez=false;
 		}
 
 		getline(cin, mensaje);
@@ -115,6 +116,7 @@ void escritura(Socket& socket, int socket_fd, bool& fin,bool& primeraVez,Semapho
 		}
 
 		send_bytes = socket.Send(socket_fd, mensaje);
+		cout << "ENVIADO: "<<mensaje<<endl;
 		if(send_bytes == -1){
 			cout << "Error en el send del cliente" << endl;
 			exit(0);
