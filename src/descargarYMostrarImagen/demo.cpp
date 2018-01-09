@@ -27,7 +27,7 @@ int main() {
     ImageDownloader downloader;
     // Descargamos una imagen de Internet
     //que se almacenará como "IC343.jpg"
-    char URL[500] = "http://assets2.motherboard.tv/content-images/contentimage/no-slug/7703bcea71c8096ea7c18addc28e8a15.jpg";
+    char URL[500] = "http://www.gettyimages.es/gi-resources/images/Embed/new/embed2.jpg";
     char path[100] = "IC343.jpg";
     downloader.downloadImage(URL, path);
 

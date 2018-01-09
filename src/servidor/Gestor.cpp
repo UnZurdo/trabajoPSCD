@@ -46,7 +46,8 @@ void Gestor::iniciar(){
 
     // transformo string a c_str()
     string URL = obtenerUrl(valla);
-    string path = obtenerPath(valla);
+    // Las guardo en la carpeta imagenes
+    string path = "imagenes/"+obtenerPath(valla);
 
     cout << "GESTOR==> "<< "URL: " << URL << "   path: " << path <<endl;
 

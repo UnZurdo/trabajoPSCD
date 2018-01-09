@@ -6,6 +6,6 @@ echo "Puerto seleccionado: $2"
 echo "Lanzando clientes..."
 
 # https://www.w3schools.com/w3css/img_fjords.jpg
-xterm -e ./bin/Cliente $1 $2 Alberto http://assets2.motherboard.tv/content-images/contentimage/no-slug/7703bcea71c8096ea7c18addc28e8a15.jpg &
-xterm -e ./bin/Cliente $1 $2 Miguel http://1.bp.blogspot.com/-iS3Rk8DF7qA/UIbHvnp5CtI/AAAAAAAAAEs/M4GJtJTUDWM/s1600/zurdo+4.jpg &
-xterm -e ./bin/Cliente $1 $2 Jorge  http://assets2.motherboard.tv/content-images/contentimage/no-slug/7703bcea71c8096ea7c18addc28e8a15.jpg &
+xterm -e ./bin/Cliente $1 $2 Alberto http://www.gettyimages.es/gi-resources/images/Embed/new/embed2.jpg &
+xterm -e ./bin/Cliente $1 $2 Miguel https://i.pinimg.com/originals/99/a8/b3/99a8b3766f813918c235dda4039f411d.jpg &
+xterm -e ./bin/Cliente $1 $2 Jorge http://www.thinkstockphotos.com/ts-resources/images/home/TS_AnonHP_462882495_01.jpg &

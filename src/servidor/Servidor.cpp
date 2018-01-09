@@ -71,8 +71,8 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 	// Esperar hasta enviar ACEPTAR / RECHAZA conexion 
 	aceptar.wait();
 
-	while(!out && !fin){
-		msg="";
+	while(!out){
+		//msg="";
 		int rcv_bytes = soc.Recv(client_fd,buffer,length);
 		if(strcmp(buffer, "ACK")!=0)cout << "BUFFER: "<<buffer<<endl;
 		if (rcv_bytes == -1) {
@@ -142,8 +142,9 @@ void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool
 	// else messageAUX = ACEPTADO;
 
 	while (!out) {
-		if(fin) {
+		if(fin && primeraVez) {
 			out = true;
+			primeraVez=false;
 			msg = RECHAZADO;
 			aceptar.signal();
 		}
