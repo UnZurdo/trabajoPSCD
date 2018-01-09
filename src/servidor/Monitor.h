@@ -1,10 +1,7 @@
 //*****************************************************************
 // File:   Monitor.h
-// Author: Alberto García Hernández
-// Date:   noviembre 2017
-// Coms:   Ejercicio 5 de PSCD
-//         Compilar mediante
-//           g++ -std=c++11 -pthread Monitor.cpp -c
+// Date:   December 2017
+// Coms:   TP6 PSCD
 //*****************************************************************
 #ifndef MONITOR_H
 #define MONITOR_H
