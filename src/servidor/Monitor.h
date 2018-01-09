@@ -1,7 +1,9 @@
 //*****************************************************************
 // File:   Monitor.h
-// Date:   December 2017
+// Date:   december 2017
 // Coms:   TP6 PSCD
+//         Compilar mediante
+//           g++ -std=c++11 -pthread Monitor.h -c
 //*****************************************************************
 #ifndef MONITOR_H
 #define MONITOR_H
