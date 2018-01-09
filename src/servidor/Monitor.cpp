@@ -26,6 +26,12 @@ Monitor::Monitor(int min){
     }
 };
 
+void Monitor::nuevo(int min){
+    this->siguiente=min+randomS();
+    this->actual=min;
+    this->id=-1;
+}
+
 int Monitor::pujaActual(){
     unique_lock<mutex> lck(mtx);
     return actual;
@@ -57,7 +63,8 @@ int Monitor::getId(){
     return id;
 };
 
-void Monitor::get_all_clients(int clients_fd[], int& n){
+// PROBLEMA CON REFERENCIA
+void Monitor::get_all_clients(int clients_fd[], int* n){
     int j = 0;
     for(int i = 0; i< MAX;++i){
         if(clientList[i]!=0){
@@ -65,7 +72,8 @@ void Monitor::get_all_clients(int clients_fd[], int& n){
             ++j;
         }
     }
-    n = j;
+    //cout << "J: "<<j<<endl;
+    *n = j;
 }
 
 
@@ -103,11 +111,11 @@ void Monitor::Entrar(int id){
     unique_lock<mutex> lck(mtx);
     int i = 0;
     // Añado al nuevo cliente 
-    while(clientList[i]==0){
+    while(clientList[i]!=0 && i < MAX){
         ++i;
     }
     clientList[i]=id;
-    cout << "Entra: "<< clientList[i]<<endl;
+    cout << "Entra: "<< clientList[i]<< " i: " << i << endl;
 
     ++nClientes;
 };
@@ -117,12 +125,12 @@ void Monitor::Salir(int id){
     unique_lock<mutex> lck(mtx);
     int i = 0;
     // Busco cliente
-    while(clientList[i]!=id){
+    while(clientList[i]!=id && i < MAX){
         ++i;
     }
     // Lo borro
-    clientList[i]=0;
     cout << "Sale: "<< clientList[i]<<endl;
+    clientList[i]=0;
     --nClientes;
     ocupado.notify_one();
 };

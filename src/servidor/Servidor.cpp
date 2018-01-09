@@ -81,18 +81,23 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 			temp2 = strtok(NULL, " \n");
 			// Valido mensaje
 			if(temp && temp2){
-				if(strcmp(temp,PUJAR)){
+				if(strcmp(temp,PUJAR)==0){
 					int puja = atoi(temp2);
+					cout << "PUJA recibida de "<< puja<<"€"<<endl;
 					bool valida=s.obtenerMonitor()->Pujar(puja, client_fd);
-					if(!valida) msg="PUJA no aceptada" + s.obtenerMonitor()->estado();
+					if(!valida) {
+						msg="PUJA no aceptada " + s.obtenerMonitor()->estado();
+						cout << msg;
+					}
 					else {
-						msg="PUJA aceptada" + s.obtenerMonitor()->estado();
+						msg="PUJA aceptada " + s.obtenerMonitor()->estado();
+						cout << msg;
 						hayMensaje.signal();
 					}
 					// Enviar puja actual a todos los usuarios (Monitor)
 					// void informar_all(Subasta& s, Socket& soc)
 				}
-				else if(strcmp(temp,URL)){
+				else if(strcmp(temp,URL)==0){
 					// Actualiza info concursante
 					url_cliente = temp2;
 					// Despierto al gestorSubasta
@@ -148,6 +153,7 @@ void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool
 		msg="FIN";
 		const char* message = msg.c_str();
 		send_bytes = soc.Send(client_fd, message);
+		cout << "Cliente "<< client_fd <<" ha pedido salir"<<endl;
 		if(send_bytes == -1) {
 			string mensError(strerror(errno));
 			cerr << "Error al enviar datos: " + mensError + "\n";
@@ -161,9 +167,10 @@ void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool
 // Envia mensaje a todos los clientes
 void informar_all(Subasta& s, Socket& soc, string msg){
 	int clients_id[MAX];
-	int n;
-	s.obtenerMonitor()->get_all_clients(clients_id, ref(n)); /////////////////////////////////////////////////////
-	for(int i = 0; i< n; ++i){
+	int N;
+	s.obtenerMonitor()->get_all_clients(clients_id, &N); /////////////////////////////////////////////////////
+	for(int i = 0; i< N; ++i){
+		cout << "Client: "<<clients_id[i] <<endl;
 		const char* message = msg.c_str();
 		int send_bytes = soc.Send(clients_id[i], message);
 		if(send_bytes == -1) {
@@ -173,7 +180,7 @@ void informar_all(Subasta& s, Socket& soc, string msg){
 			exit(1);
 		}
 	}
-	cout << "nClientes: "<<n<<endl;
+	cout << "nClientes: "<<N<<endl;
 }
 /*
 

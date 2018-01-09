@@ -61,7 +61,7 @@ void Subasta::nuevo(){
     this->duracion=randomD();
     this->precioInicial=randomP();
     this->precioMinimo=randomP()+(randomP()/5);
-    this->monitor= new Monitor(precioInicial);
+    this->monitor->nuevo(precioInicial);
 
     this->nSubastas++;
     this->tiempoTotal+=duracion;
@@ -156,14 +156,16 @@ bool Subasta::cerrarSubasta(int& user_id, string& estado){
 		beneficios+=monitor->pujaActual();
 		++nImagenes;
 		user_id = monitor->getId();
-		delete monitor;
+		
+        //delete monitor;
 		return true;
 	}
 	else{
 		oss <<"--SUBASTA CERRADA--"<<endl<< "No hay ganador, puja minima de "<<precioMinimo<<" no superada."<<endl;
         estado=oss.str();
         cout << estado;
-		delete monitor;
+		
+        //delete monitor;
 		return false;
 	}
 };

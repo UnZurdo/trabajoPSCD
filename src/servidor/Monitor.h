@@ -41,6 +41,8 @@ class Monitor{
 
     public:
         Monitor(int min);
+        //Devuelve el mismo pero con valores actualizados
+        void nuevo(int min);
         int pujaActual();
         int siguientePuja();
         int clientes();
@@ -54,7 +56,7 @@ class Monitor{
         void Salir(int id);
         void iniciar();
         // Devuelve una lista con los id de todos los clientes actuales
-        void get_all_clients(int clients_fd[], int& n);
+        void get_all_clients(int clients_fd[], int* n);
         // Falso si puja es menor que la actual
         bool Pujar(const int dinero, int id);
 

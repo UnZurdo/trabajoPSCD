@@ -127,11 +127,11 @@ void escritura(Socket& socket, int socket_fd, bool& fin, bool& primeraVez, Semap
 		}
 		cout << "ENVIADO: "<<mensaje<<endl;
 		send_bytes = socket.Send(socket_fd, mensaje);
-		if(send_bytes == -1){
-			cout << "Error en el send del cliente" << endl;
-			exit(0);
-		}
-		cout << "TRAS ENVIO: "<<mensaje<<endl;
+		//if(send_bytes == -1){
+		//	cout << "Error en el send del cliente" << endl;
+		//	exit(0);
+		//}
+		//cout << "TRAS ENVIO: "<<mensaje<<endl;
 		if (mensaje == MENS_FIN){
 				fin = true;
 		}
@@ -203,6 +203,8 @@ int main(int argc, char* argv[]) {
 	esc.join();
 	lec.join();
 	enviar.join();
+
+	cout << "Cerrando Cliente..."<<endl;
 
 	socket.Close(socket_fd);
 	exit(1);
