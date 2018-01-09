@@ -107,6 +107,7 @@ void Monitor::Entrar(int id){
         ++i;
     }
     clientList[i]=id;
+    cout << "Entra: "<< clientList[i]<<endl;
 
     ++nClientes;
 };
@@ -121,6 +122,7 @@ void Monitor::Salir(int id){
     }
     // Lo borro
     clientList[i]=0;
+    cout << "Sale: "<< clientList[i]<<endl;
     --nClientes;
     ocupado.notify_one();
 };

@@ -37,6 +37,7 @@ string url_cliente;
 bool hayGanador = false;
 Semaphore hayMensaje(0);
 Semaphore esperarURL(0);
+Semaphore aceptar(0);
 
 
 //-------------------------------------------------------------
@@ -47,6 +48,9 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 	char *temp;
 	char *temp2;
 	//bool primeraVez = true;
+
+	// Esperar hasta enviar ACEPTAR / RECHAZA conexion 
+	aceptar.wait();
 
 	while(!out && !fin){
 		msg="";
@@ -113,20 +117,29 @@ void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool
 		if(fin) {
 			out = true;
 			msg = RECHAZADO;
+			aceptar.signal();
 		}
-
 		// Confirmo conexion
 		else if(!fin && primeraVez){
 			primeraVez=false;
 			msg= ACEPTADO;
 			msg = msg + "\n" + s.obtenerMonitor()->estado();
-			out = true;
+			//out = true;
+			aceptar.signal();
 		}
 
 		if(msg!=""){
 			const char* message = msg.c_str();
 			send_bytes = soc.Send(client_fd, message);
+			if(send_bytes == -1) {
+				string mensError(strerror(errno));
+    			cerr << "Error al enviar datos: " + mensError + "\n";
+				// Cerramos los sockets
+				exit(1);
+			}
 			// Envio primer mensaje ACEPTO /RECHAZO conexion y espero al siguiente
+			msg="";
+			// Tas enviar el mensaje de confirmacion espero a que haya que enviar mas mensajes
 			hayMensaje.wait();
 		}
 	}
@@ -135,6 +148,12 @@ void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool
 		msg="FIN";
 		const char* message = msg.c_str();
 		send_bytes = soc.Send(client_fd, message);
+		if(send_bytes == -1) {
+			string mensError(strerror(errno));
+			cerr << "Error al enviar datos: " + mensError + "\n";
+			// Cerramos los sockets
+			exit(1);
+		}
 	}
 }
 
@@ -147,7 +166,14 @@ void informar_all(Subasta& s, Socket& soc, string msg){
 	for(int i = 0; i< n; ++i){
 		const char* message = msg.c_str();
 		int send_bytes = soc.Send(clients_id[i], message);
+		if(send_bytes == -1) {
+			string mensError(strerror(errno));
+			cerr << "Error al enviar datos: " + mensError + "\n";
+			// Cerramos los sockets
+			exit(1);
+		}
 	}
+	cout << "nClientes: "<<n<<endl;
 }
 /*
 
@@ -175,6 +201,12 @@ void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, bool& fin){
 			string msg = URL;
 			const char* message = msg.c_str();
 			int send_bytes = soc.Send(user_id, message);
+			if(send_bytes == -1) {
+				string mensError(strerror(errno));
+    			cerr << "Error al enviar datos: " + mensError + "\n";
+				// Cerramos los sockets
+				exit(1);
+			}
 
 
 			// Espero ha que el cliente me envie la URL
@@ -302,6 +334,8 @@ int main(int argc, char** argv) {
 	//¿Qué pasa si algún thread acaba inesperadamente?
 	subasta.obtenerMonitor()->Finalizar();
 	administrador.join();
+	gestorP.join();
+	subastador.join();
 
 
     // Cerramos el socket del servidor

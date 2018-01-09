@@ -33,8 +33,9 @@ const char PUJAR[]="PUJAR";
 
 bool esGanador = false;
 string url;
+Semaphore ganador(0);
 
-void enviarURL(Socket& socket, int socket_fd, bool& fin, Semaphore& ganador){
+void enviarURL(Socket& socket, int socket_fd, bool& fin){
 	while(!fin){
 		string mensaje;
 		//Espero a que me den permiso para enviar la url
@@ -52,11 +53,21 @@ void enviarURL(Socket& socket, int socket_fd, bool& fin, Semaphore& ganador){
 }
 
 void lectura(Socket& socket, int socket_fd, bool& fin, bool& primeraVez, Semaphore& sem){
+	cout << "LECTURA"<<endl;
 	int read_bytes;
 	string buffer;
-	Semaphore ganador(0);
-	// Lanzo nuevo proceso encargado de enviar la URL
-	thread enviar = thread(&enviarURL, ref(socket), socket_fd, ref(fin), ref(ganador));
+
+	read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
+	if(read_bytes == -1){
+		cout << "Error en el recv del cliente" << endl;
+		exit(0);
+	}
+	if(buffer==RECHAZADO){
+		fin=true;
+	}
+	cout << buffer <<endl;
+	sem.signal();
+
 	while(!fin){
 		read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
 		if(read_bytes == -1){
@@ -64,10 +75,6 @@ void lectura(Socket& socket, int socket_fd, bool& fin, bool& primeraVez, Semapho
 			exit(0);
 		}
 		else {
-			if(primeraVez == true){
-				primeraVez = false;
-				sem.signal();
-			}
 
 			//OCUPADO ==> SERVER NO PUEDE RESPONDER DE MOMENTO
 
@@ -75,38 +82,42 @@ void lectura(Socket& socket, int socket_fd, bool& fin, bool& primeraVez, Semapho
 				fin = true;
 				cout << "Final recibido del servidor" << endl;
 			}
-			else if(buffer == "URL"){
+			else if(buffer == URL){
 				esGanador = true;
 				ganador.signal();
 			}
 			else{
-				cout << buffer << endl;
+				cout <<"RESPUESTA: "<< buffer << endl;
 			}
 		}
 	}
 	// Lo despierto para que salgfa del bucle
 	ganador.signal();
-	enviar.join();
 }
 
 
 void escritura(Socket& socket, int socket_fd, bool& fin, bool& primeraVez, Semaphore& sem){
+	cout << "ESCRITURA"<<endl;
 	int send_bytes;
 	string mensaje;
 	string name;
-	while(!fin){
-		if(primeraVez == true){
-			sem.wait();
 
-			mensaje= "URL " + url;
-			// name= "NOMBRE " + name;
-			send_bytes = socket.Send(socket_fd, mensaje);
-			if(send_bytes == -1){
-				cout << "Error en el send del cliente" << endl;
-				exit(0);
-			}
-			primeraVez=false;
-		}
+	sem.wait();
+	while(!fin){
+		mensaje="";
+		primeraVez=false;
+		//if(primeraVez == true){
+		//	sem.wait();
+		//	mensaje= "URL " + url;
+		//	// name= "NOMBRE " + name;
+			//send_bytes = socket.Send(socket_fd, mensaje);
+			//if(send_bytes == -1){
+			//	cout << "Error en el send del cliente" << endl;
+			//	exit(0);
+			//}
+			//cout << "ENVIADO: "<<mensaje<<endl;
+			//primeraVez=false;
+		//}
 
 		getline(cin, mensaje);
 		// Caso usuario no introduce nada, repetimo
@@ -114,14 +125,14 @@ void escritura(Socket& socket, int socket_fd, bool& fin, bool& primeraVez, Semap
 			//cout << "Que asiento desea reservar: ";
 			getline(cin, mensaje);
 		}
-
-		send_bytes = socket.Send(socket_fd, mensaje);
 		cout << "ENVIADO: "<<mensaje<<endl;
+		send_bytes = socket.Send(socket_fd, mensaje);
 		if(send_bytes == -1){
 			cout << "Error en el send del cliente" << endl;
 			exit(0);
 		}
-		if (mensaje == "EXIT"){
+		cout << "TRAS ENVIO: "<<mensaje<<endl;
+		if (mensaje == MENS_FIN){
 				fin = true;
 		}
 
@@ -129,6 +140,8 @@ void escritura(Socket& socket, int socket_fd, bool& fin, bool& primeraVez, Semap
 
 		// 2) MENSAJE == ESTADO
 	}
+	if(primeraVez)cout << "CONEXION RECHAZADA"<<endl;
+
 
 }
 
@@ -184,9 +197,12 @@ int main(int argc, char* argv[]) {
     thread esc;			//Proceso de escritura
     lec = thread(&lectura,ref(socket), socket_fd, ref(fin), ref(primeraVez), ref(sem));
     esc = thread(&escritura,ref(socket) ,socket_fd, ref(fin), ref(primeraVez), ref(sem));
+    // Lanzo nuevo proceso encargado de enviar la URL
+	thread enviar = thread(&enviarURL, ref(socket), socket_fd, ref(fin));
 
 	esc.join();
 	lec.join();
+	enviar.join();
 
 	socket.Close(socket_fd);
 	exit(1);
