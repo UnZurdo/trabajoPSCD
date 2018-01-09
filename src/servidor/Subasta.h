@@ -2,8 +2,6 @@
 // File:   Subasta.h
 // Date:   december 2017
 // Coms:   TP6 PSCD
-//         Compilar mediante
-//           g++ -std=c++11 -pthread Subasta.cpp -c
 //*****************************************************************
 #ifndef SUBASTA_H
 #define SUBASTA_H
