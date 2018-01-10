@@ -41,13 +41,13 @@ string Monitor::estado(){
     unique_lock<mutex> lck(mtx);
     ostringstream oss;
     if (id_ganador == -1){
-      oss << "Todavia no hay ninguna puja" << endl
+      oss << "\nTodavia no hay ninguna puja" << endl
       <<"Puja iniciada a: "<<actual<<endl;
     }
     else{
-      oss <<"Puja maxima actual: "<<actual << "del cliente "<<id_ganador <<endl
-      <<"Puja siguiente: "<<siguiente<<endl<<"Número de clientes participando"
-      <<nClientes<<endl<< "Número de pujas: "<<nPujas<<endl;
+      oss <<"Puja maxima actual: "<<actual << " del cliente "<<id_ganador <<endl
+      <<"Puja siguiente: "<<siguiente<<endl<<"Numero de clientes participando: "
+      <<nClientes<<endl<< "Numero de pujas: "<<nPujas<<endl<<endl;
     }
     return oss.str();
 };
@@ -110,7 +110,7 @@ void Monitor::Finalizar(){
 void Monitor::Entrar(int id){
     unique_lock<mutex> lck(mtx);
     int i = 0;
-    // Añado al nuevo cliente 
+    // Añado al nuevo cliente
     while(clientList[i]!=0 && i < MAX){
         ++i;
     }

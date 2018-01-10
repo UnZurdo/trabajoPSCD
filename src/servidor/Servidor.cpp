@@ -93,7 +93,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		}
 		//Recibe mensaje de ayuda
 		else if(strcmp(buffer,AYUDA)==0){
-			msg = "Escriba \"EXIT\" para abandonar la subasta.\nPara mostrar el estado actual de la subasta escriba ESTADO.\nSi desea pujar escriba: PUJAR <cantidad>\n";
+			msg = "\nEscriba \"EXIT\" para abandonar la subasta.\nPara mostrar el estado actual de la subasta escriba ESTADO.\nSi desea pujar escriba: PUJAR <cantidad>\n\n";
 			hayMensaje.signal();
 		}
 		else{
