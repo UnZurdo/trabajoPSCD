@@ -104,7 +104,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 			if(temp && temp2){
 				if(strcmp(temp,PUJAR)==0){
 					int puja = atoi(temp2);
-					cout << "PUJA recibida de "<< puja<<" €"<<endl;
+					cout << "PUJA recibida de "<< puja<<" $"<<endl;
 					bool valida=s.obtenerMonitor()->Pujar(puja, client_fd);
 					if(!valida) {
 						msg="PUJA no aceptada " + s.obtenerMonitor()->estado();

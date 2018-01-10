@@ -110,7 +110,7 @@ void Subasta::iniciar(string& estado){
 
     	oss <<"\n--SUBASTA ABIERTA--" <<endl <<"Valla Publicitaria de "<<duracion<<" segundos"<<endl
     	<< "Duracion de la puja: "<<tInicial<< " segundos"<<endl
-    	<< "Puja inicial en: " << precioInicial << " €"<<endl<<endl;
+    	<< "Puja inicial en: " << precioInicial << " $"<<endl<<endl;
         estado=oss.str();
         cout << estado;
     }
@@ -150,7 +150,7 @@ bool Subasta::cerrarSubasta(int& user_id, string& estado){
 	cout << "Tiempo agotado"<<endl;
     // Si hay ganador
 	if(monitor->getId()!=-1){
-        oss <<"--SUBASTA CONCLUIDA--"<<endl << "Ganador: "<<monitor->getId()<<"Puja cerrada a "<<monitor->pujaActual() <<"€"<<endl;
+        oss <<"--SUBASTA CONCLUIDA--"<<endl << "Ganador: "<<monitor->getId()<<"Puja cerrada a "<<monitor->pujaActual() <<"$"<<endl;
         estado=oss.str();
         cout << estado;
 		beneficios+=monitor->pujaActual();
@@ -174,7 +174,7 @@ bool Subasta::cerrarSubasta(int& user_id, string& estado){
 string Subasta::infoHistorica(){
     ostringstream oss;
     cout << "Numero de subastas realizadas: "<<nSubastas<<endl<<"Tiempo total ofertado: "<<tiempoTotal<<endl
-    <<"Tiempo medio ofertado: "<<tiempoMedio<<endl<<"Beneficios obtenidos. "<<beneficios<<"€"<<endl;
+    <<"Tiempo medio ofertado: "<<tiempoMedio<<endl<<"Beneficios obtenidos. "<<beneficios<<"$"<<endl;
 
     return oss.str();
 };
