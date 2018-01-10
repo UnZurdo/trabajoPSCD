@@ -75,7 +75,7 @@ void Gestor::iniciar(){
     imagen.move(0,0); // Esquina superior izquierda
 
     // Mostrar imagen durante 5 segundos
-    imagen.wait(5000);
+    imagen.wait(obtenerDuracion(valla)*1000);
 
     // Libero memoria
     delete [] cPATH;

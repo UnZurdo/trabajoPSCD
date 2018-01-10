@@ -18,7 +18,7 @@ int randomT(){
 
 int randomD(){
     srand (time(NULL));
-    int random = rand() % 15 + 5;
+    int random = rand() % 20 + 10;
     return random;
 }
 
