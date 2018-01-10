@@ -32,6 +32,7 @@ const char URL[]="URL";
 const char PUJAR[]="PUJAR";
 
 bool esGanador = false;
+bool aux=false;
 string url;
 Semaphore ganador(0);
 
@@ -80,6 +81,7 @@ void lectura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 
 			if(buffer == "FIN"){
 				fin = true;
+				aux = true;
 				cout << "Final recibido del servidor" << endl;
 			}
 			else if(buffer == URL){
@@ -187,8 +189,12 @@ int main(int argc, char* argv[]) {
 	lec.join();
 	enviar.join();
 
-	cout << "Cerrando Cliente..."<<endl;
-
 	socket.Close(socket_fd);
+
+	if(aux){
+		cout << "Cerrando Cliente...en 10 segundos"<<endl;
+		sleep(10);
+	}
+
 	exit(1);
 }

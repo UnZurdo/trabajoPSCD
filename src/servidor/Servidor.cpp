@@ -265,10 +265,15 @@ void servCliente(Socket& soc, int client_fd, bool& fin,  Subasta& subasta) {
 
 void administrator(Socket& socket, int socket_fd, bool& fin, Administrador& admin){
 	admin.iniciarAdmin(fin);
+	cout << "Chivato 1" << endl;
 	socket.Close(socket_fd);
 	exit(1);
 }
 
+
+void handle_sigalrm(int signo){
+	signal(SIGINT, handle_sigalrm);
+}
 //-------------------------------------------------------------
 int main(int argc, char** argv) {
 	if (argc != 2){
@@ -286,6 +291,8 @@ int main(int argc, char** argv) {
 	// Creo modulo administrador
 	Administrador admin(&gestor, &subasta);
 
+	// Protegemos frente señal
+	signal(SIGINT, handle_sigalrm);
 
 	// Dirección y número donde escucha el proceso servidor
 	string SERVER_ADDRESS = "localhost";
