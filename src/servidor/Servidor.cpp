@@ -56,7 +56,7 @@ void informar_all(Subasta& s, Socket& soc, string msg){
 			exit(1);
 		}
 	}
-	cout << "nClientes: "<<N<<endl;
+	cout << "nClientes actualmente: " << N << endl << endl;
 }
 
 //-------------------------------------------------------------
@@ -68,7 +68,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 	char *temp2;
 	//bool primeraVez = true;
 
-	// Esperar hasta enviar ACEPTAR / RECHAZA conexion 
+	// Esperar hasta enviar ACEPTAR / RECHAZA conexion
 	aceptar.wait();
 
 	while(!out){
@@ -81,16 +81,18 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 			// Cerramos los sockets
 			soc.Close(client_fd);
 		}
-		if(strcmp(buffer, MENS_FIN)==0){
+		//Recibe mensaje de fin
+		if(strcmp(buffer,MENS_FIN)==0){
 			out = true;
-			// Despiero a enviar
-			hayMensaje.signal();
+			hayMensaje.signal();	// Despiero a enviar
 		}
+		//Recibe solicitud de estado de la subasta
 		else if(strcmp(buffer, ESTADO)==0){
 			msg = s.obtenerMonitor()->estado();
 			hayMensaje.signal();
 		}
-		else if(strcmp(buffer,  AYUDA)==0){
+		//Recibe mensaje de ayuda
+		else if(strcmp(buffer,AYUDA)==0){
 			msg = "Escriba \"EXIT\" para abandonar la subasta.\nPara mostrar el estado actual de la subasta escriba ESTADO.\nSi desea pujar escriba: PUJAR <cantidad>\n";
 			hayMensaje.signal();
 		}
@@ -102,7 +104,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 			if(temp && temp2){
 				if(strcmp(temp,PUJAR)==0){
 					int puja = atoi(temp2);
-					cout << "PUJA recibida de "<< puja<<"€"<<endl;
+					cout << "PUJA recibida de "<< puja<<" €"<<endl;
 					bool valida=s.obtenerMonitor()->Pujar(puja, client_fd);
 					if(!valida) {
 						msg="PUJA no aceptada " + s.obtenerMonitor()->estado();
@@ -115,7 +117,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 						msg = msg + info;
 						cout << msg;
 						hayMensaje.signal();
-						
+
 					}
 					// Enviar puja actual a todos los usuarios (Monitor)
 					// void informar_all(Subasta& s, Socket& soc)
@@ -189,7 +191,7 @@ void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool
 
 /*
 
-	IMPLEMENTAR ESTADOS??	
+	IMPLEMENTAR ESTADOS??
 
 */
 void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, bool& fin){
@@ -247,7 +249,7 @@ void servCliente(Socket& soc, int client_fd, bool& fin,  Subasta& subasta) {
 	string mensaje="";
 	bool out = false;
 
-	
+
 	// Enviar puja actual a todos los usuarios (Monitor)
 	thread rec = thread(&recibir , ref(subasta), ref(soc), client_fd, ref(mensaje), ref(fin), ref(out));
 	thread env = thread(&enviar , ref(subasta), ref(soc), client_fd, ref(mensaje), ref(fin), ref(out));

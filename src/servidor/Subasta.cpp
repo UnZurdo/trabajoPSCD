@@ -108,9 +108,9 @@ void Subasta::iniciar(string& estado){
         // Set alarm
         alarm(tInicial);
 
-    	oss << "--SUBASTA ABIERTA--" <<endl <<"Valla Publicitaria de "<<duracion<<"segundos"<<endl
-    	<< "abierta durante: "<<tInicial<< "segundos"<<endl
-    	<< "Puja inicial: " << precioInicial<<endl;
+    	oss <<"\n--SUBASTA ABIERTA--" <<endl <<"Valla Publicitaria de "<<duracion<<" segundos"<<endl
+    	<< "Duracion de la puja: "<<tInicial<< " segundos"<<endl
+    	<< "Puja inicial en: " << precioInicial << " €"<<endl<<endl;
         estado=oss.str();
         cout << estado;
     }
@@ -156,7 +156,7 @@ bool Subasta::cerrarSubasta(int& user_id, string& estado){
 		beneficios+=monitor->pujaActual();
 		++nImagenes;
 		user_id = monitor->getId();
-		
+
         //delete monitor;
 		return false;
 	}
@@ -164,7 +164,7 @@ bool Subasta::cerrarSubasta(int& user_id, string& estado){
 		oss <<"--SUBASTA CERRADA--"<<endl<< "No hay ganador, puja minima de "<<precioMinimo<<" no superada."<<endl;
         estado=oss.str();
         cout << estado;
-		
+
         //delete monitor;
 		return true;
 	}

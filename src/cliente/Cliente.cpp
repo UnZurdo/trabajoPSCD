@@ -77,8 +77,6 @@ void lectura(Socket& socket, int socket_fd, bool& fin, bool& primeraVez, Semapho
 		}
 		else {
 
-			//OCUPADO ==> SERVER NO PUEDE RESPONDER DE MOMENTO
-
 			if(buffer == "FIN"){
 				fin = true;
 				cout << "Final recibido del servidor" << endl;
@@ -89,7 +87,7 @@ void lectura(Socket& socket, int socket_fd, bool& fin, bool& primeraVez, Semapho
 			}
 			else{
 				if(buffer!="ACK")cout <<"RESPUESTA: "<< buffer << endl;
-				
+
 			}
 		}
 	}
