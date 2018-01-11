@@ -8,6 +8,8 @@
 
 #include "Monitor.h"
 
+atomic <int> N(0);
+
 int randomS(){
     srand (time(NULL));
     int random = rand() % 100 + 10;
@@ -64,9 +66,12 @@ void Monitor::siguientePuja(){
     while(nPujas<nClientes){
         esperar.wait(lck);
     }
-    // SIGUIENTE RONDA
-    nPujas=0;
-    nPASAR=0;
+    ++N;
+    if(N==nClientes){
+        // SIGUIENTE RONDA
+        nPujas=0;
+        nPASAR=0;
+    }
 };
 
 int Monitor::getId(){
@@ -84,6 +89,7 @@ bool Monitor::esta(int client_fd){
     }
     return esta;
 }
+
 
 // PROBLEMA CON REFERENCIA
 void Monitor::get_all_clients(int clients_fd[], int* n){
@@ -164,6 +170,7 @@ void Monitor::Salir(int id){
     // Lo borro
     cout << "Sale: "<< clientList[i]<<endl;
     clientList[i]=0;
+    esperar.notify_all();
     --nClientes;
     ocupado.notify_one();
 };

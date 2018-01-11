@@ -16,6 +16,7 @@
 #include <iomanip>
 #include <ctime>
 #include <random>
+#include <atomic>
 
 
 using namespace std;

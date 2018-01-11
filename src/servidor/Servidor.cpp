@@ -72,6 +72,19 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		exit(1);
 	}
 
+	int rcv_bytes = soc.Recv(client_fd,buffer,length);
+	cout << "*BUFFER: "<<buffer<<endl;
+	if (rcv_bytes == -1) {
+		string mensError(strerror(errno));
+		cerr << "Error al recibir datos: " + mensError + "\n";
+		// Cerramos los sockets
+		soc.Close(client_fd);
+	}
+	//Recibe mensaje de fin
+	if(strcmp(buffer,MENS_FIN)==0){
+		out = true;
+	}
+
 	while(!out){
 		primeraVez=false;
 		msg="";
@@ -94,7 +107,6 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		}
 		else if(strcmp(buffer, PASO)==0){
 			msg = "--TURNO PASADO--\n";
-			puja=-1;
 			cout << msg;
 		}
 		//Recibe mensaje de ayuda
@@ -120,17 +132,19 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 						msg="--PUJA aceptada--\n";
 						cout << msg;
 					}
+					puja = -1;
 				}
 			}
 
 		}
 		// Si no ha pujado envio puja vacia
-		if(puja<=0){
+		if(puja==0){
 			s.obtenerMonitor()->Pujar(puja, client_fd);
 		}
 		puja = 0;
 		// Espero a que todos los clientes respondan
 		s.siguienteTurno();
+		cout << "aqui"<<endl;
 
 		if(msg!=""){
 			// Añado informacion correspondiente a la siguiente puja
@@ -231,7 +245,7 @@ void servCliente(Socket& soc, int client_fd, bool& fin,  Subasta& subasta) {
 
 	soc.Close(client_fd);
 	subasta.obtenerMonitor()->Salir(client_fd);
-	cout << "Fin SERVIR a cliente "<<client_fd<<endl;
+	cout << "->Fin SERVIR a cliente "<<client_fd<<endl;
 
 }
 
