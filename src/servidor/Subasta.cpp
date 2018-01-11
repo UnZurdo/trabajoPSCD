@@ -89,13 +89,8 @@ int Subasta::obtenerDuracion(){
 };
 
 
-// Fecha final en la que se cerrara la subasta
-int Subasta::cierreSubasta(){
-	return duracion;
-};
-
 void Subasta::siguienteTurno(){
-    monitor->siguientePuja(ref(nTurnos));
+    monitor->siguientePuja();
     // Despierto cerrarsSubasta en caso finTurnos
     esperar.signal();
 };
@@ -123,9 +118,6 @@ int Subasta::obtenerDuracionSubasta(){
     return nTurnos;
 }
 
-bool Subasta::finTurnos(){
- return nTurnos==0;
-};
 
 void Subasta::finalizarSubasta(){
   fin=true;
@@ -142,10 +134,10 @@ int Subasta::pujaInicial(){
 // Parcial: si no hay ganador
 bool Subasta::cerrarSubasta(int& user_id, string& estado){
     ostringstream oss;
-    // Si aun no ha finalizaod espero
-    while(!finTurnos()) esperar.wait();
+    // Si aun no ha finalizado (todos han escrito PASAR) espero
+    while(!monitor->Pasar()) esperar.wait();
     // Si hay ganador
-	if(monitor->getId()!=-1){
+	if(monitor->getId()!=-1 && monitor->pujaActual() >= precioMinimo){
         oss <<"--SUBASTA CONCLUIDA--"<<endl << "Ganador: "<<monitor->getId()<<" Puja cerrada a "<<monitor->pujaActual() <<"$"<<endl;
         estado=oss.str();
         cout << estado;

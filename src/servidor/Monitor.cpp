@@ -18,6 +18,8 @@ Monitor::Monitor(int min){
     this->nClientes=0;
     this->nPujasTotales=0;
     this->nPujas=0;
+    this->nPASAR=0;
+    this->finSubastaActual=false;
     this->siguiente=min+randomS();
     this->actual=min;
     this->id_ganador=-1;
@@ -31,6 +33,8 @@ void Monitor::nuevo(int min){
     this->siguiente=min+randomS();
     this->actual=min;
     this->nPujas=0;
+    this->nPASAR=0;
+    this->finSubastaActual=false;
     this->id_ganador=-1;
 }
 
@@ -44,7 +48,7 @@ string Monitor::estado(){
     ostringstream oss;
     if (id_ganador == -1){
       oss << "\n Todavia no hay ninguna puja" << endl
-      <<"Puja iniciada a: "<<actual<<endl;
+      <<"Puja iniciada a: "<<siguiente<<endl;
     }
     else{
       oss <<"Puja maxima actual: "<<actual << " del cliente "<<id_ganador <<endl
@@ -55,14 +59,14 @@ string Monitor::estado(){
 };
 
 
-void Monitor::siguientePuja(int& nRondas){
+void Monitor::siguientePuja(){
     unique_lock<mutex> lck(mtx);
     while(nPujas<nClientes){
         esperar.wait(lck);
     }
     // SIGUIENTE RONDA
-    --nRondas;
     nPujas=0;
+    nPASAR=0;
 };
 
 int Monitor::getId(){
@@ -94,6 +98,9 @@ void Monitor::get_all_clients(int clients_fd[], int* n){
     *n = j;
 }
 
+bool Monitor::Pasar(){
+    return finSubastaActual;
+};
 
 // Falso si puja es menor que la actual
 bool Monitor::Pujar(const int dinero, int id){
@@ -104,6 +111,10 @@ bool Monitor::Pujar(const int dinero, int id){
     cout << "num PUJAS: "<< nPujas<<endl;
     esperar.notify_all();
     if(dinero < siguiente){
+        if(dinero==-1){
+            // Si clientes PASAR
+            ++nPASAR;
+        }
         return false;
     }
     else{

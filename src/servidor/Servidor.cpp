@@ -94,6 +94,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		}
 		else if(strcmp(buffer, PASO)==0){
 			msg = "--TURNO PASADO--\n";
+			puja=-1;
 			cout << msg;
 		}
 		//Recibe mensaje de ayuda
@@ -124,7 +125,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 
 		}
 		// Si no ha pujado envio puja vacia
-		if(puja==0){
+		if(puja<=0){
 			s.obtenerMonitor()->Pujar(puja, client_fd);
 		}
 		puja = 0;
@@ -146,7 +147,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 			//Borro mensaje
 			msg="";
 		}
-		cout << "Siguiente Turno"<<endl;
+		cout << "->Siguiente Turno"<<endl;
 
 	}
 
@@ -174,7 +175,7 @@ void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, bool& fin){
 		if(hayGanador){
 			// Comprueba que aun sigue conectado
 			if(subasta.obtenerMonitor()->esta(user_id)){
-	;			// Pido URL al cliente, la recibo en el proceso de recibir
+				// Pido URL al cliente, la recibo en el proceso de recibir
 				string msg = URL;
 				const char* message = msg.c_str();
 				int send_bytes = soc.Send(user_id, message);

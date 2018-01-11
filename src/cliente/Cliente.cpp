@@ -70,55 +70,53 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 			socket.Close(socket_fd);
 			exit(1);
 		}
-
-
-		exit(1);
     }
 
+    if(mensaje!=MENS_FIN){
+	    // Buffer para almacenar la respuesta
+		string buffer;
+		bool mensajeContinua = false;
+		do{
+			mensaje="";
 
-    // Buffer para almacenar la respuesta
-	string buffer;
-	bool mensajeContinua = false;
-	do{
-		mensaje="";
-
-		if(buffer == URL){
-			cout << "PUJA ganada"<<endl;
-			mensaje = url;
-		}
-		else {
-			// Leer mensaje de la entrada estandar
-			// Caso usuario no introduce nada, repetimo
-			while(mensaje=="") {
-				getline(cin, mensaje);
+			if(buffer == URL){
+				cout << "PUJA ganada"<<endl;
+				mensaje = url;
 			}
-		}
+			else {
+				// Leer mensaje de la entrada estandar
+				// Caso usuario no introduce nada, repetimo
+				while(mensaje=="") {
+					getline(cin, mensaje);
+				}
+			}
 
-		// Enviamos el mensaje
-	    int send_bytes = socket.Send(socket_fd, mensaje);
+			// Enviamos el mensaje
+		    int send_bytes = socket.Send(socket_fd, mensaje);
 
-	    if(send_bytes == -1){
-			cerr << "Error al enviar datos: " << strerror(errno) << endl;
-			// Cerramos el socket
-			socket.Close(socket_fd);
-			exit(1);
-		}
+		    if(send_bytes == -1){
+				cerr << "Error al enviar datos: " << strerror(errno) << endl;
+				// Cerramos el socket
+				socket.Close(socket_fd);
+				exit(1);
+			}
 
-		if(mensaje != MENS_FIN){
-		    if(mensajeContinua){
-		    	int read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
-		    	// Mostramos asientos libres
-		    	cout << buffer << endl;
-		    	mensajeContinua=false;
-		    }
-		    else{
-			    // Recibimos la respuesta del servidor  
-			    int read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
-			    // Mostramos la respuesta
-			    cout << "RESPUESTA: " << buffer << endl;
-		    }
-		}
-	} while(mensaje != MENS_FIN);
+			if(mensaje != MENS_FIN){
+			    if(mensajeContinua){
+			    	int read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
+			    	// Mostramos asientos libres
+			    	cout << buffer << endl;
+			    	mensajeContinua=false;
+			    }
+			    else{
+				    // Recibimos la respuesta del servidor  
+				    int read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
+				    // Mostramos la respuesta
+				    cout << "RESPUESTA: " << buffer << endl;
+			    }
+			}
+		} while(mensaje != MENS_FIN);
+	}
 }
 
 

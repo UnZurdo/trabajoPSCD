@@ -27,6 +27,8 @@ class Monitor{
     //Lista de clientes
     
     int nClientes;
+    int nPASAR;
+    bool finSubastaActual;
     int nPujas;
     int nPujasTotales;
     // Mayor puja actual
@@ -46,9 +48,11 @@ class Monitor{
         // Esperar a que todos terminen de pujar para comenzar nueva ronda de pujas
         // Si envia otro mensaje puja = 0
         // Al terminar ++Rondas
-        void siguientePuja(int& nRondas);
+        void siguientePuja();
         int clientes();
         int getId();
+        // Return true if finSubastaActual
+        bool Pasar();
         string estado();
         // En caso de finalizacion inesperada de cliente
         void Finalizar();

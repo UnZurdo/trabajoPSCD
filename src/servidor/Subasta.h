@@ -56,10 +56,6 @@ class Subasta{
         int obtenerDuracion();
         // Devuelve el numero de vallas ofertadas hasta el momento
         int nVallas();
-        // Devuelve true si turnos agotados
-        bool finTurnos();
-        // Fecha final en la que se cerrara la subasta
-        int cierreSubasta();
         // Precio al que se abre la subasta
         int pujaInicial();
         // Aumentar precio para siguiente puja
