@@ -12,6 +12,7 @@ Gestor::Gestor(){
   this->fin = false;
   this->contador=0;
   this->s.setInitValue(0);
+  this->turno.setInitValue(1);
 };
 
 
@@ -21,10 +22,10 @@ void Gestor::anyadirValla(Valla valla){
   if(!fin) {
     q.push(valla);
     s.signal();
-  } 
+  }
  };
- 
- 
+
+
 void Gestor::apagar(){
   fin = true;
   // DESPIERTO AL PROCESO PARA QUE PUEDA FINALIZAR
@@ -50,9 +51,11 @@ void Gestor::iniciar(){
     //mostrar imagen de la valla en cola
     // Si no se puede mostrar nada == > ESPERAR
     s.wait();
+    //Entra en SC
+    turno.wait();
     Valla valla = q.front();
     q.pop();
-
+    turno.singal();
     // transformo string a c_str()
     string URL = obtenerUrl(valla);
     // Las guardo en la carpeta imagenes

@@ -396,6 +396,7 @@ int main(int argc, char** argv) {
 
 	administrador = thread(&administrator, ref(socket), socket_fd, ref(fin), ref(admin));
 	gestorP = thread(&Gestor::iniciar, ref(gestor));
+	gestorP2 = thread(&Gestor::iniciar, ref(gestor));
 	subastador = thread(&gestorSubasta, ref(socket), ref(subasta), ref(gestor), ref(fin));
 
 
@@ -423,6 +424,7 @@ int main(int argc, char** argv) {
 
 	//¿Qué pasa si algún thread acaba inesperadamente?
 	gestorP.join();
+	gestorP2.join();
 	subastador.join();
 	administrador.join();
 

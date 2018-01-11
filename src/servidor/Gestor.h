@@ -26,6 +26,7 @@ class Gestor{
     queue<Valla> q;
     bool fin;
     Semaphore s;
+    Semaphore turno;
     int contador;
 
     public:
@@ -36,8 +37,8 @@ class Gestor{
         void apagar();
         // Muestra informacion sobre el estado actual
         string estado();
-        // Bucle infinito en el que se muestran las imagenes siempre que haya disponibles 
-        // en la cola, finaliza si fin := true, rechaza nuevas vallas y espera a que se terminen de 
+        // Bucle infinito en el que se muestran las imagenes siempre que haya disponibles
+        // en la cola, finaliza si fin := true, rechaza nuevas vallas y espera a que se terminen de
         // mostrar las encoladas
         void iniciar();
 
