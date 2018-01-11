@@ -36,102 +36,67 @@ bool aux=false;
 string url;
 Semaphore ganador(0);
 
-//Proceso enviarURL
-void enviarURL(Socket& socket, int socket_fd, bool& fin){
-	while(!fin){
-		string mensaje;
-		//Espero a que me den permiso para enviar la url
-		ganador.wait();
-		if(esGanador) {
-			esGanador = false;
-			mensaje= "URL " + url;
-			// name= "NOMBRE " + name;
-			int send_bytes = socket.Send(socket_fd, mensaje);
-			//if(send_bytes == -1){
-			//	cout << "Error en el send del cliente" << endl;
-			//	exit(0);
-			//}
-		}
-	}
-}
-
-void lectura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
-	cout << "LECTURA"<<endl;
-	int read_bytes;
-	string buffer;
-
-	read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
-	if(read_bytes == -1){
-		cout << "Error en el recv del cliente" << endl;
-		exit(0);
-	}
-	if(buffer==RECHAZADO){
-		fin=true;
-	}
-	cout << buffer <<endl;
-	sem.signal();
-
-	while(!fin){
-		read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
-		if(read_bytes == -1){
-			cout << "Error en el recv del cliente" << endl;
-			exit(0);
-		}
-		else {
-
-			if(buffer == "FIN"){
-				fin = true;
-				aux = true;
-				cout << "Final recibido del servidor" << endl;
-			}
-			else if(buffer == URL){
-				esGanador = true;
-				string mensaje= "URL " + url;
-				// name= "NOMBRE " + name;
-				int send_bytes = socket.Send(socket_fd, mensaje);
-				if(send_bytes == -1){
-					cout << "Error en el send del cliente" << endl;
-					exit(0);
-				}
-				//ganador.signal();
-			}
-			else{
-				if(buffer!="ACK")cout <<"RESPUESTA: "<< buffer << endl;
-
-			}
-		}
-	}
-	// Lo despierto para que salga del bucle
-	ganador.signal();
-}
-
 
 void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
-	cout << "ESCRITURA"<<endl;
-	int send_bytes;
-	string mensaje;
-	string name;
+	// Recibimos la respuesta del servidor 
+    string aux; 
+    int read_bytes = socket.Recv(socket_fd, aux, MESSAGE_SIZE);
+    // Cerramos Socket
+    if(aux==RECHAZADO){
 
-	sem.wait();
-	while(!fin){
-		mensaje="";
+    	int error_code = socket.Close(socket_fd);
+	    if(error_code == -1){
+			cerr << "Error cerrando el socket: " << strerror(errno) << endl;
+	    }
+	    cout << "Conexión RECHAZADA"<<endl;
+    }
 
-		getline(cin, mensaje);
-		// Caso usuario no introduce nada, repetimo
-		while(mensaje=="") {
-			getline(cin, mensaje);
+    cout << "\"exit\" para finalizar operación"<<endl;
+    cout << "Para seleccionar asiento escriba: fila columna"<<endl;
+    string mensaje = "";
+
+    // Buffer para almacenar la respuesta
+	string buffer;
+	bool mensajeContinua = false;
+	do{
+
+		if(buffer == URL){
+			cout << "PUJA ganada"<<endl;
+			mensaje = url;
 		}
-		cout << "ENVIADO: "<<mensaje<<endl;
-		send_bytes = socket.Send(socket_fd, mensaje);
-		//if(send_bytes == -1){
-		//	cout << "Error en el send del cliente" << endl;
-		//	exit(0);
-		//}
-		//cout << "TRAS ENVIO: "<<mensaje<<endl;
-		if (mensaje == MENS_FIN){
-				fin = true;
+		else {
+			// Leer mensaje de la entrada estandar
+			// Caso usuario no introduce nada, repetimo
+			while(mensaje=="") {
+				getline(cin, mensaje);
+			}
 		}
-	}
+
+		// Enviamos el mensaje
+	    int send_bytes = socket.Send(socket_fd, mensaje);
+
+	    if(send_bytes == -1){
+			cerr << "Error al enviar datos: " << strerror(errno) << endl;
+			// Cerramos el socket
+			socket.Close(socket_fd);
+			exit(1);
+		}
+
+		if(mensaje != MENS_FIN){
+		    if(mensajeContinua){
+		    	int read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
+		    	// Mostramos asientos libres
+		    	cout << buffer << endl;
+		    	mensajeContinua=false;
+		    }
+		    else{
+			    // Recibimos la respuesta del servidor  
+			    int read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
+			    // Mostramos la respuesta
+			    cout << "RESPUESTA: " << buffer << endl;
+		    }
+		}
+	} while(mensaje != MENS_FIN);
 }
 
 
@@ -181,16 +146,12 @@ int main(int argc, char* argv[]) {
     	return socket_fd;
     }
 
-    thread lec;			//Proceso de lectura
     thread esc;			//Proceso de escritura
-    lec = thread(&lectura,ref(socket), socket_fd, ref(fin), ref(sem));
     esc = thread(&escritura,ref(socket) ,socket_fd, ref(fin), ref(sem));
     // Lanzo nuevo proceso encargado de enviar la URL
 	//thread enviar = thread(&enviarURL, ref(socket), socket_fd, ref(fin));
 
 	esc.join();
-	lec.join();
-	//enviar.join();
 
 	socket.Close(socket_fd);
 
