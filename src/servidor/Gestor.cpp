@@ -7,6 +7,7 @@
 //*****************************************************************
 #include "Gestor.h"
 
+
 Gestor::Gestor(){
   this->fin = false;
   this->contador=0;
@@ -28,6 +29,12 @@ void Gestor::apagar(){
   fin = true;
 };
 
+string Gestor::estado(){
+    ostringstream oss;
+    oss << "Numero de vallas mostradas: "<<contador<<endl<<"Numero de vallas pendientes por mostrar: "<<q.size()<<endl;
+    cout << oss.str();
+    return oss.str();
+}
 
 void Gestor::iniciar(){
   // Tamaños de ventana para las vallas publicitarias
@@ -63,9 +70,10 @@ void Gestor::iniciar(){
     cout << "GESTOR==>IMAGEN DESCRGADA"<<endl;
 
     // Creamos una valla publicitaria con una imagen
-    char name[] = "Valla ";
+    char name[50] = "valla";
     char indice = contador+'0';
     strcat(name, &indice);
+    strcat(name, ".jpg\0");
     ++contador;
 
     cimg_library::CImg<unsigned char> img_principal(cPATH);
@@ -76,7 +84,7 @@ void Gestor::iniciar(){
 
     // Mostrar imagen durante 5 segundos
     imagen.wait(obtenerDuracion(valla)*1000);
-
+    cout << "Cierro ventana valla..."<<endl;
     // Libero memoria
     delete [] cPATH;
     delete [] cURL;

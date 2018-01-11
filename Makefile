@@ -34,9 +34,6 @@ CLIENTE=Cliente
 CLIENTEAUTOMATICO=ClienteAuto
 
 
-#Target
-TARGET= ${SERVIDOR} ${CLIENTE} # ${CLIENTEAUTOMATICO}
-
 # #################### #
 # FLAGS DE COMPILACION #
 # #################### #
@@ -51,7 +48,7 @@ SOCKETSFLAGS=-lsocket -lnsl # Flags linkado sockets (Solaris SunOS)
 
 .PHONY:all
 
-all: ${TARGET}
+all: ${SERVIDOR} ${CLIENTE} # ${CLIENTEAUTOMATICO}
 
 
 # Compilacion de librerias servidor
@@ -111,5 +108,5 @@ ${CLIENTEAUTOMATICO}: bin/${CLIENTEAUTOMATICO}.o bin/${SOCKET}.o bin/${SEMAPHORE
 # LIMPIEZA
 clean:
 	$(RM) bin/*.o
-	$(RM) bin/${TARGET}
+	$(RM) bin/*
 	$(RM) imagenes/*.*

@@ -14,7 +14,15 @@ Administrador::Administrador(Gestor* gestor, Subasta* subasta){
 
 
 string Administrador::mostrarEstado(){
-    return subasta->obtenerMonitor()->estado();
+	int clients_id[MAX];
+	int N;
+	subasta->obtenerMonitor()->get_all_clients(clients_id, &N);
+	string clientes;
+	for(int i = 0; i< N; ++i){
+		clientes = clientes + to_string(clients_id[i]) +", ";
+	}
+    string MENSAJE= "Numero de clientes: "+ to_string(N) +"\nListado clientes: "+ clientes + "\n";
+    return subasta->obtenerMonitor()->estado() + gestor->estado()+ MENSAJE;
 };
 
 
@@ -46,9 +54,12 @@ void Administrador::iniciarAdmin(bool& fin){
 
 	cout << "Closing server...."<<endl;
 	fin=true;
+	// NO CREO SUBASTAS NUEVAS
 	subasta->finalizarSubasta();
+	// ESPERO A QUE TERMINEN CLIENTES
+	subasta->obtenerMonitor()->Finalizar();
+	// NO AÑADO MAS VALLAS
 	gestor->apagar();
 	// Ejecucion bloqueada hasta que todos los clientes salgan
 	// Echarlos????????????
-	subasta->obtenerMonitor()->Finalizar();
 };

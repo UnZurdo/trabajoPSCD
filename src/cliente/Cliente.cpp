@@ -47,10 +47,10 @@ void enviarURL(Socket& socket, int socket_fd, bool& fin){
 			mensaje= "URL " + url;
 			// name= "NOMBRE " + name;
 			int send_bytes = socket.Send(socket_fd, mensaje);
-			if(send_bytes == -1){
-				cout << "Error en el send del cliente" << endl;
-				exit(0);
-			}
+			//if(send_bytes == -1){
+			//	cout << "Error en el send del cliente" << endl;
+			//	exit(0);
+			//}
 		}
 	}
 }

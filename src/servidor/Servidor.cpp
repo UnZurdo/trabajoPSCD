@@ -71,21 +71,32 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 	char *temp;
 	char *temp2;
 	int send_bytes;
-	//bool primeraVez = true;
+	bool primeraVez = true;
 
-	// Esperar hasta enviar ACEPTAR / RECHAZA conexion
-	aceptar.wait();
+	if(fin) {
+		out = true;
+		msg = RECHAZADO;
+		aceptar.signal();
+	}
+	// Confirmo conexion
+	else if(!fin){
+		msg= ACEPTADO;
+		msg = msg + "\n" + s.obtenerMonitor()->estado();
+		aceptar.signal();
+	}
+	send_bytes = soc.Send(client_fd, msg);
 
 	while(!out){
-		//msg="";
+		primeraVez=false;
+		msg="";
 		int rcv_bytes = soc.Recv(client_fd,buffer,length);
-		if(strcmp(buffer, "ACK")!=0)cout << "BUFFER: "<<buffer<<endl;
-		if (rcv_bytes == -1) {
-			string mensError(strerror(errno));
-    		cerr << "Error al recibir datos: " + mensError + "\n";
-			// Cerramos los sockets
-			soc.Close(client_fd);
-		}
+		if(strcmp(buffer, "ACK")!=0)cout << "*BUFFER: "<<buffer<<endl;
+		//if (rcv_bytes == -1) {
+		//	string mensError(strerror(errno));
+    	//	cerr << "Error al recibir datos: " + mensError + "\n";
+		//	// Cerramos los sockets
+		//	soc.Close(client_fd);
+		//}
 		//Recibe mensaje de fin
 		if(strcmp(buffer,MENS_FIN)==0){
 			out = true;
@@ -93,8 +104,6 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 			// ERROR: Error al enviar datos: Connection reset by peer
 			//------
 			send_bytes = soc.Send(client_fd, msg);
-
-			//hayMensaje.signal();	// Despiero a enviar
 		}
 		//Recibe solicitud de estado de la subasta
 		else if(strcmp(buffer, ESTADO)==0){
@@ -127,7 +136,8 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 					if(!valida) {
 						msg="PUJA no aceptada\n" + s.obtenerMonitor()->estado();
 						cout << msg;
-						hayMensaje.signal();
+						send_bytes = soc.Send(client_fd, msg);
+						cout <<endl<<"---ENVIO: "<<msg<<endl;
 					}
 					else {
 						string info= s.obtenerMonitor()->estado();
@@ -135,13 +145,18 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 						informar_all(s, soc, info);
 						msg = msg + info;
 						cout << msg;
-						hayMensaje.signal();
+						send_bytes = soc.Send(client_fd, msg);
+						cout <<endl<<"---ENVIO: "<<msg<<endl;
 
 					}
 					// Enviar puja actual a todos los usuarios (Monitor)
 					// void informar_all(Subasta& s, Socket& soc)
 				}
 				else if(strcmp(temp,URL)==0){
+					/*
+						PROBLRMA:: *BUFFER: ACKURL
+
+					*/
 					// Actualiza info concursante
 					url_cliente = temp2;
 					// Despierto al gestorSubasta
@@ -152,6 +167,19 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		}
 
 	}
+	if(primeraVez){
+		msg="FIN";
+		const char* message = msg.c_str();
+		send_bytes = soc.Send(client_fd, message);
+		cout << "Cliente "<< client_fd <<" ha pedido salir"<<endl;
+		if(send_bytes == -1) {
+			string mensError(strerror(errno));
+			cerr << "Error al enviar datos: " + mensError + "\n";
+			// Cerramos los sockets
+			exit(1);
+		}
+	}
+	//hayMensaje.signal();	// Despiero a enviar
 
 }
 
@@ -174,29 +202,28 @@ void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool
 			primeraVez=false;
 			msg= ACEPTADO;
 			msg = msg + "\n" + s.obtenerMonitor()->estado();
-			//out = true;
 			aceptar.signal();
 		}
 
 		//if(msg!=""){
-			const char* message = msg.c_str();
+		const char* message = msg.c_str();
 
-			enviandoMensaje.wait();
-			send_bytes = soc.Send(client_fd, message);
-			enviandoMensaje.signal();
+		//enviandoMensaje.wait();
+		send_bytes = soc.Send(client_fd, message);
+		//enviandoMensaje.signal();
 
-			cout <<endl<<"---ENVIO: "<<msg<<endl;
-			if(send_bytes == -1) {
-				string mensError(strerror(errno));
-    			cerr << "Error al enviar datos: " + mensError + "\n";
-				// Cerramos los sockets
-				exit(1);
-			}
-			// Envio primer mensaje ACEPTO /RECHAZO conexion y espero al siguiente
-			msg="";
-			// Tas enviar el mensaje de confirmacion espero a que haya que enviar mas mensajes
-			hayMensaje.wait();
-			cout << "hayMensaje"<<endl;
+		cout <<endl<<"---ENVIO: "<<msg<<endl;
+		//if(send_bytes == -1) {
+		//	string mensError(strerror(errno));
+		//	cerr << "Error al enviar datos: " + mensError + "\n";
+		//	// Cerramos los sockets
+		//	exit(1);
+		//}
+		// Envio primer mensaje ACEPTO /RECHAZO conexion y espero al siguiente
+		msg="";
+		// Tas enviar el mensaje de confirmacion espero a que haya que enviar mas mensajes
+		hayMensaje.wait();
+		cout << "hayMensaje"<<endl;
 		//}
 	}
 	// Desbloqueo espera:  recv() del cliente
@@ -260,7 +287,7 @@ void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, bool& fin){
 			int d = subasta.obtenerDuracionSubasta();
 			Valla valla;
 			// creo un nombre con el que se mostrara la valla
-			string path = "valla" + to_string(subasta.nVallas());
+			string path = "valla" + to_string(subasta.nVallas()) + ".jpg";
 			cout << "Nueva Valla: "<< url_cliente << "   path"<<path<<endl;
 			crear(valla, url_cliente, path, d);
 			gestor.anyadirValla(valla);
@@ -284,10 +311,10 @@ void servCliente(Socket& soc, int client_fd, bool& fin,  Subasta& subasta) {
 
 	// Enviar puja actual a todos los usuarios (Monitor)
 	thread rec = thread(&recibir , ref(subasta), ref(soc), client_fd, ref(mensaje), ref(fin), ref(out));
-	thread env = thread(&enviar , ref(subasta), ref(soc), client_fd, ref(mensaje), ref(fin), ref(out));
+	//thread env = thread(&enviar , ref(subasta), ref(soc), client_fd, ref(mensaje), ref(fin), ref(out));
 
 	rec.join();
-	env.join();
+	//env.join();
 
 	soc.Close(client_fd);
 	subasta.obtenerMonitor()->Salir(client_fd);
@@ -296,7 +323,7 @@ void servCliente(Socket& soc, int client_fd, bool& fin,  Subasta& subasta) {
 
 
 void administrator(Socket& socket, int socket_fd, bool& fin, Administrador& admin){
-	admin.iniciarAdmin(fin);
+	admin.iniciarAdmin(ref(fin));
 	cout << "Chivato 1" << endl;
 	socket.Close(socket_fd);
 	exit(1);
@@ -388,9 +415,9 @@ int main(int argc, char** argv) {
 
 	//¿Qué pasa si algún thread acaba inesperadamente?
 	subasta.obtenerMonitor()->Finalizar();
-	administrador.join();
 	gestorP.join();
 	subastador.join();
+	administrador.join();
 
 
     // Cerramos el socket del servidor

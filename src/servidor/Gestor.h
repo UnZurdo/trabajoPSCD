@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include <cstring>
+#include <sstream>
 #include <ctime>
 #include <iomanip>
 #include <queue>
@@ -33,6 +34,8 @@ class Gestor{
         void anyadirValla(Valla valla);
         // fin := true, establecido por el admin
         void apagar();
+        // Muestra informacion sobre el estado actual
+        string estado();
         // Bucle infinito en el que se muestran las imagenes siempre que haya disponibles 
         // en la cola, finaliza si fin := true, rechaza nuevas vallas y espera a que se terminen de 
         // mostrar las encoladas

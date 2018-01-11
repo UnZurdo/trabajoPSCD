@@ -12,13 +12,13 @@ int randomP(){
 
 int randomT(){
     srand (time(NULL));
-    int random = rand() % 40 + 10;
+    int random = rand() % 20 + 10;
     return random;
 }
 
 int randomD(){
     srand (time(NULL));
-    int random = rand() % 20 + 10;
+    int random = rand() % 30 + 20;
     return random;
 }
 
@@ -150,7 +150,7 @@ bool Subasta::cerrarSubasta(int& user_id, string& estado){
 	cout << "Tiempo agotado"<<endl;
     // Si hay ganador
 	if(monitor->getId()!=-1){
-        oss <<"--SUBASTA CONCLUIDA--"<<endl << "Ganador: "<<monitor->getId()<<"Puja cerrada a "<<monitor->pujaActual() <<"$"<<endl;
+        oss <<"--SUBASTA CONCLUIDA--"<<endl << "Ganador: "<<monitor->getId()<<" Puja cerrada a "<<monitor->pujaActual() <<"$"<<endl;
         estado=oss.str();
         cout << estado;
 		beneficios+=monitor->pujaActual();
@@ -174,8 +174,8 @@ bool Subasta::cerrarSubasta(int& user_id, string& estado){
 
 string Subasta::infoHistorica(){
     ostringstream oss;
-    cout << "Numero de subastas realizadas: "<<nSubastas<<endl<<"Tiempo total ofertado: "<<tiempoTotal<<endl
+    oss << "Numero de subastas realizadas: "<<nSubastas<<endl<<"Tiempo total ofertado: "<<tiempoTotal<<endl
     <<"Tiempo medio ofertado: "<<tiempoMedio<<endl<<"Beneficios obtenidos. "<<beneficios<<"$"<<endl;
-
+    cout << oss.str();
     return oss.str();
 };
