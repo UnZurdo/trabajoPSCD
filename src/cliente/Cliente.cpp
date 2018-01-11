@@ -50,15 +50,37 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 	    }
 	    cout << "Conexión RECHAZADA"<<endl;
     }
+    string mensaje;
+    cout << "¿Desea unirse a la subasta? ( SI/NO ): "<<endl;
+    getline(cin, mensaje);
 
-    cout << "\"exit\" para finalizar operación"<<endl;
-    cout << "Para seleccionar asiento escriba: fila columna"<<endl;
-    string mensaje = "";
+    if(mensaje=="SI"){
+		cout <<"Gracias por participar"<<endl<< "Escriba \"EXIT\" para finalizar"<<endl;
+    }
+
+    else{
+    	cout << "Gracias por contactar." <<endl;
+    	mensaje = MENS_FIN;
+    	// Enviamos el mensaje
+	    int send_bytes = socket.Send(socket_fd, mensaje);
+
+	    if(send_bytes == -1){
+			cerr << "Error al enviar datos: " << strerror(errno) << endl;
+			// Cerramos el socket
+			socket.Close(socket_fd);
+			exit(1);
+		}
+
+
+		exit(1);
+    }
+
 
     // Buffer para almacenar la respuesta
 	string buffer;
 	bool mensajeContinua = false;
 	do{
+		mensaje="";
 
 		if(buffer == URL){
 			cout << "PUJA ganada"<<endl;
@@ -156,8 +178,8 @@ int main(int argc, char* argv[]) {
 	socket.Close(socket_fd);
 
 	if(aux){
-		cout << "Cerrando Cliente...en 10 segundos"<<endl;
-		sleep(10);
+		cout << "Adios."<<endl;
+		sleep(2);
 	}
 
 	exit(1);

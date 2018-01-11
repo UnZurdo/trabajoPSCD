@@ -60,7 +60,9 @@ void Monitor::siguientePuja(int& nRondas){
     while(nPujas<nClientes){
         esperar.wait(lck);
     }
+    // SIGUIENTE RONDA
     --nRondas;
+    nPujas=0;
 };
 
 int Monitor::getId(){
@@ -97,6 +99,10 @@ void Monitor::get_all_clients(int clients_fd[], int* n){
 bool Monitor::Pujar(const int dinero, int id){
     unique_lock<mutex> lck(mtx);
     ++nPujasTotales;
+    // Despierto a todos los que estaban esperando
+    ++nPujas;
+    cout << "num PUJAS: "<< nPujas<<endl;
+    esperar.notify_all();
     if(dinero < siguiente){
         return false;
     }
@@ -106,9 +112,6 @@ bool Monitor::Pujar(const int dinero, int id){
         id_ganador=id;
         return true;
     }
-    // Despierto a todos los que estaban esperando
-    ++nPujas;
-    esperar.notify_all();
 };
 
 int Monitor::clientes(){

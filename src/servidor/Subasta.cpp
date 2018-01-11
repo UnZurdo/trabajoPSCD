@@ -143,7 +143,7 @@ int Subasta::pujaInicial(){
 bool Subasta::cerrarSubasta(int& user_id, string& estado){
     ostringstream oss;
     // Si aun no ha finalizaod espero
-    if(!finTurnos()) esperar.wait();
+    while(!finTurnos()) esperar.wait();
     // Si hay ganador
 	if(monitor->getId()!=-1){
         oss <<"--SUBASTA CONCLUIDA--"<<endl << "Ganador: "<<monitor->getId()<<" Puja cerrada a "<<monitor->pujaActual() <<"$"<<endl;

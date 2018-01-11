@@ -127,6 +127,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		if(puja==0){
 			s.obtenerMonitor()->Pujar(puja, client_fd);
 		}
+		puja = 0;
 		// Espero a que todos los clientes respondan
 		s.siguienteTurno();
 
@@ -145,6 +146,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 			//Borro mensaje
 			msg="";
 		}
+		cout << "Siguiente Turno"<<endl;
 
 	}
 
@@ -191,7 +193,7 @@ void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, bool& fin){
 					soc.Close(user_id);
 				}
 				string url_cliente = buffer;
-				cout << "BUFFER: "<< buffer <<endl;
+				cout << "BUFFER URL: "<< buffer <<endl;
 				int d = subasta.obtenerDuracionSubasta();
 				Valla valla;
 				// creo un nombre con el que se mostrara la valla
@@ -263,7 +265,8 @@ int main(int argc, char** argv) {
 	Administrador admin(&gestor, &subasta);
 
 	// Protegemos frente señal
-	signal(SIGINT, handle_sigalrm);
+	
+	//signal(SIGINT, handle_sigalrm);
 
 	// Dirección y número donde escucha el proceso servidor
 	string SERVER_ADDRESS = "localhost";
