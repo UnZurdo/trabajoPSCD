@@ -41,7 +41,7 @@ string Monitor::estado(){
     unique_lock<mutex> lck(mtx);
     ostringstream oss;
     if (id_ganador == -1){
-      oss << "\nTodavia no hay ninguna puja" << endl
+      oss << "\n Todavia no hay ninguna puja" << endl
       <<"Puja iniciada a: "<<actual<<endl;
     }
     else{

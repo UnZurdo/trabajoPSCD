@@ -33,22 +33,22 @@ void Administrador::apagarServidor(){
 void Administrador::iniciarAdmin(bool& fin){
 	cout << "Para finalizar escribir \"EXIT\""<<endl;
 	string msg;
-	/*
 
-		RESTO DE CASOS
-
-
-	*/
 	while(msg!="EXIT"){
 		getline(cin, msg);
+		if(msg=="HISTORICO"){
+			cout << mostrarHistoria();
+		}
+		else if(msg=="ESTADO"){
+			cout << mostrarEstado();
+		}
 	}
+
 	cout << "Closing server...."<<endl;
 	fin=true;
-
 	subasta->finalizarSubasta();
 	gestor->apagar();
 	// Ejecucion bloqueada hasta que todos los clientes salgan
-
 	// Echarlos????????????
 	subasta->obtenerMonitor()->Finalizar();
 };

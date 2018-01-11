@@ -156,6 +156,7 @@ bool Subasta::cerrarSubasta(int& user_id, string& estado){
 		beneficios+=monitor->pujaActual();
 		++nImagenes;
 		user_id = monitor->getId();
+        beneficios+=monitor->pujaActual();
 
         //delete monitor;
 		return false;

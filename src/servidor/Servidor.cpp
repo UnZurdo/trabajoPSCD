@@ -39,9 +39,12 @@ Semaphore hayMensaje(0);
 Semaphore esperarURL(0);
 Semaphore aceptar(0);
 
+Semaphore enviandoMensaje(1);
+
 
 // Envia mensaje a todos los clientes
 void informar_all(Subasta& s, Socket& soc, string msg){
+	enviandoMensaje.wait();
 	int clients_id[MAX];
 	int N;
 	s.obtenerMonitor()->get_all_clients(clients_id, &N); /////////////////////////////////////////////////////
@@ -57,6 +60,7 @@ void informar_all(Subasta& s, Socket& soc, string msg){
 		}
 	}
 	cout << "nClientes actualmente: " << N << endl << endl;
+	enviandoMensaje.signal();
 }
 
 //-------------------------------------------------------------
@@ -66,6 +70,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 	char buffer[length];
 	char *temp;
 	char *temp2;
+	int send_bytes;
 	//bool primeraVez = true;
 
 	// Esperar hasta enviar ACEPTAR / RECHAZA conexion
@@ -84,17 +89,30 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		//Recibe mensaje de fin
 		if(strcmp(buffer,MENS_FIN)==0){
 			out = true;
-			hayMensaje.signal();	// Despiero a enviar
+			//------
+			// ERROR: Error al enviar datos: Connection reset by peer
+			//------
+			send_bytes = soc.Send(client_fd, msg);
+
+			//hayMensaje.signal();	// Despiero a enviar
 		}
 		//Recibe solicitud de estado de la subasta
 		else if(strcmp(buffer, ESTADO)==0){
 			msg = s.obtenerMonitor()->estado();
-			hayMensaje.signal();
+			cout << msg;
+
+			send_bytes = soc.Send(client_fd, msg);
+
+			//hayMensaje.signal();
 		}
 		//Recibe mensaje de ayuda
 		else if(strcmp(buffer,AYUDA)==0){
 			msg = "\nEscriba \"EXIT\" para abandonar la subasta.\nPara mostrar el estado actual de la subasta escriba ESTADO.\nSi desea pujar escriba: PUJAR <cantidad>\n\n";
-			hayMensaje.signal();
+			cout << msg;
+
+			send_bytes = soc.Send(client_fd, msg);
+
+			//hayMensaje.signal();
 		}
 		else{
 			// Parseamos al entrada ante varios delimitadores
@@ -107,12 +125,13 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 					cout << "PUJA recibida de "<< puja<<" $"<<endl;
 					bool valida=s.obtenerMonitor()->Pujar(puja, client_fd);
 					if(!valida) {
-						msg="PUJA no aceptada " + s.obtenerMonitor()->estado();
+						msg="PUJA no aceptada\n" + s.obtenerMonitor()->estado();
 						cout << msg;
+						hayMensaje.signal();
 					}
 					else {
 						string info= s.obtenerMonitor()->estado();
-						msg="PUJA aceptada ";
+						msg="PUJA aceptada\n";
 						informar_all(s, soc, info);
 						msg = msg + info;
 						cout << msg;
@@ -159,9 +178,14 @@ void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool
 			aceptar.signal();
 		}
 
-		if(msg!=""){
+		//if(msg!=""){
 			const char* message = msg.c_str();
+
+			enviandoMensaje.wait();
 			send_bytes = soc.Send(client_fd, message);
+			enviandoMensaje.signal();
+
+			cout <<endl<<"---ENVIO: "<<msg<<endl;
 			if(send_bytes == -1) {
 				string mensError(strerror(errno));
     			cerr << "Error al enviar datos: " + mensError + "\n";
@@ -172,10 +196,11 @@ void enviar(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool
 			msg="";
 			// Tas enviar el mensaje de confirmacion espero a que haya que enviar mas mensajes
 			hayMensaje.wait();
-		}
+			cout << "hayMensaje"<<endl;
+		//}
 	}
 	// Desbloqueo espera:  recv() del cliente
-	if(out && !fin && !primeraVez){
+	if(out){
 		msg="FIN";
 		const char* message = msg.c_str();
 		send_bytes = soc.Send(client_fd, message);
@@ -214,7 +239,9 @@ void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, bool& fin){
 			// Pido URL al cliente, la recibo en el proceso de recibir
 			string msg = URL;
 			const char* message = msg.c_str();
+			//enviandoMensaje.wait();
 			int send_bytes = soc.Send(user_id, message);
+			//enviandoMensaje.signal();
 			if(send_bytes == -1) {
 				string mensError(strerror(errno));
     			cerr << "Error al enviar datos: " + mensError + "\n";
@@ -222,6 +249,11 @@ void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, bool& fin){
 				exit(1);
 			}
 
+			/*
+
+			QUE PASA SI EL CLIENTE SE DESCONECTA ANTES DE ENVIAR URL
+
+			*/
 
 			// Espero ha que el cliente me envie la URL
 			esperarURL.wait();

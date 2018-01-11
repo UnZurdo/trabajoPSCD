@@ -86,7 +86,14 @@ void lectura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 			}
 			else if(buffer == URL){
 				esGanador = true;
-				ganador.signal();
+				string mensaje= "URL " + url;
+				// name= "NOMBRE " + name;
+				int send_bytes = socket.Send(socket_fd, mensaje);
+				if(send_bytes == -1){
+					cout << "Error en el send del cliente" << endl;
+					exit(0);
+				}
+				//ganador.signal();
 			}
 			else{
 				if(buffer!="ACK")cout <<"RESPUESTA: "<< buffer << endl;
@@ -183,11 +190,11 @@ int main(int argc, char* argv[]) {
     lec = thread(&lectura,ref(socket), socket_fd, ref(fin), ref(sem));
     esc = thread(&escritura,ref(socket) ,socket_fd, ref(fin), ref(sem));
     // Lanzo nuevo proceso encargado de enviar la URL
-	thread enviar = thread(&enviarURL, ref(socket), socket_fd, ref(fin));
+	//thread enviar = thread(&enviarURL, ref(socket), socket_fd, ref(fin));
 
 	esc.join();
 	lec.join();
-	enviar.join();
+	//enviar.join();
 
 	socket.Close(socket_fd);
 
