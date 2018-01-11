@@ -85,6 +85,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		aceptar.signal();
 	}
 	send_bytes = soc.Send(client_fd, msg);
+	cout <<endl<<"---ENVIO: "<<msg<<endl;
 
 	while(!out){
 		primeraVez=false;
@@ -167,18 +168,19 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		}
 
 	}
-	if(primeraVez){
-		msg="FIN";
-		const char* message = msg.c_str();
-		send_bytes = soc.Send(client_fd, message);
-		cout << "Cliente "<< client_fd <<" ha pedido salir"<<endl;
-		if(send_bytes == -1) {
-			string mensError(strerror(errno));
-			cerr << "Error al enviar datos: " + mensError + "\n";
-			// Cerramos los sockets
-			exit(1);
-		}
-	}
+	//if(primeraVez){
+	//	msg="FIN";
+	//	const char* message = msg.c_str();
+	//	send_bytes = soc.Send(client_fd, message);
+	//	cout << "Cliente "<< client_fd <<" ha pedido salir"<<endl;
+	//	if(send_bytes == -1) {
+	//		string mensError(strerror(errno));
+	//		cerr << "Error al enviar datos: " + mensError + "\n";
+	//		// Cerramos los sockets
+	//		exit(1);
+	//	}
+	//}
+
 	//hayMensaje.signal();	// Despiero a enviar
 
 }
@@ -298,6 +300,10 @@ void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, bool& fin){
 		// Reiniciar Subasta
 		subasta.nuevo();
 	}
+	string final ="----SUBASTA CERRADA----\n";
+	// Informmar ALL CERRADA
+	informar_all(subasta, soc, final);
+	cout << final;
 
 }
 
@@ -318,6 +324,7 @@ void servCliente(Socket& soc, int client_fd, bool& fin,  Subasta& subasta) {
 
 	soc.Close(client_fd);
 	subasta.obtenerMonitor()->Salir(client_fd);
+	cout << "Fin SERVIR a cliente "<<client_fd<<endl;
 
 }
 
@@ -326,6 +333,7 @@ void administrator(Socket& socket, int socket_fd, bool& fin, Administrador& admi
 	admin.iniciarAdmin(ref(fin));
 	cout << "Chivato 1" << endl;
 	socket.Close(socket_fd);
+	cout << "----Socket CLOSED----"<<endl;
 	exit(1);
 }
 
@@ -414,7 +422,6 @@ int main(int argc, char** argv) {
 	}
 
 	//¿Qué pasa si algún thread acaba inesperadamente?
-	subasta.obtenerMonitor()->Finalizar();
 	gestorP.join();
 	subastador.join();
 	administrador.join();

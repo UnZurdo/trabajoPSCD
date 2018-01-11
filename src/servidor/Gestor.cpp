@@ -27,6 +27,8 @@ void Gestor::anyadirValla(Valla valla){
  
 void Gestor::apagar(){
   fin = true;
+  // DESPIERTO AL PROCESO PARA QUE PUEDA FINALIZAR
+  s.signal();
 };
 
 string Gestor::estado(){
@@ -91,4 +93,5 @@ void Gestor::iniciar(){
 
 
  }
+ cout <<endl<< "----GESTOR CERRADO----"<<endl;
 };

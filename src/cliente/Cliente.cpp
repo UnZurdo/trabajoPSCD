@@ -101,7 +101,7 @@ void lectura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 			}
 		}
 	}
-	// Lo despierto para que salgfa del bucle
+	// Lo despierto para que salga del bucle
 	ganador.signal();
 }
 
@@ -131,10 +131,6 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 		if (mensaje == MENS_FIN){
 				fin = true;
 		}
-
-		// 1) MENSAJE == AYUDA
-
-		// 2) MENSAJE == ESTADO
 	}
 }
 
