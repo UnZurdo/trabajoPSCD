@@ -42,7 +42,7 @@ string Monitor::estado(){
     ostringstream oss;
     if (id_ganador == -1){
       oss << "\n Todavia no hay ninguna puja" << endl
-      <<"Puja iniciada a: "<<actual<<endl;
+      <<"Puja iniciada a: "<<siguiente<<endl;
     }
     else{
       oss <<"Puja maxima actual: "<<actual << " del cliente "<<id_ganador <<endl
