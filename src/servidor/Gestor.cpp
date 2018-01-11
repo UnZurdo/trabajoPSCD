@@ -55,7 +55,7 @@ void Gestor::iniciar(){
     turno.wait();
     Valla valla = q.front();
     q.pop();
-    turno.singal();
+    turno.signal();
     // transformo string a c_str()
     string URL = obtenerUrl(valla);
     // Las guardo en la carpeta imagenes

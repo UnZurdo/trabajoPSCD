@@ -367,6 +367,7 @@ int main(int argc, char** argv) {
 
 	thread administrador;		//Proceso administrador
 	thread gestorP;				//Proceso gestor
+	thread gestorP2;				//Proceso gestor
 	thread subastador;			//Proceso control de la subasta
 
     int client_fd;
