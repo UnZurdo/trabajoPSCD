@@ -38,8 +38,8 @@ Semaphore ganador(0);
 
 
 void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
-	// Recibimos la respuesta del servidor 
-    string aux; 
+	// Recibimos la respuesta del servidor
+    string aux;
     int read_bytes = socket.Recv(socket_fd, aux, MESSAGE_SIZE);
     // Cerramos Socket
     if(aux==RECHAZADO){
@@ -109,7 +109,7 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 			    	mensajeContinua=false;
 			    }
 			    else{
-				    // Recibimos la respuesta del servidor  
+				    // Recibimos la respuesta del servidor
 				    int read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
 				    // Mostramos la respuesta
 				    cout << "RESPUESTA: " << buffer << endl;
@@ -175,10 +175,7 @@ int main(int argc, char* argv[]) {
 
 	socket.Close(socket_fd);
 
-	if(aux){
-		cout << "Adios."<<endl;
-		sleep(2);
-	}
-
+    cout << "Cerrando el cliente..." << endl;
+    sleep(5);
 	exit(1);
 }
