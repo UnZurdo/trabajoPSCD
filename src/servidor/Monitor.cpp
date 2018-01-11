@@ -16,6 +16,7 @@ int randomS(){
 
 Monitor::Monitor(int min){
     this->nClientes=0;
+    this->nPujasTotales=0;
     this->nPujas=0;
     this->siguiente=min+randomS();
     this->actual=min;
@@ -29,6 +30,7 @@ Monitor::Monitor(int min){
 void Monitor::nuevo(int min){
     this->siguiente=min+randomS();
     this->actual=min;
+    this->nPujas=0;
     this->id_ganador=-1;
 }
 
@@ -47,21 +49,35 @@ string Monitor::estado(){
     else{
       oss <<"Puja maxima actual: "<<actual << " del cliente "<<id_ganador <<endl
       <<"Puja siguiente: "<<siguiente<<endl<<"Numero de clientes participando: "
-      <<nClientes<<endl<< "Numero de pujas: "<<nPujas<<endl<<endl;
+      <<nClientes<<endl<< "Numero de pujas: "<<nPujasTotales<<endl<<endl;
     }
     return oss.str();
 };
 
 
-int Monitor::siguientePuja(){
+void Monitor::siguientePuja(int& nRondas){
     unique_lock<mutex> lck(mtx);
-    return  siguiente;
+    while(nPujas<nClientes){
+        esperar.wait(lck);
+    }
+    --nRondas;
 };
 
 int Monitor::getId(){
     unique_lock<mutex> lck(mtx);
     return id_ganador;
 };
+
+bool Monitor::esta(int client_fd){
+    unique_lock<mutex> lck(mtx);
+    bool esta=false;
+    int i = 0;
+    while(!esta && i < nClientes){
+        if(clientList[i]==client_fd) esta = true;
+        ++i;
+    }
+    return esta;
+}
 
 // PROBLEMA CON REFERENCIA
 void Monitor::get_all_clients(int clients_fd[], int* n){
@@ -80,7 +96,7 @@ void Monitor::get_all_clients(int clients_fd[], int* n){
 // Falso si puja es menor que la actual
 bool Monitor::Pujar(const int dinero, int id){
     unique_lock<mutex> lck(mtx);
-    ++nPujas;
+    ++nPujasTotales;
     if(dinero < siguiente){
         return false;
     }
@@ -90,6 +106,9 @@ bool Monitor::Pujar(const int dinero, int id){
         id_ganador=id;
         return true;
     }
+    // Despierto a todos los que estaban esperando
+    ++nPujas;
+    esperar.notify_all();
 };
 
 int Monitor::clientes(){

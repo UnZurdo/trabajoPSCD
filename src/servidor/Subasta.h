@@ -21,6 +21,7 @@ using namespace std;
 class Subasta{
 
     Monitor* monitor;
+    int nTurnos;
     int tInicial;
     int tiempoRestante;
     int duracion;
@@ -43,7 +44,7 @@ class Subasta{
         // Crea una nueva Subasta con valores generados aleatoriamente
         Subasta();
         // Crea una nueva Subasta con valores establecidos
-        Subasta(int tInicial, int duracion, int precioInicial, int precioMinimo);
+        Subasta(int nTurnos, int duracion, int precioInicial, int precioMinimo);
 
         // Sobrescribo datos de la subasta actual con los de una nueva
         void nuevo();
@@ -55,8 +56,8 @@ class Subasta{
         int obtenerDuracion();
         // Devuelve el numero de vallas ofertadas hasta el momento
         int nVallas();
-        // Devuelve true si el tiempo de la subasta se ha agotado
-        bool finTiempo();
+        // Devuelve true si turnos agotados
+        bool finTurnos();
         // Fecha final en la que se cerrara la subasta
         int cierreSubasta();
         // Precio al que se abre la subasta
@@ -67,6 +68,8 @@ class Subasta{
         void iniciar(string& estado);
         // Devuelve la duracion de la ronda actual en segundos
         int obtenerDuracionSubasta();
+        // Espera a que todos los clientes respondan y comprueba si fin
+        void siguienteTurno();
         // Actualiza datos, guarda datos ganador, los encola en el GESTOR de VALLAS
         // y genera una nueva suabsta
         // Parcial: si no hay ganador

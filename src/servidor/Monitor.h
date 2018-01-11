@@ -28,11 +28,13 @@ class Monitor{
     
     int nClientes;
     int nPujas;
+    int nPujasTotales;
     // Mayor puja actual
     int actual; 
     int siguiente;
     int id_ganador;
     mutex mtx;
+    condition_variable esperar;
     condition_variable ocupado;
     int clientList[MAX];
 
@@ -41,7 +43,10 @@ class Monitor{
         //Devuelve el mismo pero con valores actualizados
         void nuevo(int min);
         int pujaActual();
-        int siguientePuja();
+        // Esperar a que todos terminen de pujar para comenzar nueva ronda de pujas
+        // Si envia otro mensaje puja = 0
+        // Al terminar ++Rondas
+        void siguientePuja(int& nRondas);
         int clientes();
         int getId();
         string estado();
@@ -52,6 +57,8 @@ class Monitor{
         // --nClientes y borro su id
         void Salir(int id);
         void iniciar();
+        // Devuelve true si el cliente sigue conectado
+        bool esta(int client_fd);
         // Devuelve una lista con los id de todos los clientes actuales
         void get_all_clients(int clients_fd[], int* n);
         // Falso si puja es menor que la actual

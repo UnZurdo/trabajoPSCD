@@ -12,7 +12,7 @@ int randomP(){
 
 int randomT(){
     srand (time(NULL));
-    int random = rand() % 20 + 10;
+    int random = rand() % 6 + 2;
     return random;
 }
 
@@ -25,7 +25,7 @@ int randomD(){
 // Crea una nueva Subasta con valores generados aleatoriamente
 Subasta::Subasta(){
     this->fin=false;
-    this->tInicial=randomT();
+    this->nTurnos=randomT();
     this->duracion=randomD();
     this->precioInicial=randomP();
     this->precioMinimo=randomP()+(randomP()/5);
@@ -39,9 +39,9 @@ Subasta::Subasta(){
 };
 
 // Crea una nueva Subasta con valores establecidos
-Subasta::Subasta(int tInicial, int duracion, int precioInicial, int precioMinimo){
+Subasta::Subasta(int nTurnos, int duracion, int precioInicial, int precioMinimo){
     this->fin=false;
-    this->tInicial=tInicial;
+    this->nTurnos=nTurnos;
     this->duracion=duracion;
     this->precioInicial=precioInicial;
     this->precioMinimo=precioMinimo;
@@ -57,7 +57,7 @@ Subasta::Subasta(int tInicial, int duracion, int precioInicial, int precioMinimo
 // Sobrescribo datos de la subasta actual con los de una nueva
 void Subasta::nuevo(){
     this->fin=false;
-    this->tInicial=randomT();
+    this->nTurnos=randomT();
     this->duracion=randomD();
     this->precioInicial=randomP();
     this->precioMinimo=randomP()+(randomP()/5);
@@ -94,19 +94,16 @@ int Subasta::cierreSubasta(){
 	return duracion;
 };
 
-// Static function
-void Subasta::handle_timer(int signo){
-    signal(SIGALRM, handle_timer);
+void Subasta::siguienteTurno(){
+    monitor->siguientePuja(ref(nTurnos));
+    // Despierto cerrarsSubasta en caso finTurnos
     esperar.signal();
 };
+
 
 void Subasta::iniciar(string& estado){
     ostringstream oss;
     if(!fin){
-        signal(SIGALRM, handle_timer);
-    	tiempoRestante=time(NULL)+tInicial;
-        // Set alarm
-        alarm(tInicial);
 
     	oss <<"\n--SUBASTA ABIERTA--" <<endl <<"Valla Publicitaria de "<<duracion<<" segundos"<<endl
     	<< "Duracion de la puja: "<<tInicial<< " segundos"<<endl
@@ -123,11 +120,11 @@ void Subasta::iniciar(string& estado){
 };
 
 int Subasta::obtenerDuracionSubasta(){
-    return tInicial;
+    return nTurnos;
 }
 
-bool Subasta::finTiempo(){
- return time(NULL) >= tiempoRestante;
+bool Subasta::finTurnos(){
+ return nTurnos==0;
 };
 
 void Subasta::finalizarSubasta(){
@@ -146,8 +143,7 @@ int Subasta::pujaInicial(){
 bool Subasta::cerrarSubasta(int& user_id, string& estado){
     ostringstream oss;
     // Si aun no ha finalizaod espero
-    if(!finTiempo()) esperar.wait();
-	cout << "Tiempo agotado"<<endl;
+    if(!finTurnos()) esperar.wait();
     // Si hay ganador
 	if(monitor->getId()!=-1){
         oss <<"--SUBASTA CONCLUIDA--"<<endl << "Ganador: "<<monitor->getId()<<" Puja cerrada a "<<monitor->pujaActual() <<"$"<<endl;
