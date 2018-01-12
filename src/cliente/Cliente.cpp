@@ -122,13 +122,12 @@ void handle_sigalrm(int signo){
 }
 
 int main(int argc, char* argv[]) {
-	if (argc != 5){
+	if (argc != 4){
 		cout << "ERROR, inserte los parametros correctamente" << endl;
 		exit(1);
 	}
 
-	string name = argv[3];
-	url = argv[4];
+	url = argv[3];
 
 	const int MAX_ATTEMPS = 3;
 	// Dirección y número donde escucha el proceso servidor
