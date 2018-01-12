@@ -28,7 +28,8 @@ void Gestor::anyadirValla(Valla valla){
 
 void Gestor::apagar(){
   fin = true;
-  // DESPIERTO AL PROCESO PARA QUE PUEDA FINALIZAR
+  // DESPIERTO A LOS 2 PROCESOS PARA QUE PUEDAN FINALIZAR
+  s.signal();
   s.signal();
 };
 

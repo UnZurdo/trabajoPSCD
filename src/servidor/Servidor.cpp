@@ -84,9 +84,8 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 	if(strcmp(buffer,MENS_FIN)==0){
 		out = true;
 	}
-
 	while(!out){
-		primeraVez=false;
+
 		msg="";
 		int rcv_bytes = soc.Recv(client_fd,buffer,length);
 		cout << "*BUFFER: "<<buffer<<endl;
@@ -150,13 +149,13 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 
 			// Si SUBASTA NUEVA
 			if(s.obtenerMonitor()->Pasar()) {
+				s.obtenerMonitor()->bloquearSubasta();
 				msg=msg+"****** SUBASTA NUEVA ******\nGanador: " + to_string(s.obtenerMonitor()->getId()) +"\n";
-				enviandoMensaje.wait();
 			}
-			else{
+			//else{
 				// Añado informacion correspondiente a la siguiente puja
 				msg= msg+ "\n" +s.obtenerMonitor()->estado();
-			}
+			//}
 
 			send_bytes = soc.Send(client_fd, msg);
 			cout <<endl<<"---ENVIO: "<<msg<<endl;
@@ -195,6 +194,7 @@ void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, bool& fin){
 
 		// Informar ganador si lo hay y obtener datos url
 		if(hayGanador){
+			cout << "---> Hay ganador"<<endl;
 			// Comprueba que aun sigue conectado
 			if(subasta.obtenerMonitor()->esta(user_id)){
 				// Pido URL al cliente, la recibo en el proceso de recibir
@@ -226,7 +226,8 @@ void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, bool& fin){
 				gestor.anyadirValla(valla);
 				cout << "valla anadida"<<endl<<endl;
 			}
-			enviandoMensaje.signal();
+
+			subasta.obtenerMonitor()->desbloquearSubasta();
 		}
 
 		// Reiniciar Subasta

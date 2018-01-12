@@ -80,7 +80,19 @@ void Monitor::siguientePuja(){
             cout << "--> FIN SUBASTA ACTUAL"<<endl;
         }
         else nPASAR=0;
+        esperando_ultimo.notify_all();
     }
+    else esperando_ultimo.wait(lck);
+};
+
+void Monitor::bloquearSubasta(){
+    unique_lock<mutex> lck(mtx);
+    bloqueado.wait(lck);
+
+};
+
+void Monitor::desbloquearSubasta(){
+    bloqueado.notify_all();
 };
 
 int Monitor::getId(){

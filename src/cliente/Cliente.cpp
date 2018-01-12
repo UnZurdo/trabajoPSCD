@@ -54,7 +54,7 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
     cout << "¿Desea unirse a la subasta? ( SI/NO ): "<<endl;
     getline(cin, mensaje);
 
-    if(mensaje=="SI"){
+    if(mensaje=="SI" || mensaje=="si"){
 		cout <<"Gracias por participar"<<endl<< "Escriba \"EXIT\" para finalizar"<<endl;
     }
 
@@ -103,18 +103,10 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 			}
 
 			if(mensaje != MENS_FIN){
-			    if(mensajeContinua){
-			    	int read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
-			    	// Mostramos asientos libres
-			    	cout << buffer << endl;
-			    	mensajeContinua=false;
-			    }
-			    else{
-				    // Recibimos la respuesta del servidor
-				    int read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
-				    // Mostramos la respuesta
-				    cout << "RESPUESTA: " << buffer << endl;
-			    }
+			    // Recibimos la respuesta del servidor
+			    int read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
+			    // Mostramos la respuesta
+			    cout << "RESPUESTA: " << buffer << endl;
 			}
 		} while(mensaje != MENS_FIN);
 	}

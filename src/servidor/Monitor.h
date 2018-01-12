@@ -40,6 +40,9 @@ class Monitor{
     mutex mtx;
     condition_variable esperar;
     condition_variable ocupado;
+
+    condition_variable bloqueado;
+    condition_variable esperando_ultimo;
     int clientList[MAX];
 
     public:
@@ -69,6 +72,10 @@ class Monitor{
         void get_all_clients(int clients_fd[], int* n);
         // Falso si puja es menor que la actual
         bool Pujar(const int dinero, int id);
+
+
+        void bloquearSubasta();
+        void desbloquearSubasta();
 
 };
 
