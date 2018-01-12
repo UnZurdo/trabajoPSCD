@@ -44,7 +44,7 @@ class Subasta{
         // Crea una nueva Subasta con valores generados aleatoriamente
         Subasta();
         // Crea una nueva Subasta con valores establecidos
-        Subasta(int nTurnos, int duracion, int precioInicial, int precioMinimo);
+        Subasta(int duracion, int precioInicial, int precioMinimo);
 
         // Sobrescribo datos de la subasta actual con los de una nueva
         void nuevo();
@@ -62,8 +62,6 @@ class Subasta{
         int siguientePuja();
         // Si !fin ==> Inicializa temporizador y muestra estado
         void iniciar(string& estado);
-        // Devuelve la duracion de la ronda actual en segundos
-        int obtenerDuracionSubasta();
         // Espera a que todos los clientes respondan y comprueba si fin
         void siguienteTurno();
         // Actualiza datos, guarda datos ganador, los encola en el GESTOR de VALLAS

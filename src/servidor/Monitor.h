@@ -26,16 +26,17 @@ using namespace std;
 class Monitor{
 
     //Lista de clientes
-    
+
     int nClientes;
     int nPASAR;
     bool finSubastaActual;
     int nPujas;
     int nPujasTotales;
     // Mayor puja actual
-    int actual; 
+    int actual;
     int siguiente;
     int id_ganador;
+    int minSecreto;
     mutex mtx;
     condition_variable esperar;
     condition_variable ocupado;

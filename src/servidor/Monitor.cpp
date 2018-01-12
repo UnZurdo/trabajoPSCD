@@ -22,8 +22,9 @@ Monitor::Monitor(int min){
     this->nPujas=0;
     this->nPASAR=0;
     this->finSubastaActual=false;
-    this->siguiente=min+randomS();
+    this->siguiente=min;
     this->actual=min;
+    this->minSecreto = min +randomS();
     this->id_ganador=-1;
     // Inicializo vector a 0
     for(int i = 0; i<MAX; ++i){
@@ -32,8 +33,9 @@ Monitor::Monitor(int min){
 };
 
 void Monitor::nuevo(int min){
-    this->siguiente=min+randomS();
+    this->siguiente=min;
     this->actual=min;
+    this->minSecreto = min +randomS();
     this->nPujas=0;
     this->nPASAR=0;
     this->finSubastaActual=false;
@@ -50,7 +52,7 @@ string Monitor::estado(){
     ostringstream oss;
     if (id_ganador == -1){
       oss << "\n Todavia no hay ninguna puja" << endl
-      <<"Puja iniciada a: "<<siguiente<<endl;
+      <<"Puja iniciada a: "<<actual<<endl;
     }
     else{
       oss <<"Puja maxima actual: "<<actual << " del cliente "<<id_ganador <<endl
@@ -61,16 +63,23 @@ string Monitor::estado(){
 };
 
 
+
 void Monitor::siguientePuja(){
     unique_lock<mutex> lck(mtx);
     while(nPujas<nClientes){
         esperar.wait(lck);
     }
     ++N;
+    // EL ULTIMO EN DESPERTARSE
     if(N==nClientes){
         // SIGUIENTE RONDA
         nPujas=0;
-        nPASAR=0;
+        N=0;
+        if(nPASAR==nClientes){
+            finSubastaActual=true;
+            cout << "--> FIN SUBASTA ACTUAL"<<endl;
+        }
+        else nPASAR=0;
     }
 };
 
@@ -83,7 +92,7 @@ bool Monitor::esta(int client_fd){
     unique_lock<mutex> lck(mtx);
     bool esta=false;
     int i = 0;
-    while(!esta && i < nClientes){
+    while(!esta && i < MAX){
         if(clientList[i]==client_fd) esta = true;
         ++i;
     }
@@ -126,7 +135,9 @@ bool Monitor::Pujar(const int dinero, int id){
     else{
         actual=dinero;
         siguiente=dinero+randomS();
-        id_ganador=id;
+        if(actual > minSecreto){
+            id_ganador=id;
+        }
         return true;
     }
 };

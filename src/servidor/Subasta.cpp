@@ -25,7 +25,6 @@ int randomD(){
 // Crea una nueva Subasta con valores generados aleatoriamente
 Subasta::Subasta(){
     this->fin=false;
-    this->nTurnos=randomT();
     this->duracion=randomD();
     this->precioInicial=randomP();
     this->precioMinimo=randomP()+(randomP()/5);
@@ -39,9 +38,8 @@ Subasta::Subasta(){
 };
 
 // Crea una nueva Subasta con valores establecidos
-Subasta::Subasta(int nTurnos, int duracion, int precioInicial, int precioMinimo){
+Subasta::Subasta(int duracion, int precioInicial, int precioMinimo){
     this->fin=false;
-    this->nTurnos=nTurnos;
     this->duracion=duracion;
     this->precioInicial=precioInicial;
     this->precioMinimo=precioMinimo;
@@ -57,7 +55,6 @@ Subasta::Subasta(int nTurnos, int duracion, int precioInicial, int precioMinimo)
 // Sobrescribo datos de la subasta actual con los de una nueva
 void Subasta::nuevo(){
     this->fin=false;
-    this->nTurnos=randomT();
     this->duracion=randomD();
     this->precioInicial=randomP();
     this->precioMinimo=randomP()+(randomP()/5);
@@ -113,11 +110,6 @@ void Subasta::iniciar(string& estado){
     }
 
 };
-
-int Subasta::obtenerDuracionSubasta(){
-    return nTurnos;
-}
-
 
 void Subasta::finalizarSubasta(){
   fin=true;

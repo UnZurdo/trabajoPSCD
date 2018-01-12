@@ -21,7 +21,10 @@ string Administrador::mostrarEstado(){
 	for(int i = 0; i< N; ++i){
 		clientes = clientes + to_string(clients_id[i]) +", ";
 	}
-    string MENSAJE= "Numero de clientes: "+ to_string(N) +"\nListado clientes: "+ clientes + "\n";
+    string MENSAJE= "Numero de clientes: "+ to_string(N);
+    if((subasta->obtenerMonitor()->clientes()) > 0) {
+         MENSAJE=MENSAJE+"\nListado clientes: "+ clientes + "\n";
+	}
     return subasta->obtenerMonitor()->estado() + gestor->estado()+ MENSAJE;
 };
 

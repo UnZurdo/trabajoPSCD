@@ -38,7 +38,7 @@ Semaphore hayMensaje(0);
 Semaphore esperarURL(0);
 Semaphore aceptar(0);
 
-Semaphore enviandoMensaje(1);
+Semaphore enviandoMensaje(0);
 
 
 //-------------------------------------------------------------
@@ -108,6 +108,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		else if(strcmp(buffer, PASO)==0){
 			msg = "--TURNO PASADO--\n";
 			cout << msg;
+			puja=-1;
 		}
 		//Recibe mensaje de ayuda
 		else if(strcmp(buffer,AYUDA)==0){
@@ -132,23 +133,30 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 						msg="--PUJA aceptada--\n";
 						cout << msg;
 					}
-					puja = -1;
+					puja = -2;
 				}
 			}
 
 		}
 		// Si no ha pujado envio puja vacia
-		if(puja==0){
+		if(puja==0 || puja==-1){
 			s.obtenerMonitor()->Pujar(puja, client_fd);
 		}
 		puja = 0;
 		// Espero a que todos los clientes respondan
 		s.siguienteTurno();
-		cout << "aqui"<<endl;
 
 		if(msg!=""){
-			// Añado informacion correspondiente a la siguiente puja
-			msg= msg+ "\n" +s.obtenerMonitor()->estado();
+
+			// Si SUBASTA NUEVA
+			if(s.obtenerMonitor()->Pasar()) {
+				msg=msg+"****** SUBASTA NUEVA ******\nGanador: " + to_string(s.obtenerMonitor()->getId()) +"\n";
+				enviandoMensaje.wait();
+			}
+			else{
+				// Añado informacion correspondiente a la siguiente puja
+				msg= msg+ "\n" +s.obtenerMonitor()->estado();
+			}
 
 			send_bytes = soc.Send(client_fd, msg);
 			cout <<endl<<"---ENVIO: "<<msg<<endl;
@@ -209,7 +217,7 @@ void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, bool& fin){
 				}
 				string url_cliente = buffer;
 				cout << "BUFFER URL: "<< buffer <<endl;
-				int d = subasta.obtenerDuracionSubasta();
+				int d = subasta.obtenerDuracion();
 				Valla valla;
 				// creo un nombre con el que se mostrara la valla
 				string path = "valla" + to_string(subasta.nVallas()) + ".jpg";
@@ -218,6 +226,7 @@ void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, bool& fin){
 				gestor.anyadirValla(valla);
 				cout << "valla anadida"<<endl<<endl;
 			}
+			enviandoMensaje.signal();
 		}
 
 		// Reiniciar Subasta
