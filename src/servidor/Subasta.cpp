@@ -129,7 +129,7 @@ bool Subasta::cerrarSubasta(int& user_id, string& estado){
     // Si aun no ha finalizado (todos han escrito PASAR) espero
     while(!monitor->Pasar()) esperar.wait();
     // Si hay ganador
-	if(monitor->getId()!=-1 && monitor->pujaActual() >= precioMinimo){
+	if(monitor->getId()!=-1){
         oss <<"--SUBASTA CONCLUIDA--"<<endl << "Ganador: "<<monitor->getId()<<" Puja cerrada a "<<monitor->pujaActual() <<"$"<<endl;
         estado=oss.str();
         cout << estado;

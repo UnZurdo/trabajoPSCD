@@ -93,6 +93,7 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 
 			// Enviamos el mensaje
 		    int send_bytes = socket.Send(socket_fd, mensaje);
+		    cout << "ENVIADO: "<<mensaje<<endl;
 
 		    if(send_bytes == -1){
 				cerr << "Error al enviar datos: " << strerror(errno) << endl;
