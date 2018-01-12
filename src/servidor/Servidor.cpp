@@ -87,6 +87,9 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 	while(!out){
 
 		msg="";
+		// Si Administador cierra Subasta
+		if(fin) msg=MENS_FIN;
+
 		int rcv_bytes = soc.Recv(client_fd,buffer,length);
 		cout << "*BUFFER: "<<buffer<<endl;
 		if (rcv_bytes == -1) {
@@ -169,22 +172,19 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 			msg="";
 		}
 		cout << "->Siguiente Turno"<<endl;
-
 	}
-
 }
 
-/*
 
-	IMPLEMENTAR ESTADOS??
-
-*/
 void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, bool& fin){
 	string estado;
 	int length = 1000;
 	char buffer[length];
 
 	while(!fin){
+		// Reiniciar Subasta
+		subasta.nuevo();
+
 		// Inicializo nueva subasta
 		subasta.iniciar(estado);
 
@@ -226,16 +226,11 @@ void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, bool& fin){
 				gestor.anyadirValla(valla);
 				cout << "valla anadida"<<endl<<endl;
 			}
-
-			subasta.obtenerMonitor()->desbloquearSubasta();
 		}
-
-		// Reiniciar Subasta
-		subasta.nuevo();
+		// SUBASTA BLOQUEADA MIENTRAS SE TRAMITA LA INFORMACION
+		subasta.obtenerMonitor()->desbloquearSubasta();
 	}
-	string final ="----SUBASTA CERRADA----\n";
-	cout << final;
-
+	cout << estado;
 }
 
 //-------------------------------------------------------------
@@ -245,13 +240,8 @@ void servCliente(Socket& soc, int client_fd, bool& fin,  Subasta& subasta) {
 	string mensaje="";
 	bool out = false;
 
-
-	// Enviar puja actual a todos los usuarios (Monitor)
 	thread rec = thread(&recibir , ref(subasta), ref(soc), client_fd, ref(mensaje), ref(fin), ref(out));
-	//thread env = thread(&enviar , ref(subasta), ref(soc), client_fd, ref(mensaje), ref(fin), ref(out));
-
 	rec.join();
-	//env.join();
 
 	soc.Close(client_fd);
 	subasta.obtenerMonitor()->Salir(client_fd);
@@ -299,7 +289,7 @@ int main(int argc, char** argv) {
 
 	thread administrador;		//Proceso administrador
 	thread gestorP;				//Proceso gestor
-	thread gestorP2;				//Proceso gestor
+	thread gestorP2;			//Proceso gestor2
 	thread subastador;			//Proceso control de la subasta
 
     int client_fd;
@@ -332,7 +322,6 @@ int main(int argc, char** argv) {
 	gestorP2 = thread(&Gestor::iniciar, ref(gestor));
 	subastador = thread(&gestorSubasta, ref(socket), ref(subasta), ref(gestor), ref(fin));
 
-
 	int i=0;
 	while(i<max_connections){
 		// Accept
@@ -360,6 +349,7 @@ int main(int argc, char** argv) {
 	gestorP2.join();
 	subastador.join();
 	administrador.join();
+		cout << "AQUIIIIIIIIIIIIIIIIIIIIIII"<<endl;
 
 
     // Cerramos el socket del servidor

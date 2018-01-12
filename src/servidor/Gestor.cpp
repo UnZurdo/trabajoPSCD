@@ -48,10 +48,11 @@ void Gestor::iniciar(){
   // Creamos el objeto para descargar imágenes
   ImageDownloader downloader;
  // No acabar hasta que fin y se hallan mostrado todas las vallas
+
+  //mostrar imagen de la valla en cola
+  // Si no se puede mostrar nada == > ESPERAR
+  s.wait();
  while(!fin || !q.empty()){
-    //mostrar imagen de la valla en cola
-    // Si no se puede mostrar nada == > ESPERAR
-    s.wait();
     //Entra en SC
     turno.wait();
     Valla valla = q.front();
@@ -95,6 +96,8 @@ void Gestor::iniciar(){
     delete [] cPATH;
     delete [] cURL;
 
+    // ESPERO HA QUE HAYA VALLAS PENDIENTES   
+    s.wait();
 
  }
  cout <<endl<< "----GESTOR CERRADO----"<<endl;

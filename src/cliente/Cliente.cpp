@@ -83,6 +83,10 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 				cout << "PUJA ganada"<<endl;
 				mensaje = url;
 			}
+			if(buffer == MENS_FIN){
+				cout << "--SUBASTA CERRADA PERMANENTEMENTE--" <<endl <<endl<<"Gracias por participar."<<endl;
+				mensaje = MENS_FIN;
+			}
 			else {
 				// Leer mensaje de la entrada estandar
 				// Caso usuario no introduce nada, repetimo
