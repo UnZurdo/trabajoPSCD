@@ -1,6 +1,6 @@
 #*****************************************************************
 # File:   Makefile
-# Date:   enero 2017
+# Date:   enero 2018
 # Coms:   Ejecutar como "make"
 #         Para compilar en Hendrix (Solaris OS), descomentar
 #         "#${SOCKETSFLAGS}"
