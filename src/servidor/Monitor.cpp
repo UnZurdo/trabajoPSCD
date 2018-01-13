@@ -148,8 +148,9 @@ bool Monitor::Pujar(const int dinero, int id){
         siguiente=dinero+randomS();
         if(actual > minSecreto){
             id_ganador=id;
+            return true;
         }
-        return true;
+        else return false;
     }
 };
 

@@ -27,7 +27,6 @@ const char ESTADO[]="ESTADO";
 const char AYUDA[]="AYUDA";
 const char OCUPADO[]="OCUPADO";
 // Informar de que se va a enviar datos a continuacion
-const char NOMBRE[]="NOMBRE";
 const char URL[]="URL";
 const char PUJAR[]="PUJAR";
 
@@ -171,8 +170,6 @@ int main(int argc, char* argv[]) {
 
     thread esc;			//Proceso de escritura
     esc = thread(&escritura,ref(socket) ,socket_fd, ref(fin), ref(sem));
-    // Lanzo nuevo proceso encargado de enviar la URL
-	//thread enviar = thread(&enviarURL, ref(socket), socket_fd, ref(fin));
 
 	esc.join();
 

@@ -29,7 +29,6 @@ const char AYUDA[]="AYUDA";
 const char PASO[]="PASO";
 const char OCUPADO[]="OCUPADO";
 // Informar de que se va a enviar datos a continuacion (se debe parsear el mensaje)
-const char NOMBRE[]="NOMBRE";
 const char URL[]="URL";
 const char PUJAR[]="PUJAR";
 
@@ -141,7 +140,6 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 					puja = -2;
 				}
 			}
-
 		}
 		// Si no ha pujado envio puja vacia
 		if(puja==0 || puja==-1){

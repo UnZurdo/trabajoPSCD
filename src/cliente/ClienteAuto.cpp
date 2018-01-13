@@ -2,9 +2,9 @@
 
 CLIENTE AUTOMATICO (modificar Cliente)
 
-./ClienteAuto  <ip>  <port>  <nombre>(opcional)  <url>
+./ClienteAuto  <ip>  <port>  <url>
 
-**Enviar NOMBRE del participante (opcional) y URL al comienzo
+**Enviar URL al comienzo
 
 1) Generar de forma aleatoria ordenes para enviar entre las distintas opciones:  PUJAR, ESTADO, AYUDA, EXIT
 ** Ir intercalando pausas **
