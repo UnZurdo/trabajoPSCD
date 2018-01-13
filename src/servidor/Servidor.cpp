@@ -90,7 +90,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 
 	while(!out){
 
-		msg="";
+		msg="MENSAJE INVALIDO, vuelva a intentarlo\n";
 
 		int rcv_bytes = soc.Recv(client_fd,buffer,length);
 		cout << "*BUFFER: "<<buffer<<endl;
@@ -102,6 +102,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		}
 		//Recibe mensaje de fin
 		if(strcmp(buffer,MENS_FIN)==0){
+			msg="";
 			out = true;
 		}
 		//Recibe solicitud de estado de la subasta
