@@ -108,5 +108,7 @@ ${CLIENTEAUTOMATICO}: bin/${CLIENTEAUTOMATICO}.o bin/${SOCKET}.o bin/${SEMAPHORE
 # LIMPIEZA
 clean:
 	$(RM) bin/*.o
-	$(RM) bin/*
+	$(RM) bin/${CLIENTE}
+	$(RM) bin/${SERVIDOR}
+	# $(RM) bin/${CLIENTE}
 	$(RM) imagenes/*.*
