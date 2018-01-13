@@ -40,10 +40,10 @@ Semaphore ganador(0);
 void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 	// Recibimos la respuesta del servidor
     string aux;
+    bool mensajeContinua=false;
     int read_bytes = socket.Recv(socket_fd, aux, MESSAGE_SIZE);
     // Cerramos Socket
     if(aux==RECHAZADO){
-
     	int error_code = socket.Close(socket_fd);
 	    if(error_code == -1){
 			cerr << "Error cerrando el socket: " << strerror(errno) << endl;
@@ -55,16 +55,14 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
     getline(cin, mensaje);
 
     if(mensaje=="SI" || mensaje=="si"){
-		cout <<"Gracias por participar"<<endl<< "Escriba \"EXIT\" para finalizar"<<endl;
+		cout <<"Gracias por participar"<<endl<< "Escriba \"EXIT\" para finalizar"<<endl << aux;
     }
-
     else{
     	cout << "Gracias por contactar." <<endl;
     	mensaje = MENS_FIN;
     }
     // Enviamos el mensaje
     int send_bytes = socket.Send(socket_fd, mensaje);
-
     if(send_bytes == -1){
 		cerr << "Error al enviar datos: " << strerror(errno) << endl;
 		// Cerramos el socket
@@ -83,9 +81,9 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 				cout << "PUJA ganada"<<endl;
 				mensaje = url;
 			}
+			// Si recibo fin del Servisdor
 			if(buffer == MENS_FIN){
-				cout << "--SUBASTA CERRADA PERMANENTEMENTE--" <<endl <<endl<<"Gracias por participar."<<endl;
-				mensaje = MENS_FIN;
+				mensajeContinua=true;
 			}
 			else {
 				// Leer mensaje de la entrada estandar
@@ -95,21 +93,29 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 				}
 			}
 
-			// Enviamos el mensaje
-		    int send_bytes = socket.Send(socket_fd, mensaje);
-		    cout << "ENVIADO: "<<mensaje<<endl;
+			if(!mensajeContinua){
+				// Enviamos el mensaje
+			    int send_bytes = socket.Send(socket_fd, mensaje);
+			    cout << "ENVIADO: "<<mensaje<<endl;
 
-		    if(send_bytes == -1){
-				cerr << "Error al enviar datos: " << strerror(errno) << endl;
-				// Cerramos el socket
-				socket.Close(socket_fd);
-				exit(1);
+			    if(send_bytes == -1){
+					cerr << "Error al enviar datos: " << strerror(errno) << endl;
+					// Cerramos el socket
+					socket.Close(socket_fd);
+					exit(1);
+				}
 			}
 
 			if(mensaje != MENS_FIN){
 			    // Recibimos la respuesta del servidor
 			    int read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
 			    // Mostramos la respuesta
+
+			    // Recibo el segundo mensaje
+			    if(mensajeContinua){
+			    	// Salgo dle bucle
+			    	mensaje=MENS_FIN;
+			    }
 			    cout << "RESPUESTA: " << buffer << endl;
 			}
 		} while(mensaje != MENS_FIN);

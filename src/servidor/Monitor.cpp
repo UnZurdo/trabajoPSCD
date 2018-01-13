@@ -121,7 +121,6 @@ void Monitor::get_all_clients(int clients_fd[], int* n){
             ++j;
         }
     }
-    //cout << "J: "<<j<<endl;
     *n = j;
 }
 

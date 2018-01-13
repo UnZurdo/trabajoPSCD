@@ -13,6 +13,7 @@ Gestor::Gestor(){
   this->contador=0;
   this->s.setInitValue(0);
   this->turno.setInitValue(1);
+  this->gestorCerrado.setInitValue(0);
 };
 
 
@@ -31,6 +32,9 @@ void Gestor::apagar(){
   // DESPIERTO A LOS 2 PROCESOS PARA QUE PUEDAN FINALIZAR
   s.signal();
   s.signal();
+
+  // Me bloque mientras no hayan terminado
+  gestorCerrado.wait(2);
 };
 
 string Gestor::estado(){
@@ -53,10 +57,15 @@ void Gestor::iniciar(){
   // Si no se puede mostrar nada == > ESPERAR
   s.wait();
  while(!fin || !q.empty()){
+  Valla valla;
     //Entra en SC
     turno.wait();
-    Valla valla = q.front();
-    q.pop();
+
+    if(!q.empty()){
+      valla = q.front();
+      q.pop();
+    }
+
     turno.signal();
     // transformo string a c_str()
     string URL = obtenerUrl(valla);
@@ -101,4 +110,5 @@ void Gestor::iniciar(){
 
  }
  cout <<endl<< "----GESTOR CERRADO----"<<endl;
+ gestorCerrado.signal();
 };

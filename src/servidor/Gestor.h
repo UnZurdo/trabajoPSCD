@@ -27,6 +27,7 @@ class Gestor{
     bool fin;
     Semaphore s;
     Semaphore turno;
+    Semaphore gestorCerrado;
     int contador;
 
     public:

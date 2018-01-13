@@ -42,7 +42,7 @@ Semaphore enviandoMensaje(0);
 
 
 //-------------------------------------------------------------
-void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool& out){
+void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, bool& out, string& estado){
 	// Buffer para recibir el mensaje
 	int length = 1000;
 	char buffer[length];
@@ -51,6 +51,8 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 	int send_bytes;
 	int puja = 0;
 	bool primeraVez = true;
+	bool ultimoMensaje=false;
+	string msgAUX;
 
 	if(fin) {
 		out = true;
@@ -59,8 +61,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 	}
 	// Confirmo conexion
 	else if(!fin){
-		msg= ACEPTADO;
-		msg = msg + "\n" + s.obtenerMonitor()->estado();
+		msg = estado;
 		aceptar.signal();
 	}
 	// Envio ACEPTAR/RECHAZAR
@@ -72,6 +73,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		exit(1);
 	}
 
+	// Recibo confirmacion de que quiere unirse a la subasta
 	int rcv_bytes = soc.Recv(client_fd,buffer,length);
 	cout << "*BUFFER: "<<buffer<<endl;
 	if (rcv_bytes == -1) {
@@ -84,11 +86,11 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 	if(strcmp(buffer,MENS_FIN)==0){
 		out = true;
 	}
+
+
 	while(!out){
 
 		msg="";
-		// Si Administador cierra Subasta
-		if(fin) msg=MENS_FIN;
 
 		int rcv_bytes = soc.Recv(client_fd,buffer,length);
 		cout << "*BUFFER: "<<buffer<<endl;
@@ -149,19 +151,24 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		s.siguienteTurno();
 
 		if(msg!=""){
-
 			// Si SUBASTA NUEVA
 			if(s.obtenerMonitor()->Pasar()) {
+				// SI HAY GANADOR ESPERO A QUE SE ENVIE LA INFORMACION
 				s.obtenerMonitor()->bloquearSubasta();
-				msg=msg+"****** SUBASTA NUEVA ******\nGanador: " + to_string(s.obtenerMonitor()->getId()) +"\n";
+				msg=msg + estado +"\n";
+				// Si era la ultima Subasta
+				if(fin) {
+					ultimoMensaje = true;
+					//Copio mensaje antiguo
+					msgAUX=msg;
+					msg=MENS_FIN;
+
+				}
 			}
-			//else{
-				// Añado informacion correspondiente a la siguiente puja
-				msg= msg+ "\n" +s.obtenerMonitor()->estado();
-			//}
+			// Añado informacion correspondiente a la siguiente ronda
+			else msg= msg+ "\n" + s.obtenerMonitor()->estado();
 
 			send_bytes = soc.Send(client_fd, msg);
-			cout <<endl<<"---ENVIO: "<<msg<<endl;
 			if(send_bytes == -1) {
 				string mensError(strerror(errno));
 				cerr << "Error al enviar datos: " + mensError + "\n";
@@ -170,23 +177,42 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 			}
 			//Borro mensaje
 			msg="";
+
+			// Si Administador cierra Subasta
+			if(ultimoMensaje) {
+				msg=msgAUX;
+				// DEJO DE ATENDER AL CLIENTE
+				send_bytes = soc.Send(client_fd, msg);
+				cout <<endl<<"---ENVIO: "<<msg<<endl;
+				if(send_bytes == -1) {
+					string mensError(strerror(errno));
+					cerr << "Error al enviar datos: " + mensError + "\n";
+					// Cerramos los sockets
+					exit(1);
+				}
+				out = true;
+			}
 		}
-		cout << "->Siguiente Turno"<<endl;
 	}
 }
 
 
-void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, bool& fin){
-	string estado;
+void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, string& estado, bool& fin){
 	int length = 1000;
 	char buffer[length];
+	string estadoAux;
+	estado="";
 
 	while(!fin){
 		// Reiniciar Subasta
 		subasta.nuevo();
 
 		// Inicializo nueva subasta
-		subasta.iniciar(estado);
+		subasta.iniciar(estadoAux);
+		estado=estado+estadoAux;
+		cout << estado;
+		// SUBASTA BLOQUEADA MIENTRAS SE TRAMITA LA INFORMACION
+		subasta.obtenerMonitor()->desbloquearSubasta();
 
 		int user_id;
 		// Finalizar Subasta ==> ESTADO: OCUPADO
@@ -216,31 +242,29 @@ void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, bool& fin){
 					soc.Close(user_id);
 				}
 				string url_cliente = buffer;
-				cout << "BUFFER URL: "<< buffer <<endl;
 				int d = subasta.obtenerDuracion();
 				Valla valla;
 				// creo un nombre con el que se mostrara la valla
 				string path = "valla" + to_string(subasta.nVallas()) + ".jpg";
-				cout << "Nueva Valla: "<< url_cliente << "   path"<<path<<endl;
 				crear(valla, url_cliente, path, d);
 				gestor.anyadirValla(valla);
-				cout << "valla anadida"<<endl<<endl;
+				cout << "valla añadida"<<endl<<endl;
 			}
 		}
-		// SUBASTA BLOQUEADA MIENTRAS SE TRAMITA LA INFORMACION
-		subasta.obtenerMonitor()->desbloquearSubasta();
 	}
 	cout << estado;
+	// SUBASTA FINALIZADA
+	subasta.obtenerMonitor()->desbloquearSubasta();
 }
 
 //-------------------------------------------------------------
-void servCliente(Socket& soc, int client_fd, bool& fin,  Subasta& subasta) {
+void servCliente(Socket& soc, int client_fd, bool& fin, string& estado, Subasta& subasta) {
 	subasta.obtenerMonitor()->Entrar(client_fd);
 
 	string mensaje="";
 	bool out = false;
 
-	thread rec = thread(&recibir , ref(subasta), ref(soc), client_fd, ref(mensaje), ref(fin), ref(out));
+	thread rec = thread(&recibir , ref(subasta), ref(soc), client_fd, ref(mensaje), ref(fin), ref(out), ref(estado));
 	rec.join();
 
 	soc.Close(client_fd);
@@ -271,6 +295,7 @@ int main(int argc, char** argv) {
 
 	int max_connections = 100;
 	bool fin = false;
+	string estado;
 
 	// Creo subasta inicial
 	Subasta subasta;
@@ -280,8 +305,7 @@ int main(int argc, char** argv) {
 	Administrador admin(&gestor, &subasta);
 
 	// Protegemos frente señal
-	
-	//signal(SIGINT, handle_sigalrm);
+	signal(SIGINT, handle_sigalrm);
 
 	// Dirección y número donde escucha el proceso servidor
 	string SERVER_ADDRESS = "localhost";
@@ -320,7 +344,7 @@ int main(int argc, char** argv) {
 	administrador = thread(&administrator, ref(socket), socket_fd, ref(fin), ref(admin));
 	gestorP = thread(&Gestor::iniciar, ref(gestor));
 	gestorP2 = thread(&Gestor::iniciar, ref(gestor));
-	subastador = thread(&gestorSubasta, ref(socket), ref(subasta), ref(gestor), ref(fin));
+	subastador = thread(&gestorSubasta, ref(socket), ref(subasta), ref(gestor), ref(estado), ref(fin));
 
 	int i=0;
 	while(i<max_connections){
@@ -336,7 +360,7 @@ int main(int argc, char** argv) {
 		}
 
 		cout << "Lanzo thread nuevo cliente " + to_string(i) + "\n";
-		thread cliente = thread(&servCliente, ref(socket), client_fd, ref(fin), ref(subasta));
+		thread cliente = thread(&servCliente, ref(socket), client_fd, ref(fin), ref(estado), ref(subasta));
 		cliente.detach();
 		cout << "Nuevo cliente " + to_string(i);
 		if(!fin) cout << " aceptado" << endl;
@@ -349,7 +373,6 @@ int main(int argc, char** argv) {
 	gestorP2.join();
 	subastador.join();
 	administrador.join();
-		cout << "AQUIIIIIIIIIIIIIIIIIIIIIII"<<endl;
 
 
     // Cerramos el socket del servidor
