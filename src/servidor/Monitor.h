@@ -1,7 +1,9 @@
 //*****************************************************************
 // File:   Monitor.h
-// Date:   december 2017
-// Coms:   TP6 PSCD
+// Date:   Enero 2018
+// Authors: García Hernández, Alberto 741363
+//          Generelo Gimeno, Jorge 737317
+//          Gómez Lahera, Miguel 741302
 //*****************************************************************
 #ifndef MONITOR_H
 #define MONITOR_H
@@ -18,15 +20,12 @@
 #include <random>
 #include <atomic>
 
-
 using namespace std;
 
 #define MAX 100
 
 class Monitor{
-
     //Lista de clientes
-
     int nClientes;
     int nPASAR;
     bool finSubastaActual;
@@ -46,38 +45,36 @@ class Monitor{
     condition_variable esperando_ultimo;
     int clientList[MAX];
 
-    public:
-        Monitor(int min);
-        //Devuelve el mismo pero con valores actualizados
-        void nuevo(int min);
-        int pujaActual();
-        // Esperar a que todos terminen de pujar para comenzar nueva ronda de pujas
-        // Si envia otro mensaje puja = 0
-        // Al terminar ++Rondas
-        void siguientePuja();
-        int clientes();
-        int getId();
-        // Return true if finSubastaActual
-        bool Pasar();
-        string estado();
-        // En caso de finalizacion inesperada de cliente
-        void Finalizar();
-        // ++nClientes y guardo su id
-        void Entrar(int id);
-        // --nClientes y borro su id
-        void Salir(int id);
-        void iniciar();
-        // Devuelve true si el cliente sigue conectado
-        bool esta(int client_fd);
-        // Devuelve una lista con los id de todos los clientes actuales
-        void get_all_clients(int clients_fd[], int* n);
-        // Falso si puja es menor que la actual
-        bool Pujar(const int dinero, int id);
+public:
+    Monitor(int min);
+    //Devuelve el mismo pero con valores actualizados
+    void nuevo(int min);
+    int pujaActual();
+    // Esperar a que todos terminen de pujar para comenzar nueva ronda de pujas
+    // Si envia otro mensaje puja = 0
+    // Al terminar ++Rondas
+    void siguientePuja();
+    int clientes();
+    int getId();
+    // Return true if finSubastaActual
+    bool Pasar();
+    string estado();
+    // En caso de finalizacion inesperada de cliente
+    void Finalizar();
+    // ++nClientes y guardo su id
+    void Entrar(int id);
+    // --nClientes y borro su id
+    void Salir(int id);
+    void iniciar();
+    // Devuelve true si el cliente sigue conectado
+    bool esta(int client_fd);
+    // Devuelve una lista con los id de todos los clientes actuales
+    void get_all_clients(int clients_fd[], int* n);
+    // Falso si puja es menor que la actual
+    bool Pujar(const int dinero, int id);
 
-
-        void bloquearSubasta();
-        void desbloquearSubasta();
-
+    void bloquearSubasta();
+    void desbloquearSubasta();
 };
 
 

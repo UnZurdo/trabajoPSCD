@@ -24,19 +24,40 @@ class Administrador{
 	Subasta* subasta;
 
 public:
-	// Crea un objeto de la clase administrador
+
+	/*
+	 * Pre: ---
+	 * Post: Crea un objeto de la clase administrador
+	 */
     Administrador(Gestor* gestor, Subasta* subasta);
-	// Finaliza la subasta
+
+	/*
+	 * Pre: ---
+	 * Post: Finaliza la subasta
+	 */
     void apagarServidor();
-	// Devuelve un cadena que contiene la información acerca
-	// de la subastas en dicho instante
+
+	/*
+	 * Pre: ---
+	 * Post: Devuelve un cadena que contiene la información acerca
+ 	 *		 de la subastas en dicho instante
+	 */
 	string mostrarEstado();
-	// Devuelve una cadena que contiene la información acerca
-	// de todas las subastas desde el momento que inicio el programa
+
+	/*
+	 * Pre: ---
+	 * Post: Devuelve un cadena que contiene la información acerca
+	 *		 de todas las subastas desde el momento que inicio el programa
+	 */
 	string mostrarHistoria();
-    // Bucle infinito hasta que finaliza el programa en el que se leen
-    // las ordenes por la linea de comandos (mostrar Estado, Historia o apagar)
-    void iniciarAdmin(bool& fin);
+
+	/*
+	 * Pre: ---
+	 * Post: Bucle infinito hasta que finaliza el programa en el que se leen
+     * 		 las ordenes por la linea de comandos (mostrar Estado,
+	 *		 Historia o apagar)
+	 */
+	void iniciarAdmin(bool& fin);
 
 };
 

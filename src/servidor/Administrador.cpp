@@ -8,8 +8,8 @@
 #include "Administrador.h"
 
 Administrador::Administrador(Gestor* gestor, Subasta* subasta){
-  this->gestor = gestor;
-  this->subasta = subasta;
+    this->gestor = gestor;
+    this->subasta = subasta;
 };
 
 
@@ -18,12 +18,13 @@ string Administrador::mostrarEstado(){
 	int N;
 	subasta->obtenerMonitor()->get_all_clients(clients_id, &N);
 	string clientes;
+    // Cuenta los clientes en un momento concreto
 	for(int i = 0; i< N; ++i){
 		clientes = clientes + to_string(clients_id[i]) +", ";
 	}
     string MENSAJE= "Numero de clientes: "+ to_string(N)+"\n";
     if((subasta->obtenerMonitor()->clientes()) > 0) {
-         MENSAJE=MENSAJE+"Listado clientes: "+ clientes + "\n";
+        MENSAJE=MENSAJE+"Listado clientes: "+ clientes + "\n";
 	}
     return subasta->obtenerMonitor()->estado() + gestor->estado()+ MENSAJE;
 };
@@ -54,11 +55,11 @@ void Administrador::iniciarAdmin(bool& fin){
 	}
 	cout << "Closing server...."<<endl;
 	fin=true;
-	// NO CREO SUBASTAS NUEVAS
+	// Deja de crear subastas nuevas
 	subasta->finalizarSubasta();
-	// ESPERO A QUE TERMINEN CLIENTES
+	// Espera a que terminen los clientes
 	subasta->obtenerMonitor()->Finalizar();
-	// NO AÑADO MAS VALLAS
+	// Deja de añadir vallas
 	gestor->apagar();
-	// Ejecucion bloqueada hasta que todos los clientes salgan
+	// Ejecución bloqueada hasta que todos los clientes salgan
 };

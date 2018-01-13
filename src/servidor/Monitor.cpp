@@ -1,9 +1,9 @@
 //*****************************************************************
 // File:   Monitor.cpp
-// Date:   december 2017
-// Coms:   TP6 PSCD
-//         Compilar mediante
-//           g++ -std=c++11 -pthread Subasta.cpp -c
+// Date:   Enero 2018
+// Authors: García Hernández, Alberto 741363
+//          Generelo Gimeno, Jorge 737317
+//          Gómez Lahera, Miguel 741302
 //*****************************************************************
 
 #include "Monitor.h"
