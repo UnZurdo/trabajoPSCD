@@ -1,9 +1,9 @@
 //******************************************************************
 // File:   ServidorMulticliente.cpp
-// Author: PSCD-Unizar
-// Date:   Noviembre 2015
-// Coms:   Ejemplo de servidor multicliente con comunicación síncrona mediante sockets
-//         Compilar el fichero "Makefile" asociado, mediante "make".
+// Date:   Enero 2018
+// Authors: García Hernández, Alberto 741363
+//          Generelo Gimeno, Jorge 737317
+//          Gómez Lahera, Miguel 741302
 //*****************************************************************
 
 #include "../librerias/Socket.h"
@@ -11,7 +11,7 @@
 #include <iostream>
 #include <thread>
 #include <sstream>
-#include <cstring> //manejo de cadenas tipo C
+#include <cstring>
 #include "Administrador.h"
 
 #include <signal.h>
@@ -32,7 +32,7 @@ const char OCUPADO[]="OCUPADO";
 const char URL[]="URL";
 const char PUJAR[]="PUJAR";
 
-bool hayGanador = false;
+bool hayGanador = false;	// Indica si hay ganador en una subasta (true)
 Semaphore hayMensaje(0);
 Semaphore esperarURL(0);
 Semaphore aceptar(0);
@@ -50,7 +50,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 	int send_bytes;
 	int puja = 0;
 	bool primeraVez = true;
-	bool ultimoMensaje=false;
+	bool ultimoMensaje = false;
 	string msgAUX;
 
 	if(fin) {
@@ -58,27 +58,27 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		msg = RECHAZADO;
 		aceptar.signal();
 	}
-	// Confirmo conexion
+	// Confirma conexion
 	else if(!fin){
 		msg = estado;
 		aceptar.signal();
 	}
-	// Envio ACEPTAR/RECHAZAR
+	// Envía ACEPTAR/RECHAZAR
 	send_bytes = soc.Send(client_fd, msg);
 	if(send_bytes == -1) {
 		string mensError(strerror(errno));
 		cerr << "Error al enviar datos: " + mensError + "\n";
-		// Cerramos los sockets
+		// Cierra los sockets
 		exit(1);
 	}
 
-	// Recibo confirmacion de que quiere unirse a la subasta
+	// Recibe confirmación de que quiere unirse a la subasta
 	int rcv_bytes = soc.Recv(client_fd,buffer,length);
 	cout << "*BUFFER: "<<buffer<<endl;
 	if (rcv_bytes == -1) {
 		string mensError(strerror(errno));
 		cerr << "Error al recibir datos: " + mensError + "\n";
-		// Cerramos los sockets
+		// Cierra los sockets
 		soc.Close(client_fd);
 	}
 	//Recibe mensaje de fin
@@ -96,7 +96,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		if (rcv_bytes == -1) {
 			string mensError(strerror(errno));
     		cerr << "Error al recibir datos: " + mensError + "\n";
-			// Cerramos los sockets
+			// Cierra los sockets
 			soc.Close(client_fd);
 		}
 		//Recibe mensaje de fin
@@ -123,7 +123,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 			// Parseamos al entrada ante varios delimitadores
 			temp = strtok(buffer, " ");
 			temp2 = strtok(NULL, " \n");
-			// Valido mensaje
+			// Si el mensaje es válido
 			if(temp && temp2){
 				if(strcmp(temp,PUJAR)==0){
 					puja = atoi(temp2);
@@ -141,52 +141,52 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 				}
 			}
 		}
-		// Si no ha pujado envio puja vacia
+		// Si no ha pujado envio puja vacía
 		if(puja==0 || puja==-1){
 			s.obtenerMonitor()->Pujar(puja, client_fd);
 		}
 		puja = 0;
-		// Espero a que todos los clientes respondan
+		// Espera a que todos los clientes respondan
 		s.siguienteTurno();
 
 		if(msg!=""){
-			// Si SUBASTA NUEVA
+			// Si la subasta es nueva
 			if(s.obtenerMonitor()->Pasar()) {
-				// SI HAY GANADOR ESPERO A QUE SE ENVIE LA INFORMACION
+				// Si hay ganador espera a que se muestre la información
 				s.obtenerMonitor()->bloquearSubasta();
 				msg=msg + estado +"\n";
-				// Si era la ultima Subasta
+				// Si era la ultima subasta
 				if(fin) {
 					ultimoMensaje = true;
-					//Copio mensaje antiguo
+					// Copia mensaje antiguo
 					msgAUX=msg;
 					msg=MENS_FIN;
 
 				}
 			}
-			// Añado informacion correspondiente a la siguiente ronda
+			// Añade información correspondiente a la siguiente ronda
 			else msg= msg+ "\n" + s.obtenerMonitor()->estado();
 
 			send_bytes = soc.Send(client_fd, msg);
 			if(send_bytes == -1) {
 				string mensError(strerror(errno));
 				cerr << "Error al enviar datos: " + mensError + "\n";
-				// Cerramos los sockets
+				// Cierra los sockets
 				exit(1);
 			}
-			//Borro mensaje
+			//Borra el mensaje
 			msg="";
 
-			// Si Administador cierra Subasta
+			// Si el administador cierra la ubasta
 			if(ultimoMensaje) {
 				msg=msgAUX;
-				// DEJO DE ATENDER AL CLIENTE
+				// Deja de atender a más clientes
 				send_bytes = soc.Send(client_fd, msg);
 				cout <<endl<<"---ENVIO: "<<msg<<endl;
 				if(send_bytes == -1) {
 					string mensError(strerror(errno));
 					cerr << "Error al enviar datos: " + mensError + "\n";
-					// Cerramos los sockets
+					// Cierra los sockets
 					exit(1);
 				}
 				out = true;

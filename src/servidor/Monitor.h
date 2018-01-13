@@ -46,34 +46,107 @@ class Monitor{
     int clientList[MAX];
 
 public:
+
+    /*
+     * Pre: ---
+     * Post: Crea un monitor con un valor mínimo min para la subasta
+     */
     Monitor(int min);
-    //Devuelve el mismo pero con valores actualizados
+
+    /*
+     * Pre: ---
+     * Post: Actualiza los valores
+     */
     void nuevo(int min);
+
+    /*
+     * Pre: ---
+     * Post: Devuelve el valor de la última puja realizada por un cliente
+     */
     int pujaActual();
-    // Esperar a que todos terminen de pujar para comenzar nueva ronda de pujas
-    // Si envia otro mensaje puja = 0
-    // Al terminar ++Rondas
+
+    /*
+     * Pre: ---
+     * Post: Espera a que todos terminen de pujar para comenzar una nueva ronda
+     *       de pujas
+     */
     void siguientePuja();
+
+    /*
+     * Pre: ---
+     * Post: Devuelve el número de clientes participando en la subasta
+     */
     int clientes();
+
+    /*
+     * Pre: ---
+     * Post: Devuelve el id del cliente ganador
+     */
     int getId();
-    // Return true if finSubastaActual
+
+    /*
+     * Pre: ---
+     * Post: Devuelve true si y sólo si acaba la subasta actual
+     */
     bool Pasar();
+
+    /*
+     * Pre: ---
+     * Post: Devuelve una cadena con información acerca del estado
+     *       actual de la subasta
+     */
     string estado();
-    // En caso de finalizacion inesperada de cliente
+
+    /*
+     * Pre: ---
+     * Post: Espera que todos los clientes hayan sido cerrados
+     */
     void Finalizar();
-    // ++nClientes y guardo su id
+
+    /*
+     * Pre: ---
+     * Post: Añade un nuevo cliente y guarda su id en la lista clientList
+     */
     void Entrar(int id);
-    // --nClientes y borro su id
+
+    /*
+     * Pre: ---
+     * Post: Elimina el cliente id de la lista
+     */
     void Salir(int id);
-    void iniciar();
-    // Devuelve true si el cliente sigue conectado
+
+    /*
+     * Pre: ---
+     * Post: Devuelve true si y sólo si el cliente_fd exise en la Lista
+     *       de clientes
+     */
     bool esta(int client_fd);
-    // Devuelve una lista con los id de todos los clientes actuales
+
+    /*
+     * Pre: ---
+     * Post: Crea una lista con todos los clientes almecenados en la Lista
+     *       clientList
+     */
     void get_all_clients(int clients_fd[], int* n);
-    // Falso si puja es menor que la actual
+
+    /*
+     * Pre: ---
+     * Post: Devuelve true si y sólo si la puja introducida por el cliente
+     *       es mayor a la mínimo exigida. En este caso se actualiza el valor
+     *       de la nueva puja a superar. En caso contrario devuelve false
+     */
     bool Pujar(const int dinero, int id);
 
+    /*
+     * Pre: ---
+     * Post: Bloquea la subasta
+     */
     void bloquearSubasta();
+
+    /*
+     * Pre: ---
+     * Post: Desbloquea la subasta
+     */
     void desbloquearSubasta();
 };
 

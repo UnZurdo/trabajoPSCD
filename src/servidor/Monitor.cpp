@@ -27,7 +27,7 @@ Monitor::Monitor(int min){
     this->actual=min;
     this->minSecreto = min +randomS();
     this->id_ganador=-1;
-    // Inicializo vector a 0
+    // Inicializa el vector a 0
     for(int i = 0; i<MAX; ++i){
         this->clientList[i]=0;
     }
@@ -72,9 +72,9 @@ void Monitor::siguientePuja(){
         esperar.wait(lck);
     }
     ++N;
-    // EL ULTIMO EN DESPERTARSE
+    // El último en despertarse
     if(N==nClientes){
-        // SIGUIENTE RONDA
+        // Siguiente ronda
         nPujas=0;
         N=0;
         if(nPASAR==nClientes){
@@ -114,7 +114,6 @@ bool Monitor::esta(int client_fd){
 }
 
 
-// PROBLEMA CON REFERENCIA
 void Monitor::get_all_clients(int clients_fd[], int* n){
     int j = 0;
     for(int i = 0; i< MAX;++i){
@@ -126,15 +125,16 @@ void Monitor::get_all_clients(int clients_fd[], int* n){
     *n = j;
 }
 
+
 bool Monitor::Pasar(){
     return finSubastaActual;
 };
 
-// Falso si puja es menor que la actual
+
 bool Monitor::Pujar(const int dinero, int id){
     unique_lock<mutex> lck(mtx);
     ++nPujasTotales;
-    // Despierto a todos los que estaban esperando
+    // Despierta a todos los que estaban esperando
     ++nPujas;
     cout << "num PUJAS: "<< nPujas<<endl;
     esperar.notify_all();
@@ -148,7 +148,7 @@ bool Monitor::Pujar(const int dinero, int id){
     else{
         ++nPujasValidas;
         actual=dinero;
-        siguiente=dinero+randomS();
+        siguiente=dinero+randomS()+(dinero/5);
         if(actual > minSecreto){
             id_ganador=id;
             return true;
@@ -189,11 +189,11 @@ void Monitor::Entrar(int id){
 void Monitor::Salir(int id){
     unique_lock<mutex> lck(mtx);
     int i = 0;
-    // Busco cliente
+    // Busca cliente
     while(clientList[i]!=id && i < MAX){
         ++i;
     }
-    // Lo borro
+    // Lo borra
     cout << "Sale: "<< clientList[i]<<endl;
     clientList[i]=0;
     esperar.notify_all();
