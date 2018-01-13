@@ -33,7 +33,7 @@ const char PUJAR[]="PUJAR";
 
 bool esGanador = false;
 bool aux=false;
-string url;
+//string url;
 Semaphore ganador(0);
 
 
@@ -78,8 +78,11 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 			mensaje="";
 
 			if(buffer == URL){
-				cout << "PUJA ganada"<<endl;
-				mensaje = url;
+				cout << "-- PUJA ganada --"<<endl << "Por favor introduzca la URL de la imagen que quier amostrar en la Valla"<<endl;
+				while(mensaje=="") {
+					getline(cin, mensaje);
+				}
+				//mensaje = url;
 			}
 			// Si recibo fin del Servisdor
 			if(buffer == MENS_FIN){
@@ -128,12 +131,10 @@ void handle_sigalrm(int signo){
 }
 
 int main(int argc, char* argv[]) {
-	if (argc != 4){
+	if (argc < 3){
 		cout << "ERROR, inserte los parametros correctamente" << endl;
 		exit(1);
 	}
-
-	url = argv[3];
 
 	const int MAX_ATTEMPS = 3;
 	// Dirección y número donde escucha el proceso servidor

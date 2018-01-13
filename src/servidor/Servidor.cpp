@@ -276,7 +276,6 @@ void servCliente(Socket& soc, int client_fd, bool& fin, string& estado, Subasta&
 
 void administrator(Socket& socket, int socket_fd, bool& fin, Administrador& admin){
 	admin.iniciarAdmin(ref(fin));
-	cout << "Chivato 1" << endl;
 	socket.Close(socket_fd);
 	cout << "----Socket CLOSED----"<<endl;
 	exit(1);
