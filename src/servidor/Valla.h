@@ -20,28 +20,28 @@ struct Valla;
  * Post: Crea una valla en la que se almacena la url, el path
  *       y su duración
  */
-void crear(Valla& s);
+void crear(Valla& s, string url, string path, int d);
 
 /*
- * Pre: ---
+ * Pre: s es una valla válida
  * Post: Actualiza la url
  */
 void actualizarUrl(Valla& s, string url);
 
 /*
- * Pre: ---
+ * Pre: s es una valla válida
  * Post: Actualiza el path
  */
 void actualizarPath(Valla& s, string path);
 
 /*
- * Pre: ---
+ * Pre: s es una valla válida
  * Post: Devuelve una cadena que equivale a la url
  */
 string obtenerUrl(const Valla& s);
 
 /*
- * Pre: ---
+ * Pre: s es una valla válida
  * Post: Devuelve una cadena que equivale a el path
  */
 string obtenerPath(const Valla& s);

@@ -29,7 +29,7 @@ int randomD(){
     return random;
 }
 
-// Crea una nueva Subasta con valores generados aleatoriamente
+
 Subasta::Subasta(){
     this->fin=false;
     this->duracion=randomD();
@@ -44,7 +44,7 @@ Subasta::Subasta(){
     this->tiempoMedio=tiempoTotal/nSubastas;
 };
 
-// Crea una nueva Subasta con valores establecidos
+
 Subasta::Subasta(int duracion, int precioInicial, int precioMinimo){
     this->fin=false;
     this->duracion=duracion;
@@ -59,7 +59,7 @@ Subasta::Subasta(int duracion, int precioInicial, int precioMinimo){
     this->tiempoMedio=0;
 };
 
-// Sobrescribo datos de la subasta actual con los de una nueva
+
 void Subasta::nuevo(){
     this->fin=false;
     this->duracion=randomD();
@@ -74,20 +74,21 @@ void Subasta::nuevo(){
 };
 
 
-// Precio PRIVADO minimo necesario para vender valla
 int Subasta::obtenerPujaMin(){
 	return precioMinimo;
 };
+
 
 int Subasta::nVallas(){
     return nImagenes;
 };
 
+
 Monitor* Subasta::obtenerMonitor(){
     return monitor;
 };
 
-// Tiempo que se mostrara la imagen
+
 int Subasta::obtenerDuracion(){
 	return duracion;
 };
@@ -110,6 +111,7 @@ void Subasta::iniciar(string& estado){
     }
 };
 
+
 void Subasta::finalizarSubasta(){
   fin=true;
   // Despierto cerrarsSubasta en caso FIN SUBASTA
@@ -121,9 +123,6 @@ int Subasta::pujaInicial(){
 };
 
 
-// Actualiza datos, guarda datos ganador, los encola en el GESTOR de VALLAS
-// y genera una nueva suabsta
-// Parcial: si no hay ganador
 bool Subasta::cerrarSubasta(int& user_id, string& estado){
     ostringstream oss;
     // Si aun no ha finalizado (todos han escrito PASAR) espero

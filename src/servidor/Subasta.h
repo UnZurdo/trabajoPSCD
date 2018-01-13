@@ -40,6 +40,7 @@ class Subasta{
 
 
 public:
+
     /*
      * Pre: ---
      * Post: Crea una nueva Subasta con valores generados aleatoriamente
@@ -47,7 +48,7 @@ public:
     Subasta();
 
     /*
-     * Pre: ---
+     * Pre: duracion, precioInicial y precioMinimo >= 0
      * Post: Crea una nueva Subasta con valores establecidos
      */
     Subasta(int duracion, int precioInicial, int precioMinimo);
@@ -108,21 +109,20 @@ public:
 
     /*
      * Pre: ---
-     * Post:
+     * Post: Devuelve true si la subasta ha sido cerrada porque ningún jugador
+     *       ha superado la puja mínima, y lo indica por pantalla. Devuelve
+     *       false en caso de que acabe la subasta y obtenga un ganador, en
+     *       cuyo caso lo muuestra por pantalla y actualiza ls variables de
+     *       beneficios e incrementa el número de imágenes. También devuelve
+     *       false en el caso de que haya ganador pero se cierre la subasta
+     *       permanentemente-
      */
-
-    // Actualiza datos, guarda datos ganador, los encola en el GESTOR de VALLAS
-    // y genera una nueva suabsta
-    // Parcial: si no hay ganador
     bool cerrarSubasta(int& user_id, string& estado);
 
     /*
      * Pre: ---
-     * Post:
+     * Post: Pone la variable fin a true
      */
-    // Terminar subasta
-    // Fin := true, no se realizaran nuevas subastas y esperara a que finalice
-    // la actual.
     void finalizarSubasta();
 
     /*
@@ -132,14 +132,6 @@ public:
      */
     string infoHistorica();
 
-    /*
-     * Pre: ---
-     * Post:
-     */
-    // Funcion AUX Subasta
-    // Señal ALARM insegura para reiniciar la Subasta
-    // Se inicializa desde el comienzo y se reinicia infinitamente hasta que se cierre
-    static void handle_timer(int signo);
 };
 
 
