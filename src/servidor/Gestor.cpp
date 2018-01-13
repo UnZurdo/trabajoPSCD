@@ -57,7 +57,7 @@ void Gestor::iniciar(){
   // Si no se puede mostrar nada == > ESPERAR
   s.wait();
  while(!fin || !q.empty()){
-  Valla valla;
+    Valla valla;
     //Entra en SC
     turno.wait();
 
@@ -98,8 +98,9 @@ void Gestor::iniciar(){
     imagen.resize(VALLA_WIDTH,VALLA_HEIGHT);
     imagen.move(0,0); // Esquina superior izquierda
 
-    // Mostrar imagen durante 5 segundos
+    // Mostrar imagen 
     imagen.wait(obtenerDuracion(valla)*1000);
+    imagen.close();
     cout << "Cierro ventana valla..."<<endl;
     // Libero memoria
     delete [] cPATH;
