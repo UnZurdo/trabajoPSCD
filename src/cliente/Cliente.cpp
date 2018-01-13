@@ -136,7 +136,7 @@ int main(int argc, char* argv[]) {
 	Semaphore sem(0);
 
 	// Protección frente señal
-	signal(SIGINT, hadle_sigint);
+	signal(SIGINT, handle_sigint);
 
 	// Creación del socket con el que se llevará a cabo
 	// la comunicación con el servidor.
