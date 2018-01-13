@@ -72,7 +72,7 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 			mensaje="";
 			if(buffer == URL){
 				cout << "-- PUJA ganada --"<<endl;
-                coutn << "Por favor introduzca la URL de la imagen que quier amostrar en la Valla"<<endl;
+                cout << "Por favor introduzca la URL de la imagen que quier amostrar en la Valla"<<endl;
 				while(mensaje=="") {
 					getline(cin, mensaje);
 				}
