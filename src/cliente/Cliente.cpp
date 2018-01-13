@@ -43,7 +43,7 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
     }
     string mensaje;
 
-    while(mensaje != "SI" || mensaje != "NO") {
+    while(mensaje != "SI" && mensaje != "NO") {
         cout << "Desea unirse a la subasta? ( SI/NO ): " << endl;
         getline(cin, mensaje);
     }
