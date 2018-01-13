@@ -1,8 +1,9 @@
 NIP Apellidos Nombre
 ------------------------------------------
-741302  Gómez Lahera Miguel
-737317  Generelo Gimeno Jorge
 741363  García Hernández Alberto
+737317  Generelo Gimeno Jorge
+741302  Gómez Lahera Miguel
+
 
 
 INFORME DE DEDICACIÓN:
