@@ -20,6 +20,7 @@ Monitor::Monitor(int min){
     this->nClientes=0;
     this->nPujasTotales=0;
     this->nPujas=0;
+    this->nPujasValidas=0;
     this->nPASAR=0;
     this->finSubastaActual=false;
     this->siguiente=min;
@@ -37,6 +38,7 @@ void Monitor::nuevo(int min){
     this->actual=min;
     this->minSecreto = min +randomS();
     this->nPujas=0;
+    this->nPujasValidas=0;
     this->nPASAR=0;
     this->finSubastaActual=false;
     this->id_ganador=-1;
@@ -50,7 +52,7 @@ int Monitor::pujaActual(){
 string Monitor::estado(){
     unique_lock<mutex> lck(mtx);
     ostringstream oss;
-    if (id_ganador == -1){
+    if (nPujasValidas==0){
       oss << "\n Todavia no hay ninguna puja" << endl
       <<"Puja iniciada a: "<<actual<<endl;
     }
@@ -144,6 +146,7 @@ bool Monitor::Pujar(const int dinero, int id){
         return false;
     }
     else{
+        ++nPujasValidas;
         actual=dinero;
         siguiente=dinero+randomS();
         if(actual > minSecreto){

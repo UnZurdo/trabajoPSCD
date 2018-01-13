@@ -31,6 +31,7 @@ class Monitor{
     int nPASAR;
     bool finSubastaActual;
     int nPujas;
+    int nPujasValidas;
     int nPujasTotales;
     // Mayor puja actual
     int actual;
