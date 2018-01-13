@@ -1,9 +1,9 @@
 //*****************************************************************
 // File:   Administrador.cpp
-// Date:   december 2017
-// Coms:   TP6 PSCD
-//         Compilar mediante
-//           g++ -std=c++11 -pthread Administrador.cpp -c
+// Date:   Enero 2018
+// Authors: García Hernández, Alberto 741363
+//          Generelo Gimeno, Jorge 737317
+//          Gómez Lahera, Miguel 741302
 //*****************************************************************
 #include "Administrador.h"
 
@@ -39,8 +39,6 @@ void Administrador::apagarServidor(){
 };
 
 
-// Bucle infinito hasta END OF SERVICE en el que se leeran las ordenes
-// por la linea de comandos (mostrar Estado, Historia o apagar)
 void Administrador::iniciarAdmin(bool& fin){
 	cout << "Para finalizar escribir \"EXIT\""<<endl;
 	string msg;
@@ -54,7 +52,6 @@ void Administrador::iniciarAdmin(bool& fin){
 			cout << mostrarEstado();
 		}
 	}
-
 	cout << "Closing server...."<<endl;
 	fin=true;
 	// NO CREO SUBASTAS NUEVAS
@@ -64,5 +61,4 @@ void Administrador::iniciarAdmin(bool& fin){
 	// NO AÑADO MAS VALLAS
 	gestor->apagar();
 	// Ejecucion bloqueada hasta que todos los clientes salgan
-	// Echarlos????????????
 };

@@ -1,9 +1,9 @@
 //*****************************************************************
-// File:   Valla.h
-// Date:   december 2017
-// Coms:   TP6 PSCD
-//         Compilar mediante
-//           g++ -std=c++11 -pthread Valla.cpp -c
+// File:   Valla.cpp
+// Date:   Enero 2018
+// Authors: García Hernández, Alberto 741363
+//          Generelo Gimeno, Jorge 737317
+//          Gómez Lahera, Miguel 741302
 //*****************************************************************
 
 #include "Valla.h"
@@ -34,8 +34,8 @@ string obtenerPath(const Valla& s){
 void marcarDuracion(Valla& s, int d){
    s.duracion = d;
 }
-    
+
 int obtenerDuracion(const Valla& s){
     return s.duracion;
-    
+
 }

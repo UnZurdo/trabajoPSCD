@@ -1,7 +1,9 @@
 //*****************************************************************
 // File:   Subasta.h
-// Date:   december 2017
-// Coms:   TP6 PSCD
+// Date:   Enero 2018
+// Authors: García Hernández, Alberto 741363
+//          Generelo Gimeno, Jorge 737317
+//          Gómez Lahera, Miguel 741302
 //*****************************************************************
 #ifndef SUBASTA_H
 #define SUBASTA_H
@@ -19,65 +21,125 @@ using namespace std;
 
 
 class Subasta{
-
     Monitor* monitor;
-    int nTurnos;
-    int tInicial;
-    int tiempoRestante;
-    int duracion;
-    int precioInicial;
-    int precioMinimo;
+    int nTurnos;            // Contador de turnos
+    int duracion;           // Tiempo que dura la subasta
+    int precioInicial;      // Precio en el que se comienza la subasta
+    int precioMinimo;       // Precio mínimo a superar
 
     // Info Historica
-    int beneficios;
-    int nSubastas;
-    int nImagenes;
-    int tiempoTotal;
-    int tiempoMedio;
+    int beneficios;         // Beneficios totales
+    int nSubastas;          // Contador de subastas hechas
+    int nImagenes;          // Contador de imágenes mostradas
+    int tiempoTotal;        // Total de tiempo ofertado
+    int tiempoMedio;        // Media aritmética del tiempo ofertado
+
+    bool fin;   // Indica el fin de subasta (True)
+
+    static Semaphore esperar;   // Semáforo para controlar los turnos
+
+
+public:
+    /*
+     * Pre: ---
+     * Post: Crea una nueva Subasta con valores generados aleatoriamente
+     */
+    Subasta();
+
+    /*
+     * Pre: ---
+     * Post: Crea una nueva Subasta con valores establecidos
+     */
+    Subasta(int duracion, int precioInicial, int precioMinimo);
+
+    /*
+     * Pre: ---
+     * Post: Sobrescribe datos de la subasta actual con los de una nueva
+     */
+    void nuevo();
+
+    /*
+     * Pre: ---
+     * Post: Acceso al monitor de Subasta
+     */
+    Monitor* obtenerMonitor();
+
+    /*
+     * Pre: ---
+     * Post: Precio PRIVADO minimo necesario para vender valla
+     */
+    int obtenerPujaMin();
+
+    /*
+     * Pre: ---
+     * Post: Tiempo que se mostrará la imagen
+     */
+    int obtenerDuracion();
+
+    /*
+     * Pre: ---
+     * Post: Devuelve el número de vallas ofertadas hasta el momento
+     */
+    int nVallas();
+
+    /*
+     * Pre: ---
+     * Post: Devuelve el precio al que se abre la subasta
+     */
+    int pujaInicial();
+
+    /*
+     * Pre: ---
+     * Post: Aumenta precio para siguiente puja
+     */
+    int siguientePuja();
+
+    /*
+     * Pre: ---
+     * Post: Si fin está en false, inicializa el temporizador y muestra estado
+     */
+    void iniciar(string& estado);
+
+    /*
+     * Pre: ---
+     * Post: Espera a que todos los clientes respondan y comprueba si fin
+     */
+    void siguienteTurno();
+
+    /*
+     * Pre: ---
+     * Post:
+     */
+
+    // Actualiza datos, guarda datos ganador, los encola en el GESTOR de VALLAS
+    // y genera una nueva suabsta
+    // Parcial: si no hay ganador
+    bool cerrarSubasta(int& user_id, string& estado);
+
+    /*
+     * Pre: ---
+     * Post:
+     */
     // Terminar subasta
-    bool fin;
+    // Fin := true, no se realizaran nuevas subastas y esperara a que finalice
+    // la actual.
+    void finalizarSubasta();
 
-    static Semaphore esperar;
+    /*
+     * Pre: ---
+     * Post: Devuelve una cadena que contiene información acerca de las
+     *       subastas desde el momento que comenzó el programa
+     */
+    string infoHistorica();
 
-
-    public:
-        // Crea una nueva Subasta con valores generados aleatoriamente
-        Subasta();
-        // Crea una nueva Subasta con valores establecidos
-        Subasta(int duracion, int precioInicial, int precioMinimo);
-
-        // Sobrescribo datos de la subasta actual con los de una nueva
-        void nuevo();
-        // Acceso al monitor de Subasta
-        Monitor* obtenerMonitor();
-        // Precio PRIVADO minimo necesario para vender valla
-        int obtenerPujaMin();
-        // Tiempo que se mostrara la imagen
-        int obtenerDuracion();
-        // Devuelve el numero de vallas ofertadas hasta el momento
-        int nVallas();
-        // Precio al que se abre la subasta
-        int pujaInicial();
-        // Aumentar precio para siguiente puja
-        int siguientePuja();
-        // Si !fin ==> Inicializa temporizador y muestra estado
-        void iniciar(string& estado);
-        // Espera a que todos los clientes respondan y comprueba si fin
-        void siguienteTurno();
-        // Actualiza datos, guarda datos ganador, los encola en el GESTOR de VALLAS
-        // y genera una nueva suabsta
-        // Parcial: si no hay ganador
-        bool cerrarSubasta(int& user_id, string& estado);
-        // Fin := true, no se realizaran nuevas subastas y esperara a que finalice
-        // la actual.
-        void finalizarSubasta();
-        string infoHistorica();
-
-        // Funcion AUX Subasta
-        // Señal ALARM insegura para reiniciar la Subasta
-        // Se inicializa desde el comienzo y se reinicia infinitamente hasta que se cierre
-        static void handle_timer(int signo);
-
+    /*
+     * Pre: ---
+     * Post:
+     */
+    // Funcion AUX Subasta
+    // Señal ALARM insegura para reiniciar la Subasta
+    // Se inicializa desde el comienzo y se reinicia infinitamente hasta que se cierre
+    static void handle_timer(int signo);
 };
 
 

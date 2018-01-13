@@ -1,9 +1,9 @@
 //*****************************************************************
 // File:   Administrador.h
-// Date:   december 2017
-// Coms:   TP6 PSCD
-//         Compilar mediante
-//           g++ -std=c++11 -pthread Administrador.cpp -c
+// Date:   Enero 2018
+// Authors: García Hernández, Alberto 741363
+//          Generelo Gimeno, Jorge 737317
+//          Gómez Lahera, Miguel 741302
 //*****************************************************************
 #ifndef ADMINISTRADOR_H
 #define ADMINISTRADOR_H
@@ -23,14 +23,20 @@ class Administrador{
 	Gestor* gestor;
 	Subasta* subasta;
 
-    public:
-        Administrador(Gestor* gestor, Subasta* subasta);
-        void apagarServidor();
-		string mostrarEstado();
-		string mostrarHistoria();
-        // Bucle infinito hasta END OF SERVICE en el que se leeran las ordenes
-        // por la linea de comandos (mostrar Estado, Historia o apagar)
-        void iniciarAdmin(bool& fin);
+public:
+	// Crea un objeto de la clase administrador
+    Administrador(Gestor* gestor, Subasta* subasta);
+	// Finaliza la subasta
+    void apagarServidor();
+	// Devuelve un cadena que contiene la información acerca
+	// de la subastas en dicho instante
+	string mostrarEstado();
+	// Devuelve una cadena que contiene la información acerca
+	// de todas las subastas desde el momento que inicio el programa
+	string mostrarHistoria();
+    // Bucle infinito hasta que finaliza el programa en el que se leen
+    // las ordenes por la linea de comandos (mostrar Estado, Historia o apagar)
+    void iniciarAdmin(bool& fin);
 
 };
 

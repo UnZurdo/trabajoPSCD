@@ -1,10 +1,9 @@
 //*****************************************************************
 // File:   Cliente.cpp
-// Author: PSCD-Unizar
-// Date:   noviembre 2015
-// Coms:   Ejemplo de cliente con comunicación síncrona mediante sockets
-//         Compilar el fichero "Makefile" asociado, mediante
-//         "make".
+// Date:   Enero 2018
+// Authors: García Hernández, Alberto 741363
+//          Generelo Gimeno, Jorge 737317
+//          Gómez Lahera, Miguel 741302
 //*****************************************************************
 
 #include <iostream>
@@ -18,30 +17,23 @@
 
 using namespace std;
 
-const int MESSAGE_SIZE = 4001; //mensajes de no más 4000 caracteres
+const int MESSAGE_SIZE = 4001;  //mensajes de no más 4000 caracteres
 
 const char MENS_FIN[]="EXIT";
 const char RECHAZADO[]="RECHAZADO";
-const char ACEPTADO[]="ACEPTADO";
-const char ESTADO[]="ESTADO";
-const char AYUDA[]="AYUDA";
-const char OCUPADO[]="OCUPADO";
 // Informar de que se va a enviar datos a continuacion
 const char URL[]="URL";
-const char PUJAR[]="PUJAR";
 
 bool esGanador = false;
 bool aux=false;
-//string url;
 Semaphore ganador(0);
 
-
 void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
-	// Recibimos la respuesta del servidor
+	// Recibe la respuesta del servidor
     string aux;
     bool mensajeContinua=false;
     int read_bytes = socket.Recv(socket_fd, aux, MESSAGE_SIZE);
-    // Cerramos Socket
+    // Se cierra el Socket
     if(aux==RECHAZADO){
     	int error_code = socket.Close(socket_fd);
 	    if(error_code == -1){
@@ -50,21 +42,24 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 	    cout << "Conexión RECHAZADA"<<endl;
     }
     string mensaje;
-    cout << "¿Desea unirse a la subasta? ( SI/NO ): "<<endl;
-    getline(cin, mensaje);
 
-    if(mensaje=="SI" || mensaje=="si"){
+    while(mensaje != "SI" || mensaje != "NO") {
+        cout << "Desea unirse a la subasta? ( SI/NO ): " << endl;
+        getline(cin, mensaje);
+    }
+
+    if(mensaje=="SI"){
 		cout <<"Gracias por participar"<<endl<< "Escriba \"EXIT\" para finalizar"<<endl << aux;
     }
     else{
     	cout << "Gracias por contactar." <<endl;
     	mensaje = MENS_FIN;
     }
-    // Enviamos el mensaje
+    // Envía el mensaje
     int send_bytes = socket.Send(socket_fd, mensaje);
     if(send_bytes == -1){
 		cerr << "Error al enviar datos: " << strerror(errno) << endl;
-		// Cerramos el socket
+		// Se cierra el socket
 		socket.Close(socket_fd);
 		exit(1);
 	}
@@ -75,15 +70,14 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 		bool mensajeContinua = false;
 		do{
 			mensaje="";
-
 			if(buffer == URL){
-				cout << "-- PUJA ganada --"<<endl << "Por favor introduzca la URL de la imagen que quier amostrar en la Valla"<<endl;
+				cout << "-- PUJA ganada --"<<endl;
+                coutn << "Por favor introduzca la URL de la imagen que quier amostrar en la Valla"<<endl;
 				while(mensaje=="") {
 					getline(cin, mensaje);
 				}
-				//mensaje = url;
 			}
-			// Si recibo fin del Servisdor
+			// Si recibe fin del Servisdor
 			if(buffer == MENS_FIN){
 				mensajeContinua=true;
 			}
@@ -96,26 +90,25 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 			}
 
 			if(!mensajeContinua){
-				// Enviamos el mensaje
+				// Envía el mensaje
 			    int send_bytes = socket.Send(socket_fd, mensaje);
 			    cout << "ENVIADO: "<<mensaje<<endl;
 
 			    if(send_bytes == -1){
 					cerr << "Error al enviar datos: " << strerror(errno) << endl;
-					// Cerramos el socket
+					// Se cierra el socket
 					socket.Close(socket_fd);
 					exit(1);
 				}
 			}
 
 			if(mensaje != MENS_FIN){
-			    // Recibimos la respuesta del servidor
+			    // Recibe la respuesta del servidor
 			    int read_bytes = socket.Recv(socket_fd, buffer, MESSAGE_SIZE);
-			    // Mostramos la respuesta
 
-			    // Recibo el segundo mensaje
+			    // Recibe el segundo mensaje
 			    if(mensajeContinua){
-			    	// Salgo dle bucle
+    			    // Indica el fin del bucle
 			    	mensaje=MENS_FIN;
 			    }
 			    cout << "RESPUESTA: " << buffer << endl;
@@ -124,9 +117,9 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 	}
 }
 
-
-void handle_sigalrm(int signo){
-	signal(SIGINT, handle_sigalrm);
+//Función de protección frente señal
+void handle_sigint(int signo){
+	signal(SIGINT, handle_sigint);
 }
 
 int main(int argc, char* argv[]) {
@@ -142,14 +135,14 @@ int main(int argc, char* argv[]) {
 	bool fin = false;
 	Semaphore sem(0);
 
-	// Protegemos frente señal
-	signal(SIGINT, handle_sigalrm);
+	// Protección frente señal
+	signal(SIGINT, hadle_sigint);
 
 	// Creación del socket con el que se llevará a cabo
 	// la comunicación con el servidor.
 	Socket socket(SERVER_ADDRESS, SERVER_PORT);
 
-    // Conectamos con el servidor. Probamos varias conexiones
+    // Conexión con el servidor. Prueba varias conexiones
 	int count = 0;
 	int socket_fd;
 	do {

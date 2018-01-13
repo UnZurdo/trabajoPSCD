@@ -1,3 +1,10 @@
+//*****************************************************************
+// File:   Subasta.cpp
+// Date:   Enero 2018
+// Authors: García Hernández, Alberto 741363
+//          Generelo Gimeno, Jorge 737317
+//          Gómez Lahera, Miguel 741302
+//*****************************************************************
 #include "Subasta.h"
 #include <ctime>
 #include <cstdlib>
