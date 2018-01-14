@@ -16,22 +16,30 @@ Administrador::Administrador(Gestor* gestor, Subasta* subasta){
 string Administrador::mostrarEstado(){
 	int clients_id[MAX];
 	int N;
+	string mensaje;
 	subasta->obtenerMonitor()->get_all_clients(clients_id, &N);
 	string clientes;
     // Cuenta los clientes en un momento concreto
 	for(int i = 0; i< N; ++i){
 		clientes = clientes + to_string(clients_id[i]) +", ";
 	}
-    string MENSAJE= "Numero de clientes: "+ to_string(N)+"\n";
+    string mensajeAUX= "Numero de clientes: "+ to_string(N)+"\n";
     if((subasta->obtenerMonitor()->clientes()) > 0) {
-        MENSAJE=MENSAJE+"Listado clientes: "+ clientes + "\n";
+        mensajeAUX=mensajeAUX+"Listado clientes: "+ clientes + "\n";
 	}
-    return subasta->obtenerMonitor()->estado() + gestor->estado() + MENSAJE;
+	mensaje="\n--------------- ESTADO ---------------\n";
+	mensaje+= subasta->obtenerMonitor()->estado() + gestor->estado() + mensajeAUX;
+	mensaje+= "--------------------------------------\n";
+    return mensaje;
 };
 
 
 string Administrador::mostrarHistoria(){
-    return subasta->infoHistorica() + gestor->estado();
+	string mensaje;
+	mensaje="\n-------------- HISTÓRICO --------------\n";
+    mensaje += subasta->infoHistorica() + gestor->estado();
+    mensaje+="----------------------------------------\n";
+    return mensaje;
 };
 
 

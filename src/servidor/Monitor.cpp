@@ -56,9 +56,9 @@ string Monitor::estado(){
     }
     else{
       oss <<"Puja maxima actual: "<<actual << " del cliente "<<id_ganador <<endl
-      <<"Puja siguiente: "<<siguiente<<endl<<"Numero de clientes participando: "
-      <<nClientes<<endl<< "Numero de pujas actuales: "<<nPujasValidas<<endl
-      << "Numero de pujas totales: "<<nPujasTotales<<endl<<endl;
+      <<"Puja siguiente: "<<siguiente<<endl<<"Número de clientes participando: "
+      <<nClientes<<endl<< "Número de pujas actuales: "<<nPujasValidas<<endl
+      << "Número de pujas totales: "<<nPujasTotales<<endl<<endl;
     }
     return oss.str();
 };

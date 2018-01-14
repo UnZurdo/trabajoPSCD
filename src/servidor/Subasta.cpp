@@ -131,8 +131,8 @@ bool Subasta::cerrarSubasta(int& user_id, string& estado){
     while(!monitor->Pasar()) esperar.wait();
     // Si hay ganador
 	if(monitor->getId()!=-1 && monitor->pujaActual() > precioMinimo){
-        if(!fin) oss <<"--SUBASTA CONCLUIDA--"<<endl; 
-        else oss <<endl<<"--SUBASTA CERRADA PERMANENTEMENTE--"<<endl;
+        if(!fin) oss <<endl<<"------- SUBASTA CONCLUIDA -------"<<endl; 
+        else oss <<endl<<"------- SUBASTA CERRADA PERMANENTEMENTE -------"<<endl;
         oss <<"Ganador: "<<monitor->getId()<<" Puja cerrada a "<<monitor->pujaActual() <<"$"<<endl<<endl;
         estado=oss.str();
         cout << estado;
@@ -146,8 +146,8 @@ bool Subasta::cerrarSubasta(int& user_id, string& estado){
 		return false;
 	}
 	else{
-        if(!fin) oss <<"--SUBASTA CERRADA--"<<endl;
-        else oss <<endl<<"--SUBASTA CERRADA PERMANENTEMENTE--"<<endl;
+        if(!fin) oss <<endl<<"------- SUBASTA CERRADA -------"<<endl;
+        else oss <<endl<<"------- SUBASTA CERRADA PERMANENTEMENTE -------"<<endl;
 		oss << "No hay ganador, puja minima de "<<precioMinimo<<" no superada."<<endl;
         estado=oss.str();
         cout << estado;
@@ -162,8 +162,8 @@ string Subasta::infoHistorica(){
     for(int i = 0; i< nGanadores; ++i){
         lista_ganadores += to_string(ganadores[i])+", ";
     }
-    oss << "Numero de subastas realizadas: "<<nSubastas<<endl<<"Tiempo total ofertado: "<<tiempoTotal<<endl
+    oss << "Número de subastas realizadas: "<<nSubastas<<endl<<"Tiempo total ofertado: "<<tiempoTotal<<endl
     <<"Tiempo medio ofertado: "<<tiempoMedio<<endl<<"Beneficios obtenidos. "<<beneficios<<"$"<<endl
-    << "Numero de vallas contratadas: "<<nGanadores <<endl << "Lista de ganadores: " << lista_ganadores<<endl;
+    << "Número de vallas contratadas: "<<nGanadores <<endl << "Lista de ganadores: " << lista_ganadores<<endl;
     return oss.str();
 };

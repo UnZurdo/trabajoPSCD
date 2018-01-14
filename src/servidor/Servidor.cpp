@@ -91,7 +91,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		int rcv_bytes = soc.Recv(client_fd,buffer,length);
 		msgAUX= "*BUFFER: ";
 		msgAUX +=  buffer;
-		msgAUX +=  "\n";
+		msgAUX +=  "  -> Cliente " + to_string(client_fd) +"\n";
 		cout << msgAUX;
 		if (rcv_bytes == -1) {
 			string mensError(strerror(errno));
@@ -107,11 +107,11 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		//Recibe solicitud de estado de la subasta
 		else if(strcmp(buffer, ESTADO)==0){
 			msg = "--ESTADO--\n";
-			cout << msg;
+			//cout << msg;
 		}
 		else if(strcmp(buffer, PASO)==0){
 			msg = "--TURNO PASADO--\n";
-			cout << msg;
+			//cout << msg;
 			puja=-1;
 		}
 		//Recibe mensaje de ayuda
@@ -129,15 +129,15 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 			if(temp && temp2){
 				if(strcmp(temp,PUJAR)==0){
 					puja = atoi(temp2);
-					msgAUX = "PUJA recibida de " + to_string(puja) +" $\n";
-					cout << msgAUX;
+					//msgAUX = "PUJA recibida de " + to_string(puja) +" $\n";
+					//cout << msgAUX;
 					bool valida=s.obtenerMonitor()->Pujar(puja, client_fd);
 					if(!valida) {
-						msg="--PUJA no aceptada--\n";
+						msg="-- PUJA del cliente " + to_string(client_fd) +" NO aceptada --\n";
 						cout << msg;
 					}
 					else {
-						msg="--PUJA aceptada--\n";
+						msg="-- PUJA del cliente " + to_string(client_fd) +" ACEPTADA --\n";;
 						cout << msg;
 					}
 					puja = -2;
