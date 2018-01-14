@@ -127,44 +127,27 @@ bool Subasta::cerrarSubasta(int& user_id, string& estado){
     ostringstream oss;
     // Si aun no ha finalizado (todos han escrito PASAR) espero
     while(!monitor->Pasar()) esperar.wait();
-    if(!fin){
-        // Si hay ganador
-    	if(monitor->getId()!=-1){
-            oss <<"--SUBASTA CONCLUIDA--"<<endl << "Ganador: "<<monitor->getId()<<" Puja cerrada a "<<monitor->pujaActual() <<"$"<<endl;
-            estado=oss.str();
-            cout << estado;
-    		beneficios+=monitor->pujaActual();
-    		++nImagenes;
-    		user_id = monitor->getId();
-            beneficios+=monitor->pujaActual();
-    		return false;
-    	}
-    	else{
-    		oss <<"--SUBASTA CERRADA--"<<endl<< "No hay ganador, puja minima de "<<precioMinimo<<" no superada."<<endl;
-            estado=oss.str();
-            cout << estado;
-    		return true;
-    	}
-    }
-    else{
-        oss <<endl<<"--SUBASTA CERRADA PERMANENTEMENTE--"<<endl;
-        if(monitor->getId()!=-1){
-            oss <<"Ganador: "<<monitor->getId()<<" Puja cerrada a "<<monitor->pujaActual() <<"$"<<endl<<endl;
-            beneficios+=monitor->pujaActual();
-            ++nImagenes;
-            user_id = monitor->getId();
-            beneficios+=monitor->pujaActual();
-            estado=oss.str();
-            cout << estado;
-            return false;
-        }
-        else{
-            oss <<"No hay ganador, puja minima de "<<precioMinimo<<" no superada."<<endl<<endl;
-            estado=oss.str();
-            cout << estado;
-            return true;
-        }
-    }
+    // Si hay ganador
+	if(monitor->getId()!=-1 && monitor->pujaActual() > precioMinimo){
+        if(!fin) oss <<"--SUBASTA CONCLUIDA--"<<endl; 
+        else oss <<endl<<"--SUBASTA CERRADA PERMANENTEMENTE--"<<endl;
+        oss <<"Ganador: "<<monitor->getId()<<" Puja cerrada a "<<monitor->pujaActual() <<"$"<<endl<<endl;
+        estado=oss.str();
+        cout << estado;
+		beneficios+=monitor->pujaActual();
+		++nImagenes;
+		user_id = monitor->getId();
+        beneficios+=monitor->pujaActual();
+		return false;
+	}
+	else{
+        if(!fin) oss <<"--SUBASTA CERRADA--"<<endl;
+        else oss <<endl<<"--SUBASTA CERRADA PERMANENTEMENTE--"<<endl;
+		oss << "No hay ganador, puja minima de "<<precioMinimo<<" no superada."<<endl;
+        estado=oss.str();
+        cout << estado;
+		return true;
+	}
 };
 
 
