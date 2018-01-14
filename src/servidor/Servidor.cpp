@@ -117,6 +117,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		//Recibe mensaje de ayuda
 		else if(strcmp(buffer,AYUDA)==0){
 			msg = "\nEscriba \"EXIT\" para abandonar la subasta.\nPara mostrar el estado actual de la subasta escriba ESTADO.\nSi desea pujar escriba: PUJAR <cantidad>\n";
+			msg+="Si desea saltarse una ronda escriba: PASO\n";
 			msg += "Su ID para la subasta actual es: " + to_string(client_fd) + "\n";
 			//cout << msg;
 		}
