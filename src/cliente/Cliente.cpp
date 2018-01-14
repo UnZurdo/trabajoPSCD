@@ -26,6 +26,8 @@ const char RECHAZADO[]="RECHAZADO";
 // Informar de que se va a enviar datos a continuacion
 const char URL[]="URL";
 
+string url;
+
 void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 	// Recibe la respuesta del servidor
     string aux;
@@ -74,10 +76,7 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 			}
 			else if(buffer == URL){
 				cout << "-- PUJA ganada --"<<endl;
-                cout << "Por favor introduzca la URL de la imagen que quier amostrar en la Valla"<<endl;
-				while(mensaje=="") {
-					getline(cin, mensaje);
-				}
+				mensaje=url;
 			}
 			else {
 				// Leer mensaje de la entrada estandar
@@ -121,7 +120,7 @@ void handle_sigint(int signo){
 }
 
 int main(int argc, char* argv[]) {
-	if (argc < 3){
+	if (argc < 4){
 		cout << "ERROR, inserte los parametros correctamente" << endl;
 		exit(1);
 	}
@@ -131,6 +130,7 @@ int main(int argc, char* argv[]) {
 	string SERVER_ADDRESS = argv[1];
 	int SERVER_PORT = atoi(argv[2]);
 	bool fin = false;
+	url = argv[3];
 	Semaphore sem(0);
 
 	// Protección frente señal

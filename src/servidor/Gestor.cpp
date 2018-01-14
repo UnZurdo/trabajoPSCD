@@ -104,6 +104,6 @@ void Gestor::iniciar(){
         s.wait();
 
     }
-    cout <<endl<< "----GESTOR CERRADO----"<<endl;
+    cout << "------- GESTOR CERRADO -------"<<endl;
     gestorCerrado.signal();
 };

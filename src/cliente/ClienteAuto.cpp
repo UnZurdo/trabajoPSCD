@@ -143,7 +143,7 @@ void handle_sigint(int signo){
 }
 
 int main(int argc, char* argv[]) {
-	if (argc < 3){
+	if (argc < 4){
 		cout << "ERROR, inserte los parametros correctamente" << endl;
 		exit(1);
 	}
