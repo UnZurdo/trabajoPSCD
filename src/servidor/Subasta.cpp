@@ -107,7 +107,7 @@ void Subasta::iniciar(string& estado){
     ostringstream oss;
     // SI FIN no creo subastas nuevas
     if(!fin){
-    	oss <<"\n--SUBASTA ABIERTA--" <<endl <<"Valla Publicitaria de "<<duracion<<" segundos"<<endl
+    	oss <<"\n------- SUBASTA ABIERTA -------" <<endl <<"Valla Publicitaria de "<<duracion<<" segundos"<<endl
     	<< "Puja inicial en: " << precioInicial << " $"<<endl<<endl;
         estado=oss.str();
     }
