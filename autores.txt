@@ -26,12 +26,16 @@ Del 10 al 14, debuggear programa y documentación del diseño
 
 
 Jorge:
-Horas invertidas aproximasdas: 15 horas
+Horas invertidas aproximasdas: 18 horas
 Dedicación principalmente a diseño e implementación de funciones y monitores,
 análisis, búsqueda de fallos y pruebas. 
 
 
 Miguel:
-Horas invertidas aproximadas: 15 horas
+Horas invertidas aproximadas: 18 horas
 Dedicación a implementación de los ficheros de cliente y servidor, pruebas
 o tests de funcionamiento, especifiación y maquetado.
+
+Del 5 al 8 implementación y diseño.
+Del 8 al 12 cambios en general.
+Del 12 al 14 maquetado y pruebas finales.
