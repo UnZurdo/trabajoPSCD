@@ -22,4 +22,4 @@ análisis, búsqueda de fallos y pruebas.
 Miguel:
 Horas invertidas aproximadas: 15 horas
 Dedicación a implementación de los ficheros de cliente y servidor, pruebas
-o tests de funcionamiento, especifiación y maquetado ademas de carisma y energia.
+o tests de funcionamiento, especifiación y maquetado.
