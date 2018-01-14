@@ -6,6 +6,10 @@
 //          Gómez Lahera, Miguel 741302
 //*****************************************************************
 
+//******************************************************************//
+// SET de INSTRUCCIONES:  ESTADO,  AYUDA,  PUJAR <cantidad>,  PASO //
+//****************************************************************//
+
 #include <iostream>
 #include <chrono>
 #include <thread>
@@ -16,17 +20,11 @@
 #include "../librerias/Socket.h"
 
 using namespace std;
-
 const int MESSAGE_SIZE = 4001;  //mensajes de no más 4000 caracteres
-
 const char MENS_FIN[]="EXIT";
 const char RECHAZADO[]="RECHAZADO";
 // Informar de que se va a enviar datos a continuacion
 const char URL[]="URL";
-
-bool esGanador = false;
-bool aux=false;
-Semaphore ganador(0);
 
 void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 	// Recibe la respuesta del servidor
@@ -70,16 +68,16 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 		bool mensajeContinua = false;
 		do{
 			mensaje="";
-			if(buffer == URL){
+			// Si recibe fin del Servisdor
+			if(buffer == MENS_FIN){
+				mensajeContinua=true;
+			}
+			else if(buffer == URL){
 				cout << "-- PUJA ganada --"<<endl;
                 cout << "Por favor introduzca la URL de la imagen que quier amostrar en la Valla"<<endl;
 				while(mensaje=="") {
 					getline(cin, mensaje);
 				}
-			}
-			// Si recibe fin del Servisdor
-			if(buffer == MENS_FIN){
-				mensajeContinua=true;
 			}
 			else {
 				// Leer mensaje de la entrada estandar

@@ -33,11 +33,7 @@ const char URL[]="URL";
 const char PUJAR[]="PUJAR";
 
 bool hayGanador = false;	// Indica si hay ganador en una subasta (true)
-Semaphore hayMensaje(0);
-Semaphore esperarURL(0);
 Semaphore aceptar(0);
-
-Semaphore enviandoMensaje(0);
 
 
 //-------------------------------------------------------------
@@ -182,7 +178,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 				msg=msgAUX;
 				// Deja de atender a más clientes
 				send_bytes = soc.Send(client_fd, msg);
-				cout <<endl<<"---ENVIO: "<<msg<<endl;
+				//cout <<endl<<"---ENVIO: "<<msg<<endl;
 				if(send_bytes == -1) {
 					string mensError(strerror(errno));
 					cerr << "Error al enviar datos: " + mensError + "\n";

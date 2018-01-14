@@ -54,8 +54,8 @@ public:
 	/*
 	 * Pre: ---
 	 * Post: Bucle infinito hasta que finaliza el programa en el que se leen
-     * 		 las ordenes por la linea de comandos (mostrar Estado,
-	 *		 Historia o apagar)
+     * 		 las ordenes por la linea de comandos (ESTADO,
+	 *		 HISTORICO o EXIT)
 	 */
 	void iniciarAdmin(bool& fin);
 

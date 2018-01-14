@@ -48,7 +48,7 @@ SOCKETSFLAGS=-lsocket -lnsl # Flags linkado sockets (Solaris SunOS)
 
 .PHONY:all
 
-all: ${SERVIDOR} ${CLIENTE} # ${CLIENTEAUTOMATICO}
+all: ${SERVIDOR} ${CLIENTE} ${CLIENTEAUTOMATICO}
 
 
 # Compilacion de librerias servidor
@@ -110,5 +110,5 @@ clean:
 	$(RM) bin/*.o
 	$(RM) bin/${CLIENTE}
 	$(RM) bin/${SERVIDOR}
-	# $(RM) bin/${CLIENTE}
+	$(RM) bin/${CLIENTEAUTOMATICO}
 	$(RM) imagenes/*.*

@@ -172,6 +172,5 @@ string Subasta::infoHistorica(){
     ostringstream oss;
     oss << "Numero de subastas realizadas: "<<nSubastas<<endl<<"Tiempo total ofertado: "<<tiempoTotal<<endl
     <<"Tiempo medio ofertado: "<<tiempoMedio<<endl<<"Beneficios obtenidos. "<<beneficios<<"$"<<endl;
-    cout << oss.str();
     return oss.str();
 };
