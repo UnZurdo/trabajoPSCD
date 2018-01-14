@@ -112,6 +112,7 @@ void Subasta::iniciar(string& estado){
         cout << estado;
         estado=oss.str();
     }
+    cout<<estado;
 };
 
 

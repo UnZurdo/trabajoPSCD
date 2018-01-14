@@ -8,7 +8,9 @@
 
 #include "Monitor.h"
 
-atomic <int> N(0);
+// Variable auxiliar para contabilizar el orden en el que se despiertan los procesos de 
+// la funcion siguientePuja
+int N=0;
 
 int randomS(){
     srand (time(NULL));
