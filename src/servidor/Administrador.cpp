@@ -35,11 +35,6 @@ string Administrador::mostrarHistoria(){
 };
 
 
-void Administrador::apagarServidor(){
-    subasta->finalizarSubasta();
-};
-
-
 void Administrador::iniciarAdmin(bool& fin){
 	cout << "Para finalizar escribir \"EXIT\""<<endl;
 	string msg;

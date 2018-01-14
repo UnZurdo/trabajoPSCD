@@ -134,18 +134,19 @@ public:
      * Post: Devuelve true si y sólo si la puja introducida por el cliente
      *       es mayor a la mínimo exigida. En este caso se actualiza el valor
      *       de la nueva puja a superar. En caso contrario devuelve false
+     *       En ambos casos se actualizan las variables de estado correspondientes.
      */
     bool Pujar(const int dinero, int id);
 
     /*
      * Pre: ---
-     * Post: Bloquea la subasta
+     * Post: Bloquea la subasta, evitando que ningún proceso siga progresando.
      */
     void bloquearSubasta();
 
     /*
      * Pre: ---
-     * Post: Desbloquea la subasta
+     * Post: Desbloquea la subasta y despierta todos los procesos que estaban esperando.
      */
     void desbloquearSubasta();
 };

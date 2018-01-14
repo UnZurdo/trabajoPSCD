@@ -99,7 +99,7 @@ public:
 
     /*
      * Pre: ---
-     * Post: Si fin está en false, inicializa el temporizador y muestra estado
+     * Post: Si fin está en false, muestra el estado de la nueva subasta
      */
     void iniciar(string& estado);
 
@@ -111,13 +111,14 @@ public:
 
     /*
      * Pre: ---
-     * Post: Devuelve true si la subasta ha sido cerrada porque ningún jugador
+     * Post: Si la subasta aun no ha finalizado la ejecución se bloquea.
+     *       Devuelve true si la subasta ha sido cerrada porque ningún jugador
      *       ha superado la puja mínima, y lo indica por pantalla. Devuelve
      *       false en caso de que acabe la subasta y obtenga un ganador, en
-     *       cuyo caso lo muuestra por pantalla y actualiza ls variables de
+     *       cuyo caso lo muestra por pantalla y actualiza las variables de
      *       beneficios e incrementa el número de imágenes. También devuelve
      *       false en el caso de que haya ganador pero se cierre la subasta
-     *       permanentemente-
+     *       permanentemente.
      */
     bool cerrarSubasta(int& user_id, string& estado);
 

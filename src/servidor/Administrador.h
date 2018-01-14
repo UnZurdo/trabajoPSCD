@@ -33,12 +33,6 @@ public:
 
 	/*
 	 * Pre: ---
-	 * Post: Finaliza la subasta
-	 */
-    void apagarServidor();
-
-	/*
-	 * Pre: ---
 	 * Post: Devuelve un cadena que contiene la información acerca
  	 *		 de la subastas en dicho instante
 	 */
@@ -55,7 +49,8 @@ public:
 	 * Pre: ---
 	 * Post: Bucle infinito hasta que finaliza el programa en el que se leen
      * 		 las ordenes por la linea de comandos (ESTADO,
-	 *		 HISTORICO o EXIT)
+	 *		 HISTORICO o EXIT). Si se recibe la orden de EXIT se procederá a
+	 *		 cerrar de forma ordenada el servidor.
 	 */
 	void iniciarAdmin(bool& fin);
 

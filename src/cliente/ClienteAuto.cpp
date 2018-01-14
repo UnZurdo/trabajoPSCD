@@ -1,17 +1,5 @@
-/*
-CLIENTE AUTOMATICO (modificar Cliente)
-
-./ClienteAuto  <ip>  <port>  <url>
-
-**Enviar URL al comienzo
-
-1) Generar de forma aleatoria ordenes para enviar entre las distintas opciones:  PUJAR, ESTADO, AYUDA, EXIT
-** Ir intercalando pausas **
-2) Pasadas 3 Subastas (llevar la cuenta) FINALIZAR
-*/
-
 //*****************************************************************
-// File:   Cliente.cpp
+// File:   ClienteAuto.cpp
 // Date:   Enero 2018
 // Authors: García Hernández, Alberto 741363
 //          Generelo Gimeno, Jorge 737317
