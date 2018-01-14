@@ -93,6 +93,7 @@ void Monitor::bloquearSubasta(){
 };
 
 void Monitor::desbloquearSubasta(){
+    unique_lock<mutex> lck(mtx);
     bloqueado.notify_all();
 };
 
@@ -114,6 +115,7 @@ bool Monitor::esta(int client_fd){
 
 
 void Monitor::get_all_clients(int clients_fd[], int* n){
+    unique_lock<mutex> lck(mtx);
     int j = 0;
     for(int i = 0; i< MAX;++i){
         if(clientList[i]!=0){
@@ -126,6 +128,7 @@ void Monitor::get_all_clients(int clients_fd[], int* n){
 
 
 bool Monitor::Pasar(){
+    unique_lock<mutex> lck(mtx);
     return finSubastaActual;
 };
 

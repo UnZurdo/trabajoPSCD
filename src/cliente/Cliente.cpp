@@ -14,6 +14,7 @@
 #include <chrono>
 #include <thread>
 #include <signal.h>
+#include <sstream>
 #include <stdio.h>
 #include <unistd.h>
 #include "../librerias/Semaphore.h"
@@ -23,10 +24,26 @@ using namespace std;
 const int MESSAGE_SIZE = 4001;  //mensajes de no más 4000 caracteres
 const char MENS_FIN[]="EXIT";
 const char RECHAZADO[]="RECHAZADO";
+const char ESTADO[]="ESTADO";
+const char AYUDA[]="AYUDA";
+const char PASO[]="PASO";
+const char PUJAR[]="PUJAR";
 // Informar de que se va a enviar datos a continuacion
 const char URL[]="URL";
 
 string url;
+
+// Comprovación sencilla para evitar el envio de mensajes incorrectos
+bool valido(string mensaje){
+	if(mensaje=="")return false;
+	bool correcto = false;
+	string aux;
+	istringstream iss(mensaje);
+	getline( iss, aux, ' ' );
+	if(aux==ESTADO || aux==AYUDA || aux==PASO || aux==PUJAR || aux==MENS_FIN) correcto=true;
+
+	return correcto;
+}
 
 void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 	// Recibe la respuesta del servidor
@@ -81,8 +98,11 @@ void escritura(Socket& socket, int socket_fd, bool& fin, Semaphore& sem){
 			else {
 				// Leer mensaje de la entrada estandar
 				// Caso usuario no introduce nada, repetimo
-				while(mensaje=="") {
+				while(!valido(mensaje)) {
+					cout << ">>";
 					getline(cin, mensaje);
+					cout <<endl<< "Mensaje invalido, vuelve a intentarlo"<<endl;
+
 				}
 			}
 

@@ -7,6 +7,8 @@
 //*****************************************************************
 #include "Gestor.h"
 
+int X=0;
+int Y=0;
 
 Gestor::Gestor(){
     this->fin = false;
@@ -90,7 +92,9 @@ void Gestor::iniciar(){
         cimg_library::CImgDisplay imagen(img_principal.resize(VALLA_WIDTH,VALLA_HEIGHT), name);
 
         imagen.resize(VALLA_WIDTH,VALLA_HEIGHT);
-        imagen.move(0,0); // Esquina superior izquierda
+        imagen.move(X,Y); // Posicion imagen
+        X=(X+150)%1280;
+        Y=(Y+150)%720;
 
         // Mostrar imagen
         imagen.wait(obtenerDuracion(valla)*1000);

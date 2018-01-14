@@ -212,7 +212,7 @@ void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, string& estado
 		// Inicializo nueva subasta
 		subasta.iniciar(estadoAux);
 		estado=estado+estadoAux;
-		cout << estado;
+		//cout << estado;
 		// SUBASTA BLOQUEADA MIENTRAS SE TRAMITA LA INFORMACION
 		subasta.obtenerMonitor()->desbloquearSubasta();
 
@@ -254,7 +254,7 @@ void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, string& estado
 			}
 		}
 	}
-	cout << estado;
+	//cout << estado;
 	// SUBASTA FINALIZADA
 	subasta.obtenerMonitor()->desbloquearSubasta();
 }
