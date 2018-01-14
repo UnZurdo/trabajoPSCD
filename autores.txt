@@ -9,14 +9,14 @@ NIP Apellidos Nombre
 INFORME DE DEDICACIÓN:
 
 Alberto:
-Horas invertidas aproximasdas: 100 horas
+Horas invertidas aproximasdas: 10000 horas
 Dedicación ...
 
 
 Jorge:
 Horas invertidas aproximasdas: 17 horas
 Dedicación principalmente a diseño e implementación de funciones y monitores,
-análisis, búsqueda de fallos y pruebas.
+análisis, búsqueda de fallos y pruebas. 
 
 
 Miguel:
