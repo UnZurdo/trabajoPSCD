@@ -49,6 +49,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 	bool ultimoMensaje = false;
 	string msgAUX;
 
+
 	if(fin) {
 		out = true;
 		msg = RECHAZADO;
@@ -88,7 +89,10 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		msg="MENSAJE INVALIDO, vuelva a intentarlo\n";
 
 		int rcv_bytes = soc.Recv(client_fd,buffer,length);
-		cout << "*BUFFER: "<<buffer<<endl;
+		msgAUX= "*BUFFER: ";
+		msgAUX +=  buffer;
+		msgAUX +=  "\n";
+		cout << msgAUX;
 		if (rcv_bytes == -1) {
 			string mensError(strerror(errno));
     		cerr << "Error al recibir datos: " + mensError + "\n";
@@ -102,7 +106,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		}
 		//Recibe solicitud de estado de la subasta
 		else if(strcmp(buffer, ESTADO)==0){
-			msg = "--ESTADO--";
+			msg = "--ESTADO--\n";
 			cout << msg;
 		}
 		else if(strcmp(buffer, PASO)==0){
@@ -113,8 +117,8 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		//Recibe mensaje de ayuda
 		else if(strcmp(buffer,AYUDA)==0){
 			msg = "\nEscriba \"EXIT\" para abandonar la subasta.\nPara mostrar el estado actual de la subasta escriba ESTADO.\nSi desea pujar escriba: PUJAR <cantidad>\n";
-			msg += "Su ID para la subasta actual es: " + to_string(client_fd);
-			cout << msg;
+			msg += "Su ID para la subasta actual es: " + to_string(client_fd) + "\n";
+			//cout << msg;
 		}
 		else{
 			// Parseamos al entrada ante varios delimitadores
@@ -124,7 +128,8 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 			if(temp && temp2){
 				if(strcmp(temp,PUJAR)==0){
 					puja = atoi(temp2);
-					cout << "PUJA recibida de "<< puja<<" $"<<endl;
+					msgAUX = "PUJA recibida de " + to_string(puja) +" $\n";
+					cout << msgAUX;
 					bool valida=s.obtenerMonitor()->Pujar(puja, client_fd);
 					if(!valida) {
 						msg="--PUJA no aceptada--\n";
@@ -216,7 +221,7 @@ void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, string& estado
 
 		// Informar ganador si lo hay y obtener datos url
 		if(hayGanador){
-			cout << "---> Hay ganador"<<endl;
+			//cout << "---> Hay ganador"<<endl;
 			// Comprueba que aun sigue conectado
 			if(subasta.obtenerMonitor()->esta(user_id)){
 				// Pido URL al cliente, la recibo en el proceso de recibir
@@ -244,7 +249,7 @@ void gestorSubasta(Socket& soc, Subasta& subasta, Gestor& gestor, string& estado
 				string path = "valla" + to_string(subasta.nVallas()) + ".jpg";
 				crear(valla, url_cliente, path, d);
 				gestor.anyadirValla(valla);
-				cout << "valla añadida"<<endl<<endl;
+				cout << "--valla añadida--"<<endl<<endl;
 			}
 		}
 	}
