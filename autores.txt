@@ -16,10 +16,10 @@ Dedicación ...
 Jorge:
 Horas invertidas aproximasdas: 17 horas
 Dedicación principalmente a diseño e implementación de funciones y monitores,
-análisis y búsqueda de fallos.
+análisis, búsqueda de fallos y pruebas.
 
 
 Miguel:
 Horas invertidas aproximadas: 15 horas
 Dedicación a implementación de los ficheros de cliente y servidor, pruebas
-o tests de funcionamiento, especifiación y maquetado.
+o tests de funcionamiento, especifiación y maquetado ademas de carisma y energia.
