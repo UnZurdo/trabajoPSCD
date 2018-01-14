@@ -7,3 +7,19 @@ NIP Apellidos Nombre
 
 
 INFORME DE DEDICACIÓN:
+
+Alberto:
+Horas invertidas aproximasdas: 0 horas
+Dedicación
+
+
+Jorge:
+Horas invertidas aproximasdas: 17 horas
+Dedicación principalmente a diseño e implementación de funciones y monitores,
+análisis y búsqueda de fallos.
+
+
+Miguel:
+Horas invertidas aproximadas: 15 horas
+Dedicación a implementación de los ficheros de cliente y servidor, pruebas
+o tests de funcionamiento, especifiación y maquetado.
