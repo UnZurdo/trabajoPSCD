@@ -9,13 +9,20 @@ NIP Apellidos Nombre
 INFORME DE DEDICACIÓN:
 
 Todos en general y casi siempre juntos ibamos los primeros dias decidiendo el
-diseño e implementando el código, y de cara a la última semana nos dedicamos
-a testar y probar diferentes casos para perfeccionarlo y terminarlo.
+diseño e implementando el código y de cara a la última semana nos dedicamos
+a testar, añadir funcionalidades y probar diferentes casos para perfeccionarlo y terminarlo.
 
 
 Alberto:
-Horas invertidas aproximasdas: 10000 horas
-Dedicación ...
+Horas invertidas aproximasdas: 22 horas
+Desde el 29 al 2, plantear estructura de los distintos modulos, protocolo de comunicación
+y declaraciones de las funcionalidades basicas necesarias para el funcionamiento del programa.
+
+Del 2 al 7, implementación del diseño de la subasta y monitor junto a las funciones de atender al 
+cliente y gestionar subastas del servidor.
+Del 7 al 10 pequeños cambios en las estructuras de datos, completar servidor, makefile y scripts 
+para lanzar el programa.
+Del 10 al 14, debuggear programa y documentación del diseño
 
 
 Jorge:
