@@ -36,7 +36,7 @@ class Monitor{
     int actual;
     int siguiente;
     int id_ganador;
-    int minSecreto;
+    
     mutex mtx;
     condition_variable esperar;
     condition_variable ocupado;

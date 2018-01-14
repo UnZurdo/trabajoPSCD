@@ -25,7 +25,6 @@ Monitor::Monitor(int min){
     this->finSubastaActual=false;
     this->siguiente=min;
     this->actual=min;
-    this->minSecreto = min +randomS();
     this->id_ganador=-1;
     // Inicializa el vector a 0
     for(int i = 0; i<MAX; ++i){
@@ -36,7 +35,6 @@ Monitor::Monitor(int min){
 void Monitor::nuevo(int min){
     this->siguiente=min;
     this->actual=min;
-    this->minSecreto = min +randomS();
     this->nPujas=0;
     this->nPujasValidas=0;
     this->nPASAR=0;
@@ -77,9 +75,10 @@ void Monitor::siguientePuja(){
         // Siguiente ronda
         nPujas=0;
         N=0;
+        // Si todos los clientes han decidido PASAR
         if(nPASAR==nClientes){
             finSubastaActual=true;
-            cout << "--> FIN SUBASTA ACTUAL"<<endl;
+            //cout << "--> FIN SUBASTA ACTUAL"<<endl;
         }
         else nPASAR=0;
         esperando_ultimo.notify_all();
@@ -136,7 +135,7 @@ bool Monitor::Pujar(const int dinero, int id){
     ++nPujasTotales;
     // Despierta a todos los que estaban esperando
     ++nPujas;
-    cout << "num PUJAS: "<< nPujas<<endl;
+    //cout << "num PUJAS: "<< nPujas<<endl;
     esperar.notify_all();
     if(dinero < siguiente){
         if(dinero==-1){

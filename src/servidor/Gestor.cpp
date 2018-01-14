@@ -38,7 +38,6 @@ void Gestor::apagar(){
 string Gestor::estado(){
     ostringstream oss;
     oss << "Numero de vallas mostradas: "<<contador<<endl<<"Numero de vallas pendientes por mostrar: "<<q.size()<<endl;
-    cout << oss.str();
     return oss.str();
 }
 

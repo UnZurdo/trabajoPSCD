@@ -38,6 +38,7 @@ Subasta::Subasta(){
     this->monitor= new Monitor(precioInicial);
 
     this->beneficios=0;
+    this->nGanadores=0;
     this->nSubastas=1;
     this->nImagenes=0;
     this->tiempoTotal=duracion;
@@ -53,6 +54,7 @@ Subasta::Subasta(int duracion, int precioInicial, int precioMinimo){
     this->monitor= new Monitor(precioInicial);
 
     this->beneficios=0;
+    this->nGanadores=0;
     this->nSubastas=1;
     this->nImagenes=0;
     this->tiempoTotal=duracion;
@@ -137,6 +139,9 @@ bool Subasta::cerrarSubasta(int& user_id, string& estado){
 		beneficios+=monitor->pujaActual();
 		++nImagenes;
 		user_id = monitor->getId();
+        // Añado nuevo ganador
+        ganadores[nGanadores]=user_id;
+        ++nGanadores;
         beneficios+=monitor->pujaActual();
 		return false;
 	}
@@ -153,7 +158,12 @@ bool Subasta::cerrarSubasta(int& user_id, string& estado){
 
 string Subasta::infoHistorica(){
     ostringstream oss;
+    string lista_ganadores;
+    for(int i = 0; i< nGanadores; ++i){
+        lista_ganadores += to_string(ganadores[i])+", ";
+    }
     oss << "Numero de subastas realizadas: "<<nSubastas<<endl<<"Tiempo total ofertado: "<<tiempoTotal<<endl
-    <<"Tiempo medio ofertado: "<<tiempoMedio<<endl<<"Beneficios obtenidos. "<<beneficios<<"$"<<endl;
+    <<"Tiempo medio ofertado: "<<tiempoMedio<<endl<<"Beneficios obtenidos. "<<beneficios<<"$"<<endl
+    << "Numero de vallas contratadas: "<<nGanadores <<endl << "Lista de ganadores: " << lista_ganadores<<endl;
     return oss.str();
 };

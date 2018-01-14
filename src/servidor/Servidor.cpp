@@ -56,7 +56,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 	}
 	// Confirma conexion
 	else if(!fin){
-		msg = estado;
+		msg = estado + "Su ID para la subasta actual es: " + to_string(client_fd) + "\n";
 		aceptar.signal();
 	}
 	// Envía ACEPTAR/RECHAZAR
@@ -77,7 +77,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		// Cierra los sockets
 		soc.Close(client_fd);
 	}
-	//Recibe mensaje de fin
+	// si recibe mensaje de fin
 	if(strcmp(buffer,MENS_FIN)==0){
 		out = true;
 	}
@@ -102,7 +102,7 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		}
 		//Recibe solicitud de estado de la subasta
 		else if(strcmp(buffer, ESTADO)==0){
-			msg = "--ESTADO--\n";
+			msg = "--ESTADO--";
 			cout << msg;
 		}
 		else if(strcmp(buffer, PASO)==0){
@@ -112,7 +112,8 @@ void recibir(Subasta& s, Socket& soc, int client_fd, string& msg, bool& fin, boo
 		}
 		//Recibe mensaje de ayuda
 		else if(strcmp(buffer,AYUDA)==0){
-			msg = "\nEscriba \"EXIT\" para abandonar la subasta.\nPara mostrar el estado actual de la subasta escriba ESTADO.\nSi desea pujar escriba: PUJAR <cantidad>\n\n";
+			msg = "\nEscriba \"EXIT\" para abandonar la subasta.\nPara mostrar el estado actual de la subasta escriba ESTADO.\nSi desea pujar escriba: PUJAR <cantidad>\n";
+			msg += "Su ID para la subasta actual es: " + to_string(client_fd);
 			cout << msg;
 		}
 		else{

@@ -26,12 +26,12 @@ string Administrador::mostrarEstado(){
     if((subasta->obtenerMonitor()->clientes()) > 0) {
         MENSAJE=MENSAJE+"Listado clientes: "+ clientes + "\n";
 	}
-    return subasta->obtenerMonitor()->estado() + gestor->estado()+ MENSAJE;
+    return subasta->obtenerMonitor()->estado() + gestor->estado() + MENSAJE;
 };
 
 
 string Administrador::mostrarHistoria(){
-    return subasta->infoHistorica();
+    return subasta->infoHistorica() + gestor->estado();
 };
 
 
@@ -47,10 +47,10 @@ void Administrador::iniciarAdmin(bool& fin){
 	while(msg!="EXIT"){
 		getline(cin, msg);
 		if(msg=="HISTORICO"){
-			cout << mostrarHistoria();
+			cout <<endl<< mostrarHistoria()<<endl;
 		}
 		else if(msg=="ESTADO"){
-			cout << mostrarEstado();
+			cout << mostrarEstado()<<endl;
 		}
 	}
 	cout << "Closing server...."<<endl;

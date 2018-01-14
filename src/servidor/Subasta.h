@@ -28,6 +28,8 @@ class Subasta{
     int precioMinimo;       // Precio mínimo a superar
 
     // Info Historica
+    int ganadores[MAX];      // Lista con los ID de todos los ganadores
+    int nGanadores;         // número de clientes que han ganado una subasta
     int beneficios;         // Beneficios totales
     int nSubastas;          // Contador de subastas hechas
     int nImagenes;          // Contador de imágenes mostradas
