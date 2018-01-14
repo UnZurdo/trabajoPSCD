@@ -78,7 +78,6 @@ void Monitor::siguientePuja(){
         // Si todos los clientes han decidido PASAR
         if(nPASAR==nClientes){
             finSubastaActual=true;
-            //cout << "--> FIN SUBASTA ACTUAL"<<endl;
         }
         else nPASAR=0;
         esperando_ultimo.notify_all();
@@ -135,7 +134,6 @@ bool Monitor::Pujar(const int dinero, int id){
     ++nPujasTotales;
     // Despierta a todos los que estaban esperando
     ++nPujas;
-    //cout << "num PUJAS: "<< nPujas<<endl;
     esperar.notify_all();
     if(dinero < siguiente){
         if(dinero==-1){
@@ -176,8 +174,6 @@ void Monitor::Entrar(int id){
         ++i;
     }
     clientList[i]=id;
-    cout << "Entra: "<< clientList[i]<< " i: " << i << endl;
-
     ++nClientes;
 };
 
@@ -190,7 +186,6 @@ void Monitor::Salir(int id){
         ++i;
     }
     // Lo borra
-    cout << "Sale: "<< clientList[i]<<endl;
     clientList[i]=0;
     esperar.notify_all();
     --nClientes;
