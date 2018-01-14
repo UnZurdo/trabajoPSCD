@@ -57,7 +57,8 @@ string Monitor::estado(){
     else{
       oss <<"Puja maxima actual: "<<actual << " del cliente "<<id_ganador <<endl
       <<"Puja siguiente: "<<siguiente<<endl<<"Numero de clientes participando: "
-      <<nClientes<<endl<< "Numero de pujas: "<<nPujasTotales<<endl<<endl;
+      <<nClientes<<endl<< "Numero de pujas actuales: "<<nPujasValidas<<endl
+      << "Numero de pujas totales: "<<nPujasTotales<<endl<<endl;
     }
     return oss.str();
 };
@@ -131,7 +132,6 @@ bool Monitor::Pasar(){
 
 bool Monitor::Pujar(const int dinero, int id){
     unique_lock<mutex> lck(mtx);
-    ++nPujasTotales;
     // Despierta a todos los que estaban esperando
     ++nPujas;
     esperar.notify_all();
@@ -147,6 +147,7 @@ bool Monitor::Pujar(const int dinero, int id){
         siguiente=dinero+randomS()+(dinero/5);
         id_ganador=id;
         ++nPujasValidas;
+        ++nPujasTotales;
         return true;
     }
 };
